@@ -20,4 +20,6 @@ type Octave =
 
 export const availableLetters: Letter[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 export const availableAccidentals: Accidental[] = ['b', '#', ''];
-export const availableOctaves: Octave[] = [1, 2, 3];
+export const availableOctaves: Octave[] = [2, 3, 4];
+
+export const noteToNoteDelay = 1;

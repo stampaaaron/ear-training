@@ -1,6 +1,4 @@
-import * as Tone from 'tone';
-import { basicTensions, intervalDistanceMap } from './notes';
-import { getRandomNote } from './utils';
+import { basicTensions } from './notes';
 import {
   AppShell,
   Button,
@@ -12,12 +10,11 @@ import {
 
 import './styles.css';
 import '@mantine/core/styles.css';
+import { playChord } from './player';
 
 const theme = createTheme({});
 
 function App() {
-  const synth = new Tone.PolySynth().toDestination();
-
   return (
     <MantineProvider theme={theme}>
       <AppShell padding="md">
@@ -25,25 +22,7 @@ function App() {
           <Card shadow="sm">
             <SimpleGrid cols={2}>
               {basicTensions.map((chord) => (
-                <Button
-                  onClick={async () => {
-                    await Tone.start();
-                    const now = Tone.now();
-
-                    const startNote = getRandomNote();
-
-                    const notes = chord.intervals.map((note) =>
-                      Tone.Frequency(startNote)
-                        .transpose(intervalDistanceMap[note])
-                        .toNote()
-                    );
-
-                    notes.forEach((note, index) => {
-                      synth.triggerAttack(note, now + index);
-                    });
-                    synth.triggerRelease(notes, now + notes.length);
-                  }}
-                >
+                <Button onClick={() => playChord(chord.intervals)}>
                   {chord.name}
                 </Button>
               ))}
