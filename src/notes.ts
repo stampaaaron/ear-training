@@ -1,4 +1,4 @@
-type Interval =
+export type Interval =
   | '1'
   | 'b2'
   | '2'
@@ -53,18 +53,34 @@ export const intervalDistanceMap: Record<Interval, number> = {
   14: 22,
 };
 
-type Chord = {
+export type Chord = {
   name: string;
   intervals: Interval[];
 };
 
+const majIntervals: Interval[] = ['1', '3', '5'];
+const maj7Intervals: Interval[] = [...majIntervals, '7'];
+const maj6Intervals: Interval[] = [...majIntervals, '6'];
+
 export const maj79: Chord = {
   name: 'Maj7(9)',
-  intervals: ['1', '3', '5', '7', '9'],
+  intervals: [...maj7Intervals, '9'],
 };
 export const maj7s11: Chord = {
   name: 'Maj7(#11)',
-  intervals: ['1', '3', '5', '7', '#11'],
+  intervals: [...maj7Intervals, '#11'],
+};
+export const maj713: Chord = {
+  name: 'Maj7(13)',
+  intervals: [...maj7Intervals, '13'],
+};
+export const maj69: Chord = {
+  name: 'Maj6(9)',
+  intervals: [...maj6Intervals, '9'],
+};
+export const maj6s11: Chord = {
+  name: 'Maj6(#11)',
+  intervals: [...maj6Intervals, '#11'],
 };
 
-export const basicTensions = [maj79, maj7s11];
+export const basicTensions = [maj79, maj7s11, maj713, maj69, maj6s11];
