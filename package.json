@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
+  "packageManager": "pnpm@10.5.0",
   "dependencies": {
     "@mantine/core": "^7.17.1",
     "react": "^19.0.0",
