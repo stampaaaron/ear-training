@@ -39,9 +39,26 @@ export function Quiz() {
             <Button onClick={handlePlayNextChord}>Start</Button>
           )}
         </Flex>
-        <Button onClick={handlePlayNextChord}>
-          {currentChord ? 'Skip' : 'Start'}
-        </Button>
+        <Button.Group w="100%">
+          <Button
+            flex={1}
+            variant="outline"
+            disabled={!currentChord}
+            onClick={() => {
+              playChord(currentChord!.intervals);
+            }}
+          >
+            Replay
+          </Button>
+          <Button
+            flex={1}
+            disabled={!currentChord}
+            variant="outline"
+            onClick={handlePlayNextChord}
+          >
+            Skip
+          </Button>
+        </Button.Group>
 
         <SimpleGrid cols={2}>
           {basicTensions.map((chord) => (
