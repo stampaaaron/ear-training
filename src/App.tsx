@@ -1,14 +1,19 @@
 import * as Tone from 'tone';
 import { basicTensions, intervalDistanceMap } from './notes';
 import { getRandomNote } from './utils';
+import { Button, createTheme, MantineProvider } from '@mantine/core';
+
+import '@mantine/core/styles.css';
+
+const theme = createTheme({});
 
 function App() {
   const synth = new Tone.PolySynth().toDestination();
 
   return (
-    <>
+    <MantineProvider theme={theme}>
       {basicTensions.map((chord) => (
-        <button
+        <Button
           onClick={async () => {
             await Tone.start();
             const now = Tone.now();
@@ -28,9 +33,9 @@ function App() {
           }}
         >
           {chord.name}
-        </button>
+        </Button>
       ))}
-    </>
+    </MantineProvider>
   );
 }
 
