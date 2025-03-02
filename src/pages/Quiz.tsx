@@ -18,9 +18,9 @@ export function Quiz() {
   };
 
   return (
-    <Card shadow="sm">
-      <Card.Section>
-        <Title> What chord is played?</Title>
+    <Card shadow="sm" padding="xl">
+      <Card.Section inheritPadding withBorder py="sm">
+        <Title order={3}> What chord is played?</Title>
       </Card.Section>
 
       <Stack>
