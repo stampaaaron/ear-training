@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { basicTensions, Chord } from '../notes';
-import { Button, Card, Flex, Stack, Title } from '@mantine/core';
+import { Button, Flex, Stack } from '@mantine/core';
 import { getRandomChord, getRandomMidiNote } from '../utils';
 import { playChord } from '../player';
 import { ChordsGrid } from '../components/ChordsGrid';
@@ -11,6 +11,7 @@ import {
   IconVolume,
   IconX,
 } from '@tabler/icons-react';
+import { Shell } from '../layout/Shell';
 
 export function Quiz() {
   const [startNote, setStartNote] = useState<number>();
@@ -30,11 +31,7 @@ export function Quiz() {
   };
 
   return (
-    <Card padding="lg">
-      <Card.Section inheritPadding withBorder py="sm">
-        <Title order={3}> What chord is played?</Title>
-      </Card.Section>
-
+    <Shell title="What chord is played?">
       <Stack>
         <Flex justify="center" p="xl">
           {currentChord ? (
@@ -87,6 +84,6 @@ export function Quiz() {
           />
         )}
       </Stack>
-    </Card>
+    </Shell>
   );
 }
