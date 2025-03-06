@@ -83,7 +83,7 @@ export const maj713: Chord = {
   intervals: [...maj7Intervals, '13'],
 };
 
-const maj7Chords = [maj79, maj7s11, maj713];
+export const maj7Chords = [maj79, maj7s11, maj713];
 
 export const maj69: Chord = {
   name: 'Maj6(9)',
@@ -94,9 +94,9 @@ export const maj6s11: Chord = {
   intervals: [...maj6Intervals, '#11'],
 };
 
-const maj6Chords = [maj69, maj6s11];
+export const maj6Chords = [maj69, maj6s11];
 
-const majChords = [...maj7Chords, ...maj6Chords];
+export const majChords = [...maj7Chords, ...maj6Chords];
 
 export const dom7b9: Chord = {
   name: '7(b9)',
@@ -123,7 +123,7 @@ export const dom713: Chord = {
   intervals: [...domIntervals, '13'],
 };
 
-const dom7Chords = [dom7b9, dom79, dom7s9, dom7s11, dom7b13, dom713];
+export const dom7Chords = [dom7b9, dom79, dom7s9, dom7s11, dom7b13, dom713];
 
 export const dom7Sus4b9: Chord = {
   name: '7sus4(b9)',
@@ -142,9 +142,9 @@ export const dom7Sus413: Chord = {
   intervals: [...domSus4Intervals, '13'],
 };
 
-const dom7Sus4Chords = [dom7Sus4b9, dom7Sus49, dom7Sus410, dom7Sus413];
+export const dom7Sus4Chords = [dom7Sus4b9, dom7Sus49, dom7Sus410, dom7Sus413];
 
-const domChords = [...dom7Chords, ...dom7Sus4Chords];
+export const domChords = [...dom7Chords, ...dom7Sus4Chords];
 
 export const min79: Chord = {
   name: 'Min7(9)',
@@ -159,7 +159,7 @@ export const min713: Chord = {
   intervals: [...min7Intervals, '13'],
 };
 
-const min7Chords = [min79, min711, min713];
+export const min7Chords = [min79, min711, min713];
 
 export const min69: Chord = {
   name: 'Min6(9)',
@@ -170,7 +170,7 @@ export const min611: Chord = {
   intervals: [...min6Intervals, '11'],
 };
 
-const min6Chords = [min69, min611];
+export const min6Chords = [min69, min611];
 
 export const minj79: Chord = {
   name: 'Min(maj7)(9)',
@@ -185,7 +185,7 @@ export const minj713: Chord = {
   intervals: [...minj7Intervals, '13'],
 };
 
-const minj7Chords = [minj79, minj711, minj713];
+export const minj7Chords = [minj79, minj711, minj713];
 
 export const min7b59: Chord = {
   name: 'Min7(b5)(9)',
@@ -200,9 +200,9 @@ export const min7b5b13: Chord = {
   intervals: [...min7b5Intervals, 'b13'],
 };
 
-const min7b5Chords = [min7b59, min7b511, min7b5b13];
+export const min7b5Chords = [min7b59, min7b511, min7b5b13];
 
-const minChords = [
+export const minChords = [
   ...min7Chords,
   ...min6Chords,
   ...minj7Chords,

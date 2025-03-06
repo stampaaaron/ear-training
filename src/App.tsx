@@ -9,7 +9,7 @@ const theme = createTheme({});
 function App() {
   return (
     <MantineProvider theme={theme}>
-      <AppShell padding="md">
+      <AppShell>
         <AppShell.Main>
           <Quiz />
         </AppShell.Main>

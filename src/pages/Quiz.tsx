@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { basicTensions, Chord } from '../notes';
-import { Button, Card, Flex, SimpleGrid, Stack, Title } from '@mantine/core';
+import { Button, Card, Flex, Stack, Title } from '@mantine/core';
 import { getRandomChord, getRandomMidiNote } from '../utils';
 import { playChord } from '../player';
+import { ChordsGrid } from '../components/ChordsGrid';
 
 export function Quiz() {
   const [startNote, setStartNote] = useState<number>();
@@ -22,7 +23,7 @@ export function Quiz() {
   };
 
   return (
-    <Card shadow="sm" padding="xl">
+    <Card shadow="sm" padding="lg">
       <Card.Section inheritPadding withBorder py="sm">
         <Title order={3}> What chord is played?</Title>
       </Card.Section>
@@ -64,25 +65,16 @@ export function Quiz() {
           </Button>
         </Button.Group>
 
-        <SimpleGrid cols={2}>
-          {basicTensions.map((chord) => (
-            <Button
-              key={chord.name}
-              variant="default"
-              onClick={() => {
-                setChordGuess(chord);
-                if (chord.name === currentChord?.name) {
-                  setTimeout(handlePlayNextChord, 1000);
-                }
-              }}
-              rightSection={
-                chord === chordGuess && (guessedCorrectly ? 'Correct' : 'x')
-              }
-            >
-              {chord.name}
-            </Button>
-          ))}
-        </SimpleGrid>
+        <ChordsGrid
+          onChordClick={(chord) => {
+            setChordGuess(chord);
+            if (chord.name === currentChord?.name) {
+              setTimeout(handlePlayNextChord, 1000);
+            }
+          }}
+          chordGuess={chordGuess}
+          guessedCorrectly={guessedCorrectly}
+        />
       </Stack>
     </Card>
   );
