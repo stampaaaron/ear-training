@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { basicTensions, Chord } from '../notes';
 import { Button, Card, Flex, SimpleGrid, Stack, Title } from '@mantine/core';
-import { getRandomChord } from '../utils';
+import { getRandomChord, getRandomMidiNote } from '../utils';
 import { playChord } from '../player';
 
 export function Quiz() {
+  const [startNote, setStartNote] = useState<number>();
   const [currentChord, setCurrentChord] = useState<Chord>();
   const [chordGuess, setChordGuess] = useState<Chord>();
 
@@ -12,9 +13,12 @@ export function Quiz() {
 
   const handlePlayNextChord = () => {
     const randomChord = getRandomChord(basicTensions);
+    const startNote = getRandomMidiNote();
+    setStartNote(startNote);
     setChordGuess(undefined);
     setCurrentChord(randomChord);
-    playChord(randomChord.intervals);
+
+    playChord(randomChord.intervals, startNote);
   };
 
   return (
@@ -45,7 +49,7 @@ export function Quiz() {
             variant="outline"
             disabled={!currentChord}
             onClick={() => {
-              playChord(currentChord!.intervals);
+              playChord(currentChord!.intervals, startNote);
             }}
           >
             Replay

@@ -11,11 +11,12 @@ export const piano = new Tone.Sampler({
   baseUrl: './',
 }).toDestination();
 
-export const playChord = async (chord: Interval[]) => {
+export const playChord = async (
+  chord: Interval[],
+  startNote = getRandomMidiNote()
+) => {
   await Tone.start();
   const now = Tone.now();
-
-  const startNote = getRandomMidiNote();
 
   const notes = chord.map((note) =>
     Tone.Frequency(startNote, 'midi')
