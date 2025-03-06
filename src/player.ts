@@ -3,7 +3,7 @@ import { Interval, intervalDistanceMap } from './notes';
 import { getRandomMidiNote } from './utils';
 import { noteToNoteDelay, releaseDelay } from './config';
 
-const piano = new Tone.Sampler({
+export const piano = new Tone.Sampler({
   urls: {
     A4: 'A4.wav',
     A5: 'A5.wav',
