@@ -1,5 +1,6 @@
 import { Button, Fieldset, SimpleGrid } from '@mantine/core';
 import { Chord } from '../notes';
+import { IconCheck, IconX } from '@tabler/icons-react';
 
 type ChordSetProps = {
   chordSet: Chord[];
@@ -19,18 +20,32 @@ export function ChordSet({
   return (
     <Fieldset legend={label} p="sm">
       <SimpleGrid cols={2}>
-        {chordSet.map((chord) => (
-          <Button
-            key={chord.name}
-            variant="default"
-            onClick={() => onChordClick(chord)}
-            rightSection={
-              chord === chordGuess && (guessedCorrectly ? 'Correct' : 'x')
-            }
-          >
-            {chord.name}
-          </Button>
-        ))}
+        {chordSet.map((chord) => {
+          return (
+            <Button
+              key={chord.name}
+              variant={chord === chordGuess ? 'outline' : 'default'}
+              onClick={() => onChordClick(chord)}
+              color={
+                chord === chordGuess
+                  ? guessedCorrectly
+                    ? 'green'
+                    : 'red'
+                  : undefined
+              }
+              rightSection={
+                chord === chordGuess &&
+                (guessedCorrectly ? (
+                  <IconCheck size={16} />
+                ) : (
+                  <IconX size={16} />
+                ))
+              }
+            >
+              {chord.name}
+            </Button>
+          );
+        })}
       </SimpleGrid>
     </Fieldset>
   );

@@ -4,6 +4,13 @@ import { Button, Card, Flex, Stack, Title } from '@mantine/core';
 import { getRandomChord, getRandomMidiNote } from '../utils';
 import { playChord } from '../player';
 import { ChordsGrid } from '../components/ChordsGrid';
+import {
+  IconCheck,
+  IconChevronRight,
+  IconRepeat,
+  IconVolume,
+  IconX,
+} from '@tabler/icons-react';
 
 export function Quiz() {
   const [startNote, setStartNote] = useState<number>();
@@ -23,7 +30,7 @@ export function Quiz() {
   };
 
   return (
-    <Card shadow="sm" padding="lg">
+    <Card padding="lg">
       <Card.Section inheritPadding withBorder py="sm">
         <Title order={3}> What chord is played?</Title>
       </Card.Section>
@@ -33,12 +40,12 @@ export function Quiz() {
           {currentChord ? (
             chordGuess ? (
               guessedCorrectly ? (
-                'Correct!'
+                <IconCheck size={50} color="green" />
               ) : (
-                'Try again'
+                <IconX size={50} color="red" />
               )
             ) : (
-              'Listen'
+              <IconVolume size={50} />
             )
           ) : (
             <Button onClick={handlePlayNextChord}>Start</Button>
@@ -49,6 +56,7 @@ export function Quiz() {
             flex={1}
             variant="outline"
             disabled={!currentChord}
+            leftSection={<IconRepeat size={16} />}
             onClick={() => {
               playChord(currentChord!.intervals, startNote);
             }}
@@ -59,22 +67,25 @@ export function Quiz() {
             flex={1}
             disabled={!currentChord}
             variant="outline"
+            rightSection={<IconChevronRight size={16} />}
             onClick={handlePlayNextChord}
           >
             Skip
           </Button>
         </Button.Group>
 
-        <ChordsGrid
-          onChordClick={(chord) => {
-            setChordGuess(chord);
-            if (chord.name === currentChord?.name) {
-              setTimeout(handlePlayNextChord, 1000);
-            }
-          }}
-          chordGuess={chordGuess}
-          guessedCorrectly={guessedCorrectly}
-        />
+        {currentChord && (
+          <ChordsGrid
+            onChordClick={(chord) => {
+              setChordGuess(chord);
+              if (chord.name === currentChord?.name) {
+                setTimeout(handlePlayNextChord, 1000);
+              }
+            }}
+            chordGuess={chordGuess}
+            guessedCorrectly={guessedCorrectly}
+          />
+        )}
       </Stack>
     </Card>
   );
