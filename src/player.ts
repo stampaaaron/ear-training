@@ -1,9 +1,15 @@
 import * as Tone from 'tone';
 import { Interval, intervalDistanceMap } from './notes';
 import { getRandomMidiNote } from './utils';
-import { noteToNoteDelay } from './config';
+import { noteToNoteDelay, releaseDelay } from './config';
 
-const synth = new Tone.PolySynth().toDestination();
+const piano = new Tone.Sampler({
+  urls: {
+    A4: 'A4.wav',
+    A5: 'A5.wav',
+  },
+  baseUrl: './',
+}).toDestination();
 
 export const playChord = async (chord: Interval[]) => {
   await Tone.start();
@@ -18,7 +24,7 @@ export const playChord = async (chord: Interval[]) => {
   );
 
   notes.forEach((note, index) => {
-    synth.triggerAttack(note, now + index * noteToNoteDelay);
+    piano.triggerAttack(note, now + index * noteToNoteDelay, 1);
   });
-  synth.triggerRelease(notes, now + notes.length * noteToNoteDelay);
+  piano.releaseAll(now + notes.length * noteToNoteDelay + releaseDelay);
 };
