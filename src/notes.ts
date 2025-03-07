@@ -48,9 +48,9 @@ export const intervalDistanceMap: Record<Interval, number> = {
   10: 16,
   11: 17,
   '#11': 18,
-  b13: 19,
-  13: 20,
-  14: 22,
+  b13: 20,
+  13: 21,
+  14: 23,
 };
 
 export type Chord = {
