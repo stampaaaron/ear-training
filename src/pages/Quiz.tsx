@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { basicTensions, Chord } from '../notes';
+import { Chord, chordSets } from '../notes';
 import { Button, Flex, Stack } from '@mantine/core';
 import { getRandomChord, getRandomMidiNote } from '../utils';
 import { playChord } from '../player';
@@ -12,8 +12,15 @@ import {
   IconX,
 } from '@tabler/icons-react';
 import { Shell } from '../layout/Shell';
+import { useSearchParams } from 'react-router';
 
 export function Quiz() {
+  const [searchParams] = useSearchParams();
+  const chordSetKey = searchParams.get('chordSet');
+
+  const availableChords =
+    chordSets.find(({ key }) => key === chordSetKey)?.chords ?? [];
+
   const [startNote, setStartNote] = useState<number>();
   const [currentChord, setCurrentChord] = useState<Chord>();
   const [chordGuess, setChordGuess] = useState<Chord>();
@@ -21,7 +28,8 @@ export function Quiz() {
   const guessedCorrectly = chordGuess?.name === currentChord?.name;
 
   const handlePlayNextChord = () => {
-    const randomChord = getRandomChord(basicTensions);
+    const randomChord = getRandomChord(availableChords);
+
     const startNote = getRandomMidiNote();
     setStartNote(startNote);
     setChordGuess(undefined);
@@ -73,6 +81,7 @@ export function Quiz() {
 
         {currentChord && (
           <ChordsGrid
+            availableChords={availableChords}
             onChordClick={(chord) => {
               setChordGuess(chord);
               if (chord.name === currentChord?.name) {

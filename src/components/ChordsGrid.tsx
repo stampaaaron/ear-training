@@ -1,14 +1,16 @@
 import { Stack } from '@mantine/core';
-import { Chord, domChords, majChords, minChords } from '../notes';
+import { allDomChords, allMajChords, allMinChords, Chord } from '../notes';
 import { ChordSet } from './ChordSet';
 
 type ChordsGridProps = {
+  availableChords: Chord[];
   chordGuess?: Chord;
   guessedCorrectly?: boolean;
   onChordClick: (chord: Chord) => void;
 };
 
 export function ChordsGrid({
+  availableChords,
   onChordClick,
   chordGuess,
   guessedCorrectly,
@@ -17,21 +19,27 @@ export function ChordsGrid({
     <Stack>
       <ChordSet
         label="Major"
-        chordSet={majChords}
+        chordSet={allMajChords.filter((chord) =>
+          availableChords.includes(chord)
+        )}
         onChordClick={onChordClick}
         chordGuess={chordGuess}
         guessedCorrectly={guessedCorrectly}
       />
       <ChordSet
         label="Dominant"
-        chordSet={domChords}
+        chordSet={allDomChords.filter((chord) =>
+          availableChords.includes(chord)
+        )}
         onChordClick={onChordClick}
         chordGuess={chordGuess}
         guessedCorrectly={guessedCorrectly}
       />
       <ChordSet
         label="Minor"
-        chordSet={minChords}
+        chordSet={allMinChords.filter((chord) =>
+          availableChords.includes(chord)
+        )}
         onChordClick={onChordClick}
         chordGuess={chordGuess}
         guessedCorrectly={guessedCorrectly}

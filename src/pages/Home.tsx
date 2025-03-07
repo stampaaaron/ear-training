@@ -1,16 +1,7 @@
 import { Button, Stack, Title, Text } from '@mantine/core';
-import { basicTensions } from '../notes';
-import { Link } from 'react-router';
+import { chordSets } from '../notes';
+import { createSearchParams, Link } from 'react-router';
 import { Shell } from '../layout/Shell';
-
-const chordSets = [
-  {
-    label: 'Basic Tensions',
-    description:
-      'maj7, maj6, dom7, dom7sus4, min7, min6, min7(b5) and min(maj7) with all tensions',
-    chords: basicTensions,
-  },
-];
 
 export function Home() {
   return (
@@ -20,7 +11,10 @@ export function Home() {
           <Button
             variant="outline"
             component={Link}
-            to="/quiz"
+            to={{
+              pathname: '/quiz',
+              search: createSearchParams({ chordSet: chordSet.key }).toString(),
+            }}
             h="auto"
             p="lg"
             maw="100%"
