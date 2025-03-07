@@ -5,6 +5,7 @@ import { noteToNoteDelay, releaseDelay } from './config';
 
 export const piano = new Tone.Sampler({
   urls: {
+    A3: 'A3.wav',
     A4: 'A4.wav',
     A5: 'A5.wav',
   },
