@@ -1,10 +1,11 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vite.dev/config/
 export default defineConfig({
   base: '/ear-training/',
-  plugins: [react()],
+  plugins: [react(), VitePWA()],
   resolve: {
     alias: {
       // Workaround so that tabler doesn't import all icons as separate junks
