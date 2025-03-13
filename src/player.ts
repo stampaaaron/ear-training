@@ -1,7 +1,7 @@
 import * as Tone from 'tone';
 import { Interval, intervalDistanceMap } from './notes';
 import { getRandomMidiNote } from './utils';
-import { noteToNoteDelay, releaseDelay } from './config';
+import { delayBetweenModes, noteToNoteDelay, releaseDelay } from './config';
 
 export const piano = new Tone.Sampler({
   urls: {
@@ -12,21 +12,42 @@ export const piano = new Tone.Sampler({
   baseUrl: './',
 }).toDestination();
 
+export type PlaybackMode = 'ascending' | 'descending' | 'harmonic';
+
 export const playChord = async (
   chord: Interval[],
-  startNote = getRandomMidiNote()
+  startNote = getRandomMidiNote(),
+  playBackModes: PlaybackMode[] = ['harmonic', 'ascending']
 ) => {
   await Tone.start();
-  const now = Tone.now();
+  let now = Tone.now();
 
-  const notes = chord.map((note) =>
+  let notes = chord.map((note) =>
     Tone.Frequency(startNote, 'midi')
       .transpose(intervalDistanceMap[note])
       .toNote()
   );
 
-  notes.forEach((note, index) => {
-    piano.triggerAttack(note, now + index * noteToNoteDelay, 1);
+  playBackModes.forEach((mode) => {
+    switch (mode) {
+      case 'descending':
+        notes = notes.reverse();
+      // falls through
+      case 'ascending':
+        notes.forEach((note, index) => {
+          piano.triggerAttack(note, now + index * noteToNoteDelay, 1);
+        });
+        now = now + notes.length * noteToNoteDelay + releaseDelay;
+        piano.releaseAll(now);
+        break;
+      case 'harmonic':
+        piano.triggerAttack(notes, now);
+        now += releaseDelay;
+        piano.releaseAll(now);
+        break;
+      default:
+        break;
+    }
+    now += delayBetweenModes;
   });
-  piano.releaseAll(now + notes.length * noteToNoteDelay + releaseDelay);
 };
