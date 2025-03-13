@@ -1,7 +1,8 @@
 import * as Tone from 'tone';
 import { Interval, intervalDistanceMap } from './notes';
-import { getRandomMidiNote } from './utils';
-import { delayBetweenModes, noteToNoteDelay, releaseDelay } from './config';
+import { useStore } from '@nanostores/react';
+import { $settings } from './store/settings';
+import { Frequency } from 'tone';
 
 export const piano = new Tone.Sampler({
   urls: {
@@ -14,40 +15,52 @@ export const piano = new Tone.Sampler({
 
 export type PlaybackMode = 'ascending' | 'descending' | 'harmonic';
 
-export const playChord = async (
-  chord: Interval[],
-  startNote = getRandomMidiNote(),
-  playBackModes: PlaybackMode[] = ['harmonic', 'ascending']
-) => {
-  await Tone.start();
-  let now = Tone.now();
+export const usePlayer = () => {
+  const { noteToNoteDelay, releaseDelay, delayBetweenModes, startNoteRange } =
+    useStore($settings);
 
-  let notes = chord.map((note) =>
-    Tone.Frequency(startNote, 'midi')
-      .transpose(intervalDistanceMap[note])
-      .toNote()
-  );
+  const playChord = async (
+    chord: Interval[],
+    startNote = getRandomMidiNote(),
+    playBackModes: PlaybackMode[] = ['harmonic', 'ascending']
+  ) => {
+    await Tone.start();
+    let now = Tone.now();
 
-  playBackModes.forEach((mode) => {
-    switch (mode) {
-      case 'descending':
-        notes = notes.reverse();
-      // falls through
-      case 'ascending':
-        notes.forEach((note, index) => {
-          piano.triggerAttack(note, now + index * noteToNoteDelay, 1);
-        });
-        now = now + notes.length * noteToNoteDelay + releaseDelay;
-        piano.releaseAll(now);
-        break;
-      case 'harmonic':
-        piano.triggerAttack(notes, now);
-        now += releaseDelay;
-        piano.releaseAll(now);
-        break;
-      default:
-        break;
-    }
-    now += delayBetweenModes;
-  });
+    let notes = chord.map((note) =>
+      Tone.Frequency(startNote, 'midi')
+        .transpose(intervalDistanceMap[note])
+        .toNote()
+    );
+
+    playBackModes.forEach((mode) => {
+      switch (mode) {
+        case 'descending':
+          notes = notes.reverse();
+        // falls through
+        case 'ascending':
+          notes.forEach((note, index) => {
+            piano.triggerAttack(note, now + index * noteToNoteDelay, 1);
+          });
+          now = now + notes.length * noteToNoteDelay + releaseDelay;
+          piano.releaseAll(now);
+          break;
+        case 'harmonic':
+          piano.triggerAttack(notes, now);
+          now += releaseDelay;
+          piano.releaseAll(now);
+          break;
+        default:
+          break;
+      }
+      now += delayBetweenModes;
+    });
+  };
+
+  const getRandomMidiNote = (range = startNoteRange) => {
+    const [start, end] = range.map((note) => Frequency(note).toMidi());
+    return Math.floor(Math.random() * (end - start) + start);
+  };
+
+  return { playChord, getRandomMidiNote };
 };

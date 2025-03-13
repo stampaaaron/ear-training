@@ -12,7 +12,11 @@
   "packageManager": "pnpm@10.5.0",
   "dependencies": {
     "@mantine/core": "^7.17.1",
+    "@mantine/form": "^7.17.1",
+    "@nanostores/persistent": "^0.10.2",
+    "@nanostores/react": "^0.8.4",
     "@tabler/icons-react": "^3.31.0",
+    "nanostores": "^0.11.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router": "^7.2.0",

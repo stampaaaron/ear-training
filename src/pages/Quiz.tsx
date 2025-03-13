@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Chord, chordSets } from '../notes';
 import { Button, Flex, Stack } from '@mantine/core';
-import { getRandomChord, getRandomMidiNote } from '../utils';
-import { playChord } from '../player';
+import { getRandomChord } from '../utils';
+import { usePlayer } from '../player';
 import { ChordsGrid } from '../components/ChordsGrid';
 import {
   IconCheck,
@@ -17,6 +17,8 @@ import { useSearchParams } from 'react-router';
 export function Quiz() {
   const [searchParams] = useSearchParams();
   const chordSetKey = searchParams.get('chordSet');
+
+  const { playChord, getRandomMidiNote } = usePlayer();
 
   const availableChords =
     chordSets.find(({ key }) => key === chordSetKey)?.chords ?? [];
