@@ -2,7 +2,6 @@ import * as Tone from 'tone';
 import { Interval, intervalDistanceMap } from './notes';
 import { useStore } from '@nanostores/react';
 import { $settings } from './store/settings';
-import { Frequency } from 'tone';
 
 export const piano = new Tone.Sampler({
   urls: {
@@ -59,8 +58,7 @@ export const usePlayer = () => {
     });
   };
 
-  const getRandomMidiNote = (range = startNoteRange) => {
-    const [start, end] = range.map((note) => Frequency(note).toMidi());
+  const getRandomMidiNote = ([start, end] = startNoteRange) => {
     return Math.floor(Math.random() * (end - start) + start);
   };
 
