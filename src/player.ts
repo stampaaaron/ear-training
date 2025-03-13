@@ -35,6 +35,8 @@ export const usePlayer = () => {
 
     playBackModes.forEach((mode) => {
       switch (mode) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         case 'descending':
           notes = notes.reverse();
         // falls through
