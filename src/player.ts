@@ -25,16 +25,18 @@ export const playbackModeTranslationMap: Record<PlaybackMode, string> = {
 };
 
 export const usePlayer = () => {
-  const { noteToNoteDelay, releaseDelay, delayBetweenModes, startNoteRange } =
-    useStore($settings);
+  const {
+    noteToNoteDelay,
+    releaseDelay,
+    delayBetweenModes,
+    startNoteRange,
+    playBackModes,
+  } = useStore($settings);
 
   const playChord = async (
     chord: Interval[],
     startNote = getRandomMidiNote(),
-    playBackModes: PlaybackMode[] = [
-      PlaybackMode.harmonic,
-      PlaybackMode.ascending,
-    ]
+    modes: PlaybackMode[] = playBackModes
   ) => {
     await Tone.start();
     let now = Tone.now();
@@ -45,7 +47,7 @@ export const usePlayer = () => {
         .toNote()
     );
 
-    playBackModes.forEach((mode) => {
+    modes.forEach((mode) => {
       switch (mode) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error

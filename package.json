@@ -11,6 +11,7 @@
   },
   "packageManager": "pnpm@10.5.0",
   "dependencies": {
+    "@hello-pangea/dnd": "^18.0.1",
     "@mantine/core": "^7.17.1",
     "@mantine/form": "^7.17.1",
     "@nanostores/persistent": "^0.10.2",

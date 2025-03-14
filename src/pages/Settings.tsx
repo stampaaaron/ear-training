@@ -1,10 +1,10 @@
 import {
-  ActionIcon,
   Button,
-  Group,
+  Flex,
   Menu,
   RangeSlider,
   Slider,
+  Space,
   Stack,
   Text,
 } from '@mantine/core';
@@ -16,6 +16,7 @@ import { Frequency } from 'tone';
 import { arrayRange } from '../utils';
 import { PlaybackMode, playbackModeTranslationMap } from '../player';
 import { IconPlus, IconX } from '@tabler/icons-react';
+import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 
 type SettingsForm = NonNullable<typeof $settings.value>;
 
@@ -103,26 +104,70 @@ export function Settings() {
 
           <Stack>
             <Text>Playback order</Text>
-            <Group>
-              {form.getValues().playBackModes.map((mode, index) => (
-                <Button.Group key={`${mode}-${index}`}>
-                  <Button.GroupSection variant="default">
-                    {playbackModeTranslationMap[mode]}
-                  </Button.GroupSection>
-                  <Button
-                    variant="outline"
-                    p="xs"
-                    onClick={() => form.removeListItem('playBackModes', index)}
-                  >
-                    <IconX size={20} />
-                  </Button>
-                </Button.Group>
-              ))}
+            <div>
+              <DragDropContext
+                onDragEnd={({ destination, source }) => {
+                  form.reorderListItem('playBackModes', {
+                    from: source.index,
+                    to: destination?.index || 0,
+                  });
+                }}
+              >
+                <div>
+                  <Droppable droppableId="dnd-list" direction="vertical">
+                    {(provided) => (
+                      <Flex
+                        {...provided.droppableProps}
+                        direction="column"
+                        justify="center"
+                        ref={provided.innerRef}
+                      >
+                        {form.getValues().playBackModes.map((mode, index) => (
+                          <Draggable
+                            key={`${mode}-${index}`}
+                            index={index}
+                            draggableId={`${mode}-${index}`}
+                          >
+                            {(provided) => (
+                              <div
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                ref={provided.innerRef}
+                              >
+                                <Button.Group key={`${mode}-${index}`}>
+                                  <Button.GroupSection variant="default">
+                                    {playbackModeTranslationMap[mode]}
+                                  </Button.GroupSection>
+                                  <Button
+                                    variant="outline"
+                                    bg="white"
+                                    p="xs"
+                                    onClick={() =>
+                                      form.removeListItem(
+                                        'playBackModes',
+                                        index
+                                      )
+                                    }
+                                  >
+                                    <IconX size={20} />
+                                  </Button>
+                                </Button.Group>
+                                <Space h="md" />
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </Flex>
+                    )}
+                  </Droppable>
+                </div>
+              </DragDropContext>
               <Menu trigger="click-hover">
                 <Menu.Target>
-                  <ActionIcon variant="subtle">
-                    <IconPlus />
-                  </ActionIcon>
+                  <Button variant="subtle" rightSection={<IconPlus />}>
+                    Add
+                  </Button>
                 </Menu.Target>
                 <Menu.Dropdown>
                   {Object.values(PlaybackMode).map((mode) => (
@@ -135,7 +180,7 @@ export function Settings() {
                   ))}
                 </Menu.Dropdown>
               </Menu>
-            </Group>
+            </div>
           </Stack>
         </Stack>
       </form>
