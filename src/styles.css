@@ -2,3 +2,10 @@ main {
   max-width: 50rem;
   margin-inline: auto;
 }
+
+@media (max-width: 800px) {
+  .mantine-AppShell-root {
+    background-color: white !important;
+    padding-block: 0 !important;
+  }
+}
