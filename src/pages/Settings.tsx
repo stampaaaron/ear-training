@@ -1,10 +1,21 @@
-import { Button, RangeSlider, Slider, Stack, Text } from '@mantine/core';
+import {
+  ActionIcon,
+  Button,
+  Group,
+  Menu,
+  RangeSlider,
+  Slider,
+  Stack,
+  Text,
+} from '@mantine/core';
 import { Shell } from '../layout/Shell';
 import { useForm } from '@mantine/form';
 import { useStore } from '@nanostores/react';
 import { $settings, defaultSettings } from '../store/settings';
 import { Frequency } from 'tone';
 import { arrayRange } from '../utils';
+import { PlaybackMode, playbackModeTranslationMap } from '../player';
+import { IconPlus, IconX } from '@tabler/icons-react';
 
 type SettingsForm = NonNullable<typeof $settings.value>;
 
@@ -38,7 +49,7 @@ export function Settings() {
           e.preventDefault();
         }}
       >
-        <Stack>
+        <Stack gap="xl">
           <Stack gap="xs">
             <Text>Note to note delay: {form.getValues().noteToNoteDelay}s</Text>
             <Slider
@@ -88,6 +99,43 @@ export function Settings() {
               label={(value) => Frequency(value, 'midi').toNote()}
               step={1}
             />
+          </Stack>
+
+          <Stack>
+            <Text>Playback order</Text>
+            <Group>
+              {form.getValues().playBackModes.map((mode, index) => (
+                <Button.Group key={`${mode}-${index}`}>
+                  <Button.GroupSection variant="default">
+                    {playbackModeTranslationMap[mode]}
+                  </Button.GroupSection>
+                  <Button
+                    variant="outline"
+                    p="xs"
+                    onClick={() => form.removeListItem('playBackModes', index)}
+                  >
+                    <IconX size={20} />
+                  </Button>
+                </Button.Group>
+              ))}
+              <Menu trigger="click-hover">
+                <Menu.Target>
+                  <ActionIcon variant="subtle">
+                    <IconPlus />
+                  </ActionIcon>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  {Object.values(PlaybackMode).map((mode) => (
+                    <Menu.Item
+                      key={mode}
+                      onClick={() => form.insertListItem('playBackModes', mode)}
+                    >
+                      {playbackModeTranslationMap[mode]}
+                    </Menu.Item>
+                  ))}
+                </Menu.Dropdown>
+              </Menu>
+            </Group>
           </Stack>
         </Stack>
       </form>

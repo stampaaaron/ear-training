@@ -12,7 +12,17 @@ export const piano = new Tone.Sampler({
   baseUrl: './',
 }).toDestination();
 
-export type PlaybackMode = 'ascending' | 'descending' | 'harmonic';
+export enum PlaybackMode {
+  ascending = 'ascending',
+  descending = 'descending',
+  harmonic = 'harmonic',
+}
+
+export const playbackModeTranslationMap: Record<PlaybackMode, string> = {
+  ascending: 'Ascending',
+  descending: 'Descending',
+  harmonic: 'Harmonic',
+};
 
 export const usePlayer = () => {
   const { noteToNoteDelay, releaseDelay, delayBetweenModes, startNoteRange } =
@@ -21,7 +31,10 @@ export const usePlayer = () => {
   const playChord = async (
     chord: Interval[],
     startNote = getRandomMidiNote(),
-    playBackModes: PlaybackMode[] = ['harmonic', 'ascending']
+    playBackModes: PlaybackMode[] = [
+      PlaybackMode.harmonic,
+      PlaybackMode.ascending,
+    ]
   ) => {
     await Tone.start();
     let now = Tone.now();
