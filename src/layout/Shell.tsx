@@ -1,16 +1,22 @@
 import { ActionIcon, Card, Flex, Group, Title } from '@mantine/core';
 import { IconChevronLeft, IconSettings } from '@tabler/icons-react';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, ReactNode } from 'react';
 import { Link } from 'react-router';
 
 type ShellProps = {
   title: string;
+  rightSection?: ReactNode;
   backUrl?: string;
 };
 
 export function Shell({
   title,
   children,
+  rightSection = (
+    <ActionIcon component={Link} variant="subtle" to="/settings">
+      <IconSettings />
+    </ActionIcon>
+  ),
   backUrl,
 }: PropsWithChildren<ShellProps>) {
   return (
@@ -25,9 +31,7 @@ export function Shell({
             )}
             <Title order={3}>{title}</Title>
           </Group>
-          <ActionIcon component={Link} variant="subtle" to="/settings">
-            <IconSettings />
-          </ActionIcon>
+          {rightSection}
         </Flex>
       </Card.Section>
 

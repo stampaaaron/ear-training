@@ -1,8 +1,8 @@
-import { RangeSlider, Slider, Stack, Text } from '@mantine/core';
+import { Button, RangeSlider, Slider, Stack, Text } from '@mantine/core';
 import { Shell } from '../layout/Shell';
 import { useForm } from '@mantine/form';
 import { useStore } from '@nanostores/react';
-import { $settings } from '../store/settings';
+import { $settings, defaultSettings } from '../store/settings';
 import { Frequency } from 'tone';
 
 type SettingsForm = NonNullable<typeof $settings.value>;
@@ -16,7 +16,21 @@ export function Settings() {
   });
 
   return (
-    <Shell title="Settings" backUrl="..">
+    <Shell
+      title="Settings"
+      rightSection={
+        <Button
+          variant="subtle"
+          onClick={() => {
+            $settings.set(defaultSettings);
+            form.setValues(defaultSettings);
+          }}
+        >
+          Reset
+        </Button>
+      }
+      backUrl=".."
+    >
       <form
         onSubmit={(e) => {
           e.preventDefault();
