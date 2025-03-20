@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Chord, chordSets } from '../notes';
+import { Chord, chordSets } from '../../notes';
 import { Button, Flex, Stack } from '@mantine/core';
-import { getRandomChord } from '../utils';
-import { usePlayer } from '../player';
-import { ChordsGrid } from '../components/ChordsGrid';
+import { getRandomChord } from '../../utils';
+import { usePlayer } from '../../player';
+import { ChordsGrid } from '../../components/ChordsGrid';
 import {
   IconCheck,
   IconChevronRight,
@@ -11,8 +11,10 @@ import {
   IconVolume,
   IconX,
 } from '@tabler/icons-react';
-import { Shell } from '../layout/Shell';
+import { Shell } from '../../layout/Shell';
 import { useSearchParams } from 'react-router';
+import { $currentChordSet } from '../../store/chordSet';
+import { useStore } from '@nanostores/react';
 
 export function Quiz() {
   const [searchParams] = useSearchParams();
@@ -20,8 +22,14 @@ export function Quiz() {
 
   const { playChord, getRandomMidiNote } = usePlayer();
 
+  const chordSet = useStore($currentChordSet);
+
   const availableChords =
-    chordSets.find(({ key }) => key === chordSetKey)?.chords ?? [];
+    chordSet.chords ??
+    chordSets.find(({ key }) => key === chordSetKey)?.chords ??
+    [];
+
+  console.log(availableChords);
 
   const [startNote, setStartNote] = useState<number>();
   const [currentChord, setCurrentChord] = useState<Chord>();

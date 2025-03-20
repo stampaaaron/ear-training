@@ -7,6 +7,7 @@ type ChordSetProps = {
   label: string;
   chordGuess?: Chord;
   guessedCorrectly?: boolean;
+  selectedChords?: Chord[];
   onChordClick: (chord: Chord) => void;
 };
 
@@ -16,6 +17,7 @@ export function ChordSet({
   onChordClick,
   chordGuess,
   guessedCorrectly,
+  selectedChords,
 }: ChordSetProps) {
   return (
     <Fieldset legend={label} p="sm">
@@ -24,14 +26,21 @@ export function ChordSet({
           return (
             <Button
               key={chord.name}
-              variant={chord === chordGuess ? 'outline' : 'default'}
+              variant={
+                chord === chordGuess ||
+                selectedChords?.some((c) => c.name === chord.name)
+                  ? 'outline'
+                  : 'default'
+              }
               onClick={() => onChordClick(chord)}
               color={
                 chord === chordGuess
                   ? guessedCorrectly
                     ? 'green'
                     : 'red'
-                  : undefined
+                  : selectedChords?.some((c) => c.name === chord.name)
+                    ? 'blue'
+                    : undefined
               }
               rightSection={
                 chord === chordGuess &&
