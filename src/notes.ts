@@ -184,12 +184,29 @@ export const maj6s11: Chord = {
 
 export const maj6ChordsWithTensions = [maj69, maj6s11];
 
-export const majChordsWithTensions = [
+export const maj7s59: Chord = {
+  name: 'Maj7#5(9)',
+  intervals: [...augj7Intervals, '9'],
+};
+
+export const maj7s5s11: Chord = {
+  name: 'Maj7#5(11)',
+  intervals: [...augj7Intervals, '#11'],
+};
+
+export const maj7s5ChordsWithTensions = [maj7s59, maj7s5s11];
+
+export const basicMajChordsWithTensions = [
   ...maj7ChordsWithTensions,
   ...maj6ChordsWithTensions,
 ];
 
-export const allMajChords = [...maj7Chords, ...majChordsWithTensions];
+export const allMajChordsWithTensions = [
+  ...basicMajChordsWithTensions,
+  ...maj7s5ChordsWithTensions,
+];
+
+export const allMajChords = [...maj7Chords, ...basicMajChordsWithTensions];
 
 export const dom7b9: Chord = {
   name: '7(b9)',
@@ -249,12 +266,44 @@ export const dom7Sus4ChordsWithTensions = [
   dom7Sus413,
 ];
 
-export const domChordsWithTensions = [
+export const dom7s5b9: Chord = {
+  name: '7#5(b9)',
+  intervals: [...aug7Intervals, 'b9'],
+};
+
+export const dom7s59: Chord = {
+  name: '7#5(9)',
+  intervals: [...aug7Intervals, '9'],
+};
+
+export const dom7s5s9: Chord = {
+  name: '7#5(#9)',
+  intervals: [...aug7Intervals, '#9'],
+};
+
+export const dom7s5s11: Chord = {
+  name: '7#5(#11)',
+  intervals: [...aug7Intervals, '#11'],
+};
+
+export const dom7s5ChordsWithTensions = [
+  dom7s5b9,
+  dom7s59,
+  dom7s5s9,
+  dom7s5s11,
+];
+
+export const basicDomChordsWithTensions = [
   ...dom7ChordsWithTensions,
   ...dom7Sus4ChordsWithTensions,
 ];
 
-export const allDomChords = [...domChords, ...domChordsWithTensions];
+export const allDomChordsWithTensions = [
+  ...basicDomChordsWithTensions,
+  ...dom7s5ChordsWithTensions,
+];
+
+export const allDomChords = [...domChords, ...allDomChordsWithTensions];
 
 export const min79: Chord = {
   name: 'Min7(9)',
@@ -321,10 +370,41 @@ export const minChordsWithTensions = [
 
 export const allMinChords = [...minChords, ...minChordsWithTensions];
 
+export const dim79: Chord = {
+  name: 'Dim7(9)',
+  intervals: [...dim7Intervals, '9'],
+};
+
+export const dim711: Chord = {
+  name: 'Dim7(11)',
+  intervals: [...dim7Intervals, '11'],
+};
+
+export const dim7b13: Chord = {
+  name: 'Dim7(b13)',
+  intervals: [...dim7Intervals, 'b13'],
+};
+
+export const dim714: Chord = {
+  name: 'Dim7(maj7/14)',
+  intervals: [...dim7Intervals, '14'],
+};
+
+export const dim7ChordsWithTensions = [dim79, dim711, dim7b13, dim714];
+
+export const allDimChords = [...dimChords, ...dim7ChordsWithTensions];
+
 export const basicTensions = [
-  ...majChordsWithTensions,
-  ...domChordsWithTensions,
+  ...basicMajChordsWithTensions,
+  ...basicDomChordsWithTensions,
   ...minChordsWithTensions,
+];
+
+export const allTensions = [
+  ...allMajChordsWithTensions,
+  ...allDomChordsWithTensions,
+  ...minChordsWithTensions,
+  ...dim7ChordsWithTensions,
 ];
 
 export const chordSets = [
@@ -349,5 +429,12 @@ export const chordSets = [
     description:
       'maj7, maj6, dom7, dom7sus4, min7, min6, min7(b5) and min(maj7) with all tensions',
     chords: basicTensions,
+  },
+  {
+    key: 'all-tensions',
+    label: 'All Tensions',
+    description:
+      'maj7, maj6, maj7#5, dom7, dom7sus4, dom7#5, min7, min6, min7(b5), min(maj7) and dim7 with all tensions',
+    chords: allTensions,
   },
 ];

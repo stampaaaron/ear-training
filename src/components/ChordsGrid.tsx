@@ -1,5 +1,11 @@
 import { Stack } from '@mantine/core';
-import { allDomChords, allMajChords, allMinChords, Chord } from '../notes';
+import {
+  allDimChords,
+  allDomChords,
+  allMajChords,
+  allMinChords,
+  Chord,
+} from '../notes';
 import { ChordSet } from './ChordSet';
 
 type ChordsGridProps = {
@@ -46,6 +52,18 @@ export function ChordsGrid({
       <ChordSet
         label="Minor"
         chordSet={allMinChords.filter(
+          (chord) =>
+            !availableChords ||
+            availableChords.some((c) => c.name === chord.name)
+        )}
+        selectedChords={selectedChords}
+        onChordClick={onChordClick}
+        chordGuess={chordGuess}
+        guessedCorrectly={guessedCorrectly}
+      />
+      <ChordSet
+        label="Diminished"
+        chordSet={allDimChords.filter(
           (chord) =>
             !availableChords ||
             availableChords.some((c) => c.name === chord.name)
