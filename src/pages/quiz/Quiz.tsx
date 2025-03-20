@@ -25,11 +25,9 @@ export function Quiz() {
   const chordSet = useStore($currentChordSet);
 
   const availableChords =
-    chordSet.chords ??
     chordSets.find(({ key }) => key === chordSetKey)?.chords ??
+    chordSet.chords ??
     [];
-
-  console.log(availableChords);
 
   const [startNote, setStartNote] = useState<number>();
   const [currentChord, setCurrentChord] = useState<Chord>();
