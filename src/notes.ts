@@ -119,7 +119,7 @@ export const min7: Chord = {
 };
 export const min6: Chord = {
   name: 'Min6',
-  intervals: min7Intervals,
+  intervals: min6Intervals,
 };
 export const minj7: Chord = {
   name: 'Minj7',
