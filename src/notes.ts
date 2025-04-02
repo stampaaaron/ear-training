@@ -206,7 +206,7 @@ export const allMajChordsWithTensions = [
   ...maj7s5ChordsWithTensions,
 ];
 
-export const allMajChords = [...maj7Chords, ...basicMajChordsWithTensions];
+export const allMajChords = [...maj7Chords, ...allMajChordsWithTensions];
 
 export const dom7b9: Chord = {
   name: '7(b9)',
