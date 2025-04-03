@@ -1,4 +1,4 @@
-import { Chord } from './notes';
+import { Chord } from './model/chord';
 
 export const arrayRange = (start: number, stop: number, step: number = 1) =>
   Array.from(

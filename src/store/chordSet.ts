@@ -1,5 +1,5 @@
 import { persistentAtom } from '@nanostores/persistent';
-import { ChordSet } from '../notes';
+import { ChordSet } from '../model/chord';
 
 export const $currentChordSet = persistentAtom<ChordSet>(
   'currentChordSet',
