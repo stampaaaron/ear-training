@@ -1,6 +1,6 @@
 import { Button, Fieldset, SimpleGrid } from '@mantine/core';
-import { Chord } from '../notes';
 import { IconCheck, IconX } from '@tabler/icons-react';
+import { Chord } from '../model/chord';
 
 type ChordSetProps = {
   chordSet: Chord[];

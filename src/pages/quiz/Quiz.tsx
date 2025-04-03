@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Chord, chordSets } from '../../notes';
 import { Button, Flex, Stack } from '@mantine/core';
 import { getRandomChord } from '../../utils';
 import { usePlayer } from '../../player';
@@ -15,6 +14,7 @@ import { Shell } from '../../layout/Shell';
 import { useSearchParams } from 'react-router';
 import { $currentChordSet } from '../../store/chordSet';
 import { useStore } from '@nanostores/react';
+import { Chord, chordSets } from '../../model/chord';
 
 export function Quiz() {
   const [searchParams] = useSearchParams();

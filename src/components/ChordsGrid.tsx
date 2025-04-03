@@ -1,12 +1,6 @@
 import { Stack } from '@mantine/core';
-import {
-  allDimChords,
-  allDomChords,
-  allMajChords,
-  allMinChords,
-  Chord,
-} from '../notes';
 import { ChordSet } from './ChordSet';
+import { allChords, Chord, ChordBase, chordGroupNaming } from '../model/chord';
 
 type ChordsGridProps = {
   availableChords?: Chord[];
@@ -25,54 +19,23 @@ export function ChordsGrid({
 }: ChordsGridProps) {
   return (
     <Stack>
-      <ChordSet
-        label="Major"
-        chordSet={allMajChords.filter(
-          (chord) =>
-            !availableChords ||
-            availableChords.some((c) => c.name === chord.name)
-        )}
-        selectedChords={selectedChords}
-        onChordClick={onChordClick}
-        chordGuess={chordGuess}
-        guessedCorrectly={guessedCorrectly}
-      />
-      <ChordSet
-        label="Dominant"
-        chordSet={allDomChords.filter(
-          (chord) =>
-            !availableChords ||
-            availableChords.some((c) => c.name === chord.name)
-        )}
-        selectedChords={selectedChords}
-        onChordClick={onChordClick}
-        chordGuess={chordGuess}
-        guessedCorrectly={guessedCorrectly}
-      />
-      <ChordSet
-        label="Minor"
-        chordSet={allMinChords.filter(
-          (chord) =>
-            !availableChords ||
-            availableChords.some((c) => c.name === chord.name)
-        )}
-        selectedChords={selectedChords}
-        onChordClick={onChordClick}
-        chordGuess={chordGuess}
-        guessedCorrectly={guessedCorrectly}
-      />
-      <ChordSet
-        label="Diminished"
-        chordSet={allDimChords.filter(
-          (chord) =>
-            !availableChords ||
-            availableChords.some((c) => c.name === chord.name)
-        )}
-        selectedChords={selectedChords}
-        onChordClick={onChordClick}
-        chordGuess={chordGuess}
-        guessedCorrectly={guessedCorrectly}
-      />
+      {Object.values(ChordBase).map((base) => {
+        const chords = (availableChords ?? allChords).filter(
+          ({ group }) => group === base
+        );
+        return (
+          !!chords.length && (
+            <ChordSet
+              label={chordGroupNaming[base] ?? ''}
+              chordSet={chords}
+              selectedChords={selectedChords}
+              onChordClick={onChordClick}
+              chordGuess={chordGuess}
+              guessedCorrectly={guessedCorrectly}
+            />
+          )
+        );
+      })}
     </Stack>
   );
 }

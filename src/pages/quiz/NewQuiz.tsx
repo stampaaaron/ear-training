@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { ChordsGrid } from '../../components/ChordsGrid';
 import { Shell } from '../../layout/Shell';
-import { Chord } from '../../notes';
 import { Button, Stack } from '@mantine/core';
 import { createSearchParams, Link } from 'react-router';
 import { useStore } from '@nanostores/react';
 import { $currentChordSet } from '../../store/chordSet';
+import { Chord } from '../../model/chord';
 
 export function NewQuiz() {
   const chordSet = useStore($currentChordSet);
