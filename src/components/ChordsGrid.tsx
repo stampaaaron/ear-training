@@ -1,6 +1,7 @@
 import { Stack } from '@mantine/core';
 import { ChordSet } from './ChordSet';
-import { allChords, Chord, ChordBase, chordGroupNaming } from '../model/chord';
+import { Chord, ChordBase, chordGroupNaming } from '../model/chord';
+import { allChords } from '../model/chordSet';
 
 type ChordsGridProps = {
   availableChords?: Chord[];

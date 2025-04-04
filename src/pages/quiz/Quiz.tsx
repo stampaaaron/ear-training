@@ -14,7 +14,8 @@ import { Shell } from '../../layout/Shell';
 import { useSearchParams } from 'react-router';
 import { $currentChordSet } from '../../store/chordSet';
 import { useStore } from '@nanostores/react';
-import { Chord, chordSets } from '../../model/chord';
+import { Chord } from '../../model/chord';
+import { chordSets } from '../../model/chordSet';
 
 export function Quiz() {
   const [searchParams] = useSearchParams();

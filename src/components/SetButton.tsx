@@ -1,6 +1,6 @@
 import { Button, Stack, Title, Text } from '@mantine/core';
 import { createSearchParams, Link, To } from 'react-router';
-import { ChordSet } from '../model/chord';
+import { ChordSet } from '../model/chordSet';
 
 type SetButtonType = {
   chordSet: ChordSet;

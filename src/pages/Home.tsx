@@ -1,7 +1,7 @@
 import { Stack } from '@mantine/core';
 import { Shell } from '../layout/Shell';
 import { SetButton } from '../components/SetButton';
-import { chordSets } from '../model/chord';
+import { chordSets } from '../model/chordSet';
 
 export function Home() {
   return (

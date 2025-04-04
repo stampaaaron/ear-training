@@ -1,22 +1,5 @@
-import { Interval } from '../notes';
-
-type Entries<T> = {
-  [K in keyof T]-?: [K, T[K]];
-}[keyof T][];
-
-export type Chord = {
-  name: string;
-  intervals: Interval[];
-  tensions?: ChordTension[];
-  group: ChordBase;
-};
-
-export type ChordSet = {
-  key: string;
-  label: string;
-  description?: string;
-  chords: Chord[];
-};
+import { Entries } from './helper';
+import { Interval } from './interval';
 
 type ChordExtension = Extract<Interval, '6' | 'bb7' | 'b7' | '7'>;
 export type ChordTension = Extract<
@@ -33,6 +16,13 @@ export enum ChordBase {
   sus = 'sus',
   sus2 = 'sus2',
 }
+
+export type Chord = {
+  name: string;
+  intervals: Interval[];
+  tensions?: ChordTension[];
+  group: ChordBase;
+};
 
 export const chordGroupNaming: { [K in ChordBase]?: string } = {
   [ChordBase.maj]: 'Major',
@@ -180,7 +170,7 @@ export const seventhChords = (
   return acc;
 }, {} as SeventhChords);
 
-function getAllTensionChords(chord: Chord): Chord[] {
+export function getAllTensionChords(chord: Chord): Chord[] {
   return (
     chord.tensions?.map((t) => ({
       ...chord,
@@ -189,65 +179,3 @@ function getAllTensionChords(chord: Chord): Chord[] {
     })) ?? []
   );
 }
-
-const allTriads = [
-  baseChords['maj'],
-  baseChords['min'],
-  baseChords['dim'],
-  baseChords['aug'],
-  baseChords['sus'],
-  baseChords['sus2'],
-];
-
-const basicSenventhChords = [
-  seventhChords['maj.7'],
-  seventhChords['maj.6'],
-  seventhChords['min.7'],
-  seventhChords['min.6'],
-  seventhChords['maj.b7'],
-  seventhChords['sus.b7'],
-  seventhChords['dim.b7'],
-];
-
-const allSeventhChords = Object.values(seventhChords);
-
-const allChordsWithTensions = allSeventhChords.flatMap(getAllTensionChords);
-
-export const allChords = [
-  ...allTriads,
-  ...allSeventhChords,
-  ...allChordsWithTensions,
-];
-
-export const chordSets: ChordSet[] = [
-  {
-    key: 'triads',
-    label: 'Triads',
-    chords: allTriads,
-    description: `All triads (${allTriads.map(({ name }) => name).join(', ')})`,
-  },
-  {
-    key: 'basic-seventh-chords',
-    label: 'Basic Seventh Chords',
-    chords: basicSenventhChords,
-    description: basicSenventhChords.map(({ name }) => name).join(', '),
-  },
-  {
-    key: 'all-seventh-chords',
-    label: 'All Seventh Chords',
-    chords: allSeventhChords,
-    description: allSeventhChords.map(({ name }) => name).join(', '),
-  },
-  {
-    key: 'basic-tensions',
-    label: 'Basic Tensions',
-    chords: basicSenventhChords.flatMap(getAllTensionChords),
-    description: `${basicSenventhChords.map(({ name }) => name).join(', ')} with Tensions`,
-  },
-  {
-    key: 'all-tensions',
-    label: 'All Tensions',
-    chords: allChordsWithTensions,
-    description: `${allSeventhChords.map(({ name }) => name).join(', ')} with Tensions`,
-  },
-];
