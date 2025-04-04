@@ -1,25 +1,26 @@
-import { Stack } from '@mantine/core';
+import { Button, SimpleGrid } from '@mantine/core';
 import { Shell } from '../layout/Shell';
-import { SetButton } from '../components/SetButton';
-import { chordSets } from '../model/chordSet';
+import { createSearchParams, Link } from 'react-router';
+import { QuizMode, quizModeNames } from '../model/quiz';
 
 export function Home() {
   return (
-    <Shell title="Choose your chord set">
-      <Stack>
-        {chordSets.map((chordSet) => (
-          <SetButton chordSet={chordSet} />
+    <Shell title="Choose what you want to train">
+      <SimpleGrid cols={2}>
+        {Object.values(QuizMode).map((mode) => (
+          <Button
+            key={mode}
+            component={Link}
+            variant="outline"
+            to={{
+              pathname: '/sets',
+              search: createSearchParams({ mode }).toString(),
+            }}
+          >
+            {quizModeNames[mode]}
+          </Button>
         ))}
-        <SetButton
-          chordSet={{
-            chords: [],
-            key: 'custom',
-            label: 'Custom',
-            description: 'Choose your own chords.',
-          }}
-          to="/quiz/new"
-        />
-      </Stack>
+      </SimpleGrid>
     </Shell>
   );
 }

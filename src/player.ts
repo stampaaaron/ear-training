@@ -1,5 +1,5 @@
 import * as Tone from 'tone';
-import { Interval, intervalDistanceMap } from './notes';
+import { Interval, intervalDistanceMap } from './model/interval';
 import { useStore } from '@nanostores/react';
 import { $settings } from './store/settings';
 
@@ -48,6 +48,8 @@ export const usePlayer = () => {
     );
 
     modes.forEach((mode) => {
+      // TODO lautstärke
+
       switch (mode) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
