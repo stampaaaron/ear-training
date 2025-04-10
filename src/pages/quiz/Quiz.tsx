@@ -12,7 +12,7 @@ import {
 } from '@tabler/icons-react';
 import { Shell } from '../../layout/Shell';
 import { useSearchParams } from 'react-router';
-import { $currentQuizSet } from '../../store/chordSet';
+import { $currentSet } from '../../store/currentSet';
 import { useStore } from '@nanostores/react';
 import { QuizOption, QuizMode } from '../../model/quiz';
 import { allSets } from '../../model/quizSet';
@@ -24,17 +24,12 @@ export function Quiz() {
 
   const { handlePlayOption, getRandomMidiNote } = usePlayer();
 
-  const chordSet = useStore($currentQuizSet);
-
-  console.log(allSets);
-  console.log(quizSetKey);
+  const customSet = useStore($currentSet);
 
   const availableOptions =
     allSets.find(({ key }) => key === quizSetKey)?.options ??
-    chordSet.options ??
+    customSet.options ??
     [];
-
-  console.log(availableOptions);
 
   const [startNote, setStartNote] = useState<number>();
   const [current, setCurrent] = useState<QuizOption<typeof mode>>();

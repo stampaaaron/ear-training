@@ -22,15 +22,9 @@ export function OptionsGrid<M extends QuizMode>({
   return (
     <Stack>
       {Object.entries(quizGroups[quizMode]).map(([groupKey, groupName]) => {
-        console.log(groupKey);
-
-        console.log(availableOptions);
-
         const options = (availableOptions ?? quizOptions[quizMode]).filter(
           ({ group }) => group === groupKey
         );
-
-        console.log(options);
 
         return (
           !!options.length && (
