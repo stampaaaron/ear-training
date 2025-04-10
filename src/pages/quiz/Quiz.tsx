@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Button, Flex, Stack } from '@mantine/core';
-import { getRandomChord } from '../../utils';
+import { getRandomFromArray } from '../../utils';
 import { usePlayer } from '../../player';
-import { ChordsGrid } from '../../components/ChordsGrid';
+import { OptionsGrid } from '../../components/OptionsGrid';
 import {
   IconCheck,
   IconChevronRight,
@@ -12,47 +12,53 @@ import {
 } from '@tabler/icons-react';
 import { Shell } from '../../layout/Shell';
 import { useSearchParams } from 'react-router';
-import { $currentChordSet } from '../../store/chordSet';
+import { $currentQuizSet } from '../../store/chordSet';
 import { useStore } from '@nanostores/react';
-import { Chord } from '../../model/chord';
-import { chordSets } from '../../model/chordSet';
+import { QuizOption, QuizMode } from '../../model/quiz';
+import { allSets } from '../../model/quizSet';
 
 export function Quiz() {
   const [searchParams] = useSearchParams();
-  const chordSetKey = searchParams.get('chordSet');
+  const quizSetKey = searchParams.get('quizSet');
+  const mode = searchParams.get('mode') as QuizMode;
 
-  const { playChord, getRandomMidiNote } = usePlayer();
+  const { handlePlayOption, getRandomMidiNote } = usePlayer();
 
-  const chordSet = useStore($currentChordSet);
+  const chordSet = useStore($currentQuizSet);
 
-  const availableChords =
-    chordSets.find(({ key }) => key === chordSetKey)?.chords ??
-    chordSet.chords ??
+  console.log(allSets);
+  console.log(quizSetKey);
+
+  const availableOptions =
+    allSets.find(({ key }) => key === quizSetKey)?.options ??
+    chordSet.options ??
     [];
 
+  console.log(availableOptions);
+
   const [startNote, setStartNote] = useState<number>();
-  const [currentChord, setCurrentChord] = useState<Chord>();
-  const [chordGuess, setChordGuess] = useState<Chord>();
+  const [current, setCurrent] = useState<QuizOption<typeof mode>>();
+  const [guess, setGuess] = useState<QuizOption<typeof mode>>();
 
-  const guessedCorrectly = chordGuess?.name === currentChord?.name;
+  const guessedCorrectly = guess?.name === current?.name;
 
-  const handlePlayNextChord = () => {
-    const randomChord = getRandomChord(availableChords);
+  const handlePlayNext = () => {
+    const randomOption = getRandomFromArray(availableOptions);
 
     const startNote = getRandomMidiNote();
     setStartNote(startNote);
-    setChordGuess(undefined);
-    setCurrentChord(randomChord);
+    setGuess(undefined);
+    setCurrent(randomOption);
 
-    playChord(randomChord.intervals, startNote);
+    handlePlayOption(mode, randomOption, startNote);
   };
 
   return (
-    <Shell title="What chord is played?">
+    <Shell title="Choose the correct answer">
       <Stack>
         <Flex justify="center" p="xl">
-          {currentChord ? (
-            chordGuess ? (
+          {current ? (
+            guess ? (
               guessedCorrectly ? (
                 <IconCheck size={50} color="green" />
               ) : (
@@ -62,43 +68,44 @@ export function Quiz() {
               <IconVolume size={50} />
             )
           ) : (
-            <Button onClick={handlePlayNextChord}>Start</Button>
+            <Button onClick={handlePlayNext}>Start</Button>
           )}
         </Flex>
         <Button.Group w="100%">
           <Button
             flex={1}
             variant="outline"
-            disabled={!currentChord}
+            disabled={!current}
             leftSection={<IconRepeat size={16} />}
             onClick={() => {
-              playChord(currentChord!.intervals, startNote);
+              if (current) handlePlayOption(mode, current, startNote);
             }}
           >
             Replay
           </Button>
           <Button
             flex={1}
-            disabled={!currentChord}
+            disabled={!current}
             variant="outline"
             rightSection={<IconChevronRight size={16} />}
-            onClick={handlePlayNextChord}
+            onClick={handlePlayNext}
           >
             Skip
           </Button>
         </Button.Group>
 
-        {currentChord && (
-          <ChordsGrid
-            availableChords={availableChords}
-            onChordClick={(chord) => {
-              setChordGuess(chord);
-              if (chord.name === currentChord?.name) {
-                setTimeout(handlePlayNextChord, 1000);
+        {current && (
+          <OptionsGrid
+            availableOptions={availableOptions}
+            onSelect={(option) => {
+              setGuess(option);
+              if (option.name === current?.name) {
+                setTimeout(handlePlayNext, 1000);
               }
             }}
-            chordGuess={chordGuess}
+            guess={guess}
             guessedCorrectly={guessedCorrectly}
+            quizMode={mode}
           />
         )}
       </Stack>

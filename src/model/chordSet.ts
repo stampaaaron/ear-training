@@ -1,11 +1,7 @@
 import { baseChords, Chord, getAllTensionChords, seventhChords } from './chord';
+import { QuizSet } from './quizSet';
 
-export type ChordSet = {
-  key: string;
-  label: string;
-  description?: string;
-  chords: Chord[];
-};
+export type ChordSet = QuizSet<Chord>;
 
 const allTriads = [
   baseChords['maj'],
@@ -40,31 +36,31 @@ export const chordSets: ChordSet[] = [
   {
     key: 'triads',
     label: 'Triads',
-    chords: allTriads,
+    options: allTriads,
     description: `All triads (${allTriads.map(({ name }) => name).join(', ')})`,
   },
   {
     key: 'basic-seventh-chords',
     label: 'Basic Seventh Chords',
-    chords: basicSenventhChords,
+    options: basicSenventhChords,
     description: basicSenventhChords.map(({ name }) => name).join(', '),
   },
   {
     key: 'all-seventh-chords',
     label: 'All Seventh Chords',
-    chords: allSeventhChords,
+    options: allSeventhChords,
     description: allSeventhChords.map(({ name }) => name).join(', '),
   },
   {
     key: 'basic-tensions',
     label: 'Basic Tensions',
-    chords: basicSenventhChords.flatMap(getAllTensionChords),
+    options: basicSenventhChords.flatMap(getAllTensionChords),
     description: `${basicSenventhChords.map(({ name }) => name).join(', ')} with Tensions`,
   },
   {
     key: 'all-tensions',
     label: 'All Tensions',
-    chords: allChordsWithTensions,
+    options: allChordsWithTensions,
     description: `${allSeventhChords.map(({ name }) => name).join(', ')} with Tensions`,
   },
 ];

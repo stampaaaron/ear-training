@@ -2,6 +2,7 @@ import * as Tone from 'tone';
 import { Interval, intervalDistanceMap } from './model/interval';
 import { useStore } from '@nanostores/react';
 import { $settings } from './store/settings';
+import { QuizOption, QuizMode } from './model/quiz';
 
 export const piano = new Tone.Sampler({
   urls: {
@@ -75,9 +76,39 @@ export const usePlayer = () => {
     });
   };
 
+  const playInterval = async (
+    interval: Interval,
+    startNote = getRandomMidiNote()
+  ) => {
+    await Tone.start();
+    let now = Tone.now();
+
+    const transposedNote = Tone.Frequency(startNote, 'midi')
+      .transpose(intervalDistanceMap[interval])
+      .toMidi();
+
+    piano.triggerAttackRelease(startNote, releaseDelay, now);
+    now += noteToNoteDelay;
+    piano.triggerAttackRelease(transposedNote, releaseDelay, now);
+  };
+
   const getRandomMidiNote = ([start, end] = startNoteRange) => {
     return Math.floor(Math.random() * (end - start) + start);
   };
 
-  return { playChord, getRandomMidiNote };
+  const handlePlayOption = <M extends QuizMode>(
+    mode: M,
+    quizOption: QuizOption<M>,
+    startNote?: number
+  ) => {
+    switch (mode) {
+      case QuizMode.chords:
+        playChord(quizOption.intervals, startNote);
+        break;
+      default:
+        break;
+    }
+  };
+
+  return { playChord, playInterval, handlePlayOption, getRandomMidiNote };
 };

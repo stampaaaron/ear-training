@@ -1,45 +1,49 @@
 import { useState } from 'react';
-import { ChordsGrid } from '../../components/ChordsGrid';
+import { OptionsGrid } from '../../components/OptionsGrid';
 import { Shell } from '../../layout/Shell';
 import { Button, Stack } from '@mantine/core';
-import { createSearchParams, Link } from 'react-router';
+import { createSearchParams, Link, useSearchParams } from 'react-router';
 import { useStore } from '@nanostores/react';
-import { $currentChordSet } from '../../store/chordSet';
-import { Chord } from '../../model/chord';
+import { $currentQuizSet } from '../../store/chordSet';
+import { QuizMode } from '../../model/quiz';
 
 export function NewQuiz() {
-  const chordSet = useStore($currentChordSet);
-  const [selectedChords, setSelectedChords] = useState<Chord[]>(
-    chordSet.chords
+    const [searchParams] = useSearchParams();
+  const mode = searchParams.get('mode') as QuizMode;
+  
+  const quizSet = useStore($currentQuizSet);
+  const [selectedOptions, setSelectedOptions] = useState(
+    quizSet.options ?? []
   );
 
   return (
     <Shell title="Create your custom set">
       <Stack>
-        <ChordsGrid
-          onChordClick={(chord) => {
-            setSelectedChords(
-              selectedChords?.some((c) => c.name === chord.name)
-                ? selectedChords.filter((c) => c.name !== chord.name)
-                : [...selectedChords, chord]
+        <OptionsGrid
+        quizMode={mode} 
+          onSelect={(option) => {
+            setSelectedOptions(
+              selectedOptions?.some((c) => c.name === option.name) 
+                ? selectedOptions.filter((c) => c.name !== option.name)
+                : [...selectedOptions, option]
             );
-          }}
-          selectedChords={selectedChords}
-        />
+          } }
+          selectedOptions={selectedOptions}       />
 
         <Button
           component={Link}
           onClick={() =>
-            $currentChordSet.set({
+            $currentQuizSet.set({
               key: 'custom',
-              chords: selectedChords,
+              options: selectedOptions,
               label: '',
             })
           }
           to={{
             pathname: '/quiz',
             search: createSearchParams({
-              chordSet: 'custom',
+              quizSet: 'custom',
+              mode
             }).toString(),
           }}
         >

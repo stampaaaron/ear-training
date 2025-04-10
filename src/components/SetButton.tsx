@@ -1,13 +1,13 @@
 import { Button, Stack, Title, Text } from '@mantine/core';
 import { createSearchParams, Link, To } from 'react-router';
-import { QuizSet } from '../model/quizSet';
+import { QuizOptionBase, QuizSet } from '../model/quizSet';
 
-type SetButtonType = {
-  quizSet: QuizSet;
+type SetButtonType<O extends QuizOptionBase> = {
+  quizSet: QuizSet<O>;
   to?: To;
 };
 
-export function SetButton({ quizSet, to }: SetButtonType) {
+export function SetButton<O extends QuizOptionBase>({ quizSet, to }: SetButtonType<O>) {
   return (
     <Button
       variant="outline"
@@ -16,7 +16,7 @@ export function SetButton({ quizSet, to }: SetButtonType) {
         to ?? {
           pathname: '/quiz',
           search: createSearchParams({
-            chordSet: quizSet.key,
+            quizSet: quizSet.key,
           }).toString(),
         }
       }

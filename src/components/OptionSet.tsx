@@ -1,49 +1,49 @@
 import { Button, Fieldset, SimpleGrid } from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
-import { Chord } from '../model/chord';
+import { QuizOption, QuizMode } from '../model/quiz';
 
-type ChordSetProps = {
-  chordSet: Chord[];
+type OptionSetProps<M extends QuizMode> = {
+  optionSet: QuizOption<M>[];
   label: string;
-  chordGuess?: Chord;
+  guess?: QuizOption<M>;
   guessedCorrectly?: boolean;
-  selectedChords?: Chord[];
-  onChordClick: (chord: Chord) => void;
+  selectedOptions?: QuizOption<M>[];
+  onSelect: (option: QuizOption<M>) => void;
 };
 
-export function ChordSet({
-  chordSet,
+export function OptionSet<M extends QuizMode>({
+  optionSet,
   label,
-  onChordClick,
-  chordGuess,
+  onSelect,
+  guess,
   guessedCorrectly,
-  selectedChords,
-}: ChordSetProps) {
+  selectedOptions,
+}: OptionSetProps<M>) {
   return (
     <Fieldset legend={label} p="sm">
       <SimpleGrid cols={2}>
-        {chordSet.map((chord) => {
+        {optionSet.map((option) => {
           return (
             <Button
-              key={chord.name}
+              key={option.name}
               variant={
-                chord === chordGuess ||
-                selectedChords?.some((c) => c.name === chord.name)
+                option === guess ||
+                selectedOptions?.some((c) => c.name === option.name)
                   ? 'outline'
                   : 'default'
               }
-              onClick={() => onChordClick(chord)}
+              onClick={() => onSelect(option)}
               color={
-                chord === chordGuess
+                option === guess
                   ? guessedCorrectly
                     ? 'green'
                     : 'red'
-                  : selectedChords?.some((c) => c.name === chord.name)
+                  : selectedOptions?.some((c) => c.name === option.name)
                     ? 'blue'
                     : undefined
               }
               rightSection={
-                chord === chordGuess &&
+                option === guess &&
                 (guessedCorrectly ? (
                   <IconCheck size={16} />
                 ) : (
@@ -51,7 +51,7 @@ export function ChordSet({
                 ))
               }
             >
-              {chord.name}
+              {option.name}
             </Button>
           );
         })}
