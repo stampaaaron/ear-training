@@ -43,39 +43,39 @@ const chordBaseIntervals: Record<ChordBase, Interval[]> = {
 };
 
 const chords =
-  // : {
-  //   [b in ChordBase]: {
-  //     [e in ChordExtension]?: ChordTension[];
-  //   };
-  // }
-  {
-    maj: {
-      '7': ['9', '#11', '13'],
-      '6': ['9', '#11'],
-      b7: [],
-    },
-    dom: {
-      b7: ['b9', '9', '#9', '#11', 'b13', '13'],
-    },
-    sus: {
-      b7: ['b9', '9', '10', '13'],
-    },
-    sus2: undefined,
-    min: {
-      b7: ['9', '11', '13'],
-      '6': ['9', '11'],
-      '7': ['9', '11', '13'],
-    },
-    dim: {
-      '7': [],
-      b7: ['9', '11', 'b13'],
-      bb7: ['9', '11', 'b13', '14'],
-    },
-    aug: {
-      '7': ['9', '#11'],
-      b7: ['b9', '9', '#11'],
-    },
-  };
+// : {
+//   [b in ChordBase]: {
+//     [e in ChordExtension]?: ChordTension[];
+//   };
+// }
+{
+  maj: {
+    '7': ['9', '#11', '13'],
+    '6': ['9', '#11'],
+    b7: [],
+  },
+  dom: {
+    b7: ['b9', '9', '#9', '#11', 'b13', '13'],
+  },
+  sus: {
+    b7: ['b9', '9', '10', '13'],
+  },
+  sus2: undefined,
+  min: {
+    b7: ['9', '11', '13'],
+    '6': ['9', '11'],
+    '7': ['9', '11', '13'],
+  },
+  dim: {
+    '7': [],
+    b7: ['9', '11', 'b13'],
+    bb7: ['9', '11', 'b13', '14'],
+  },
+  aug: {
+    '7': ['9', '#11'],
+    b7: ['b9', '9', '#11'],
+  },
+};
 
 const chordExtensionNames: Record<ChordExtension, string> = {
   7: '(maj7)',
@@ -90,7 +90,7 @@ const chordNaming: {
     customExtensionNames?: { [e in ChordExtension]?: string };
   };
 } = {
-  maj: { name: 'Maj', customExtensionNames: { 7: 'Maj7' } },
+  maj: { name: 'Maj', customExtensionNames: { 7: 'Maj7', b7: '7' } },
   min: { name: 'Min' },
   dom: { name: '' },
   dim: { name: 'Dim', customExtensionNames: { b7: 'Min7b5' } },
@@ -119,7 +119,7 @@ const chordGrouping: ChordGrouping = {
   dim: { group: ChordBase.dim, customExtensionGroups: { b7: ChordBase.min } },
 };
 
-type SeventhChords<C extends object = typeof chords> = Record<
+export type SeventhChords<C extends object = typeof chords> = Record<
   {
     [K in keyof C]: `${Exclude<K, symbol>}.${Exclude<keyof C[K], symbol>}`;
   }[keyof C],

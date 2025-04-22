@@ -1,4 +1,5 @@
-import { baseChords, Chord, getAllTensionChords, seventhChords } from './chord';
+import { baseChords, Chord, getAllTensionChords, seventhChords, SeventhChords } from './chord';
+import { Entries } from './helper';
 import { QuizSet } from './quizSet';
 
 export type ChordSet = QuizSet<Chord>;
@@ -22,9 +23,10 @@ const basicSenventhChords = [
   seventhChords['dim.b7'],
 ];
 
-const allSeventhChords = Object.values(seventhChords);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const allSeventhChords = (Object.entries(seventhChords) as Entries<SeventhChords>).filter(([key]) => key !== 'dom.b7').map(([_, value]) => value);
 
-const allChordsWithTensions = allSeventhChords.flatMap(getAllTensionChords);
+const allChordsWithTensions = Object.values(seventhChords).flatMap(getAllTensionChords);
 
 export const allChords = [
   ...allTriads,
