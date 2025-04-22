@@ -16,8 +16,9 @@ const allTriads = [
 const basicSenventhChords = [
   seventhChords['maj.7'],
   seventhChords['maj.6'],
-  seventhChords['min.7'],
+  seventhChords['min.b7'],
   seventhChords['min.6'],
+  seventhChords['min.7'],
   seventhChords['maj.b7'],
   seventhChords['sus.b7'],
   seventhChords['dim.b7'],
