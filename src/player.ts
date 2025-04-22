@@ -103,7 +103,10 @@ export const usePlayer = () => {
   ) => {
     switch (mode) {
       case QuizMode.chords:
-        playChord(quizOption.intervals, startNote);
+        playChord((quizOption as QuizOption<QuizMode.chords>).intervals, startNote);
+        break;
+      case QuizMode.intervals:
+        playChord(['1', (quizOption as QuizOption<QuizMode.intervals>).interval], startNote);
         break;
       default:
         break;

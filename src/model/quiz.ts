@@ -1,5 +1,6 @@
 import { chordGroupNaming } from './chord';
 import { allChords } from './chordSet';
+import { allIntervals } from './interval';
 
 export enum QuizMode {
   intervals = 'intervals',
@@ -14,7 +15,7 @@ export const quizModeNames: Record<QuizMode, string> = {
 };
 
 export const quizOptions = {
-  [QuizMode.intervals]: [],
+  [QuizMode.intervals]: allIntervals,
   [QuizMode.chords]: allChords,
   [QuizMode.scales]: [],
 } as const;

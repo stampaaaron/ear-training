@@ -3,7 +3,7 @@ import { IconCheck, IconX } from '@tabler/icons-react';
 import { QuizOption, QuizMode } from '../model/quiz';
 
 type OptionSetProps<M extends QuizMode> = {
-  optionSet: QuizOption<M>[];
+  options: QuizOption<M>[];
   label: string;
   guess?: QuizOption<M>;
   guessedCorrectly?: boolean;
@@ -12,7 +12,7 @@ type OptionSetProps<M extends QuizMode> = {
 };
 
 export function OptionSet<M extends QuizMode>({
-  optionSet,
+  options,
   label,
   onSelect,
   guess,
@@ -22,7 +22,7 @@ export function OptionSet<M extends QuizMode>({
   return (
     <Fieldset legend={label} p="sm">
       <SimpleGrid cols={2}>
-        {optionSet.map((option) => {
+        {options.map((option) => {
           return (
             <Button
               key={option.name}

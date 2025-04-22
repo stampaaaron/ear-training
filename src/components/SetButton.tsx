@@ -1,13 +1,17 @@
 import { Button, Stack, Title, Text } from '@mantine/core';
 import { createSearchParams, Link, To } from 'react-router';
-import { QuizOptionBase, QuizSet } from '../model/quizSet';
+import { QuizSet } from '../model/quizSet';
+import { QuizMode, QuizOption } from '../model/quiz';
 
-type SetButtonType<O extends QuizOptionBase> = {
-  quizSet: QuizSet<O>;
+type SetButtonType<M extends QuizMode> = {
+  quizSet: QuizSet<QuizOption<M>>;
   to?: To;
 };
 
-export function SetButton<O extends QuizOptionBase>({ quizSet, to }: SetButtonType<O>) {
+export function SetButton<M extends QuizMode>({
+  quizSet,
+  to,
+}: SetButtonType<M>) {
   return (
     <Button
       variant="outline"

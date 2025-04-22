@@ -1,4 +1,5 @@
 import { chordSets } from './chordSet';
+import { intervalSets } from './interval';
 import { QuizOption, QuizMode } from './quiz';
 
 export type QuizSet<O extends QuizOptionBase> = {
@@ -9,7 +10,7 @@ export type QuizSet<O extends QuizOptionBase> = {
 };
 
 export const quizSets: { [M in QuizMode]: QuizSet<QuizOption<M>>[] } = {
-  [QuizMode.intervals]: [],
+  [QuizMode.intervals]: intervalSets,
   [QuizMode.chords]: chordSets,
   [QuizMode.scales]: [],
 };
