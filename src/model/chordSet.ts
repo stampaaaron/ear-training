@@ -1,4 +1,10 @@
-import { baseChords, Chord, getAllTensionChords, seventhChords, SeventhChords } from './chord';
+import {
+  baseChords,
+  Chord,
+  getAllTensionChords,
+  seventhChords,
+  SeventhChords,
+} from './chord';
 import { Entries } from './helper';
 import { QuizSet } from './quizSet';
 
@@ -13,21 +19,35 @@ const allTriads = [
   baseChords['sus2'],
 ];
 
-const basicSenventhChords = [
+const basicSenventhChordsWithoutDominant = [
   seventhChords['maj.7'],
   seventhChords['maj.6'],
   seventhChords['min.b7'],
   seventhChords['min.6'],
   seventhChords['min.7'],
-  seventhChords['maj.b7'],
   seventhChords['sus.b7'],
   seventhChords['dim.b7'],
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const allSeventhChords = (Object.entries(seventhChords) as Entries<SeventhChords>).filter(([key]) => key !== 'dom.b7').map(([_, value]) => value);
+const basicSeventhChords = [
+  ...basicSenventhChordsWithoutDominant,
+  seventhChords['maj.b7'],
+];
 
-const allChordsWithTensions = Object.values(seventhChords).flatMap(getAllTensionChords);
+const basicSeventhChordsWithTensions = [
+  ...basicSenventhChordsWithoutDominant,
+  seventhChords['dom.b7'],
+].flatMap(getAllTensionChords);
+
+const allSeventhChords = (
+  Object.entries(seventhChords) as Entries<SeventhChords>
+)
+  .filter(([key]) => key !== 'dom.b7')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  .map(([_, value]) => value);
+
+const allChordsWithTensions =
+  Object.values(seventhChords).flatMap(getAllTensionChords);
 
 export const allChords = [
   ...allTriads,
@@ -45,8 +65,8 @@ export const chordSets: ChordSet[] = [
   {
     key: 'basic-seventh-chords',
     label: 'Basic Seventh Chords',
-    options: basicSenventhChords,
-    description: basicSenventhChords.map(({ name }) => name).join(', '),
+    options: basicSeventhChords,
+    description: basicSeventhChords.map(({ name }) => name).join(', '),
   },
   {
     key: 'all-seventh-chords',
@@ -57,8 +77,8 @@ export const chordSets: ChordSet[] = [
   {
     key: 'basic-tensions',
     label: 'Basic Tensions',
-    options: basicSenventhChords.flatMap(getAllTensionChords),
-    description: `${basicSenventhChords.map(({ name }) => name).join(', ')} with Tensions`,
+    options: basicSeventhChordsWithTensions,
+    description: `${basicSeventhChords.map(({ name }) => name).join(', ')} with Tensions`,
   },
   {
     key: 'all-tensions',
