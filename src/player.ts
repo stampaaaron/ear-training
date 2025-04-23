@@ -59,13 +59,13 @@ export const usePlayer = () => {
         // falls through
         case 'ascending':
           notes.forEach((note, index) => {
-            piano.triggerAttack(note, now + index * noteToNoteDelay, 1);
+            piano.triggerAttack(note, now + index * noteToNoteDelay, 0.8);
           });
           now = now + notes.length * noteToNoteDelay + releaseDelay;
           piano.releaseAll(now);
           break;
         case 'harmonic':
-          piano.triggerAttack(notes, now);
+          piano.triggerAttack(notes, now, 0.8);
           now += releaseDelay;
           piano.releaseAll(now);
           break;
