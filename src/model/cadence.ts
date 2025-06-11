@@ -27,6 +27,15 @@ export enum SubstitutionDominantChordFunction {
 }
 
 export const diatonicChordFunctions = Object.values(DiatonicChordFunction);
+
+export const nonFunctionalDiatonicChordFunctions = [
+  DiatonicChordFunction.IIm7,
+  DiatonicChordFunction.IIIm7,
+  DiatonicChordFunction.IVj7,
+  DiatonicChordFunction.VIm7,
+  DiatonicChordFunction.VIIm7b5,
+];
+
 export const secondaryDominantChordFunctions = Object.values(
   SecondaryDominatChordFunction
 );

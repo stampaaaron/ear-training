@@ -4,8 +4,14 @@ import {
   iChords,
   dominantMap,
   diatonicIIMap,
+  nonFunctionalDiatonicChordFunctions,
 } from '../model/cadence';
 import { getRandomFromArray } from '../utils';
+
+const dominantWeight = 8;
+const diatonicIIWeight = 16;
+const nonFunctionalDiatonicWeight = 4;
+const allDiatonicWeight = 1;
 
 type CadenceConfig = {
   startOn1: boolean;
@@ -32,16 +38,33 @@ export function getRandomCadence({
 
     const prev = chords[i - 1];
 
-    chords.push(
-      getRandomFromArray(
-        [
-          ...diatonicChordFunctions,
-          ...dominantMap[prev],
-          ...(diatonicIIMap[prev] ? [diatonicIIMap[prev]] : []),
-        ].filter((chord) => chord !== prev)
-      )
+    const chordPool: ChordFunction[] = [];
+
+    pushWeighted(chordPool, dominantMap[prev], dominantWeight);
+    pushWeighted(chordPool, diatonicIIMap[prev], diatonicIIWeight);
+
+    const nextNonFunctionalDiatonic = getRandomFromArray(
+      nonFunctionalDiatonicChordFunctions.filter((chord) => chord !== prev)
     );
+    pushWeighted(
+      chordPool,
+      nextNonFunctionalDiatonic,
+      nonFunctionalDiatonicWeight
+    );
+
+    const nextDiatonic = getRandomFromArray(
+      diatonicChordFunctions.filter((chord) => chord !== prev)
+    );
+    pushWeighted(chordPool, nextDiatonic, allDiatonicWeight);
+
+    chords.push(getRandomFromArray(chordPool));
   }
 
   return chords.reverse();
 }
+
+const pushWeighted = <T>(array: T[], item: T | T[] = [], weight = 1) => {
+  for (let index = 0; index < weight; index++) {
+    array.push(...(Array.isArray(item) ? item : [item]));
+  }
+};
