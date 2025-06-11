@@ -8,6 +8,7 @@ import { Home } from './pages/Home';
 import { Settings } from './pages/Settings';
 import { NewQuiz } from './pages/quiz/NewQuiz';
 import { Sets } from './pages/Sets';
+import { Cadence } from './pages/cadance/Cadence';
 
 const theme = createTheme({});
 
@@ -23,6 +24,9 @@ function App() {
               <Route path="/quiz">
                 <Route path="" element={<Quiz />} />
                 <Route path="new" element={<NewQuiz />} />
+              </Route>
+              <Route path='/cadence'>
+                <Route path='' element={<Cadence />} />
               </Route>
               <Route path="/settings" element={<Settings />} />
             </Routes>
