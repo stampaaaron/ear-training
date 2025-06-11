@@ -72,56 +72,33 @@ export const chordFunctionVoicings: Record<ChordFunction, Chord> = {
   'subV7/VI': seventhChords['dom.b7'],
 };
 
-export const dominantMap: Record<ChordFunction, ChordFunction[]> = {
-  ['I6']: [
-    DiatonicChordFunction.V7,
-    SubstitutionDominantChordFunction['subV7/I'],
-  ],
-  ['Ij7']: [
-    DiatonicChordFunction.V7,
-    SubstitutionDominantChordFunction['subV7/I'],
-  ],
-  ['IIm7']: [
-    SecondaryDominatChordFunction['V7/II'],
-    SubstitutionDominantChordFunction['subV7/II'],
-  ],
-  ['IIIm7']: [
-    SecondaryDominatChordFunction['V7/III'],
-    SubstitutionDominantChordFunction['subV7/III'],
-  ],
-  ['IVj7']: [
-    SecondaryDominatChordFunction['V7/IV'],
-    SubstitutionDominantChordFunction['subV7/IV'],
-  ],
-  ['V7']: [
-    SecondaryDominatChordFunction['V7/V'],
-    SubstitutionDominantChordFunction['subV7/V'],
-  ],
-  ['VIm7']: [
-    SecondaryDominatChordFunction['V7/VI'],
-    SubstitutionDominantChordFunction['subV7/VI'],
-  ],
-  ['VIIm7b5']: [],
-  ['V7/II']: [
-    SecondaryDominatChordFunction['V7/VI'],
-    SubstitutionDominantChordFunction['subV7/VI'],
-  ],
-  ['V7/III']: [],
-  ['V7/IV']: [
-    DiatonicChordFunction.V7,
-    SubstitutionDominantChordFunction['subV7/I'],
-  ],
-  ['V7/V']: [
-    SecondaryDominatChordFunction['V7/II'],
-    SubstitutionDominantChordFunction['subV7/II'],
-  ],
-  ['V7/VI']: [],
-  ['subV7/I']: [],
-  ['subV7/II']: [],
-  ['subV7/III']: [],
-  ['subV7/IV']: [],
-  ['subV7/V']: [],
-  ['subV7/VI']: [],
+export const dominantMap: { [F in ChordFunction]?: ChordFunction } = {
+  ['I6']: DiatonicChordFunction.V7,
+  ['Ij7']: DiatonicChordFunction.V7,
+};
+
+export const secondaryDominantMap: { [F in ChordFunction]?: ChordFunction } = {
+  ['IIm7']: SecondaryDominatChordFunction['V7/II'],
+  ['IIIm7']: SecondaryDominatChordFunction['V7/III'],
+  ['IVj7']: SecondaryDominatChordFunction['V7/IV'],
+  ['V7']: SecondaryDominatChordFunction['V7/V'],
+  ['VIm7']: SecondaryDominatChordFunction['V7/VI'],
+  ['V7/II']: SecondaryDominatChordFunction['V7/VI'],
+  ['V7/IV']: DiatonicChordFunction.V7,
+  ['V7/V']: SecondaryDominatChordFunction['V7/II'],
+};
+
+export const subDominantMap: { [F in ChordFunction]?: ChordFunction } = {
+  ['I6']: SubstitutionDominantChordFunction['subV7/I'],
+  ['Ij7']: SubstitutionDominantChordFunction['subV7/I'],
+  ['IIm7']: SubstitutionDominantChordFunction['subV7/II'],
+  ['IIIm7']: SubstitutionDominantChordFunction['subV7/III'],
+  ['IVj7']: SubstitutionDominantChordFunction['subV7/IV'],
+  ['V7']: SubstitutionDominantChordFunction['subV7/V'],
+  ['VIm7']: SubstitutionDominantChordFunction['subV7/VI'],
+  ['V7/II']: SubstitutionDominantChordFunction['subV7/VI'],
+  ['V7/IV']: SubstitutionDominantChordFunction['subV7/I'],
+  ['V7/V']: SubstitutionDominantChordFunction['subV7/II'],
 };
 
 export const diatonicIIMap: { [F in ChordFunction]?: ChordFunction } = {

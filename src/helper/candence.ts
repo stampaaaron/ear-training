@@ -6,10 +6,14 @@ import {
   diatonicIIMap,
   nonFunctionalDiatonicChordFunctions,
   diatonicDescendingFifthsMap,
+  secondaryDominantMap,
+  subDominantMap,
 } from '../model/cadence';
 import { getRandomFromArray } from '../utils';
 
-const dominantWeight = 8;
+const diatonicDominantWeight = 20;
+const secondaryDominantWeight = 8;
+const subDominantWeight = 6;
 const diatonicIIWeight = 16;
 const diatonicDescedningFifthWeight = diatonicIIWeight;
 const nonFunctionalDiatonicWeight = 4;
@@ -18,13 +22,17 @@ const allDiatonicWeight = 1;
 type CadenceConfig = {
   startOn1: boolean;
   endsOn1: boolean;
+  withSecondaryDominants: boolean;
+  withSubDominants: boolean;
   messures: number;
 };
 
 export function getRandomCadence({
   startOn1 = true,
   endsOn1 = true,
-  messures = 8,
+  messures = 12,
+  withSecondaryDominants = true,
+  withSubDominants = true,
 }: Partial<CadenceConfig>) {
   const chords: ChordFunction[] = [];
 
@@ -42,7 +50,7 @@ export function getRandomCadence({
 
     const chordPool: ChordFunction[] = [];
 
-    pushWeighted(chordPool, dominantMap[prev], dominantWeight);
+    pushWeighted(chordPool, dominantMap[prev], diatonicDominantWeight);
     pushWeighted(chordPool, diatonicIIMap[prev], diatonicIIWeight);
     pushWeighted(
       chordPool,
@@ -63,6 +71,16 @@ export function getRandomCadence({
       diatonicChordFunctions.filter((chord) => chord !== prev)
     );
     pushWeighted(chordPool, nextDiatonic, allDiatonicWeight);
+
+    if (withSecondaryDominants)
+      pushWeighted(
+        chordPool,
+        secondaryDominantMap[prev],
+        secondaryDominantWeight
+      );
+
+    if (withSubDominants)
+      pushWeighted(chordPool, subDominantMap[prev], subDominantWeight);
 
     chords.push(getRandomFromArray(chordPool));
   }
