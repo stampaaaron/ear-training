@@ -3,6 +3,7 @@ import {
   diatonicChordFunctions,
   iChords,
   dominantMap,
+  diatonicIIMap,
 } from '../model/cadence';
 import { getRandomFromArray } from '../utils';
 
@@ -33,9 +34,11 @@ export function getRandomCadence({
 
     chords.push(
       getRandomFromArray(
-        [...diatonicChordFunctions, ...dominantMap[prev]].filter(
-          (chord) => chord !== prev
-        )
+        [
+          ...diatonicChordFunctions,
+          ...dominantMap[prev],
+          ...(diatonicIIMap[prev] ? [diatonicIIMap[prev]] : []),
+        ].filter((chord) => chord !== prev)
       )
     );
   }
