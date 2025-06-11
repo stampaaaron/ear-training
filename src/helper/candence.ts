@@ -5,11 +5,13 @@ import {
   dominantMap,
   diatonicIIMap,
   nonFunctionalDiatonicChordFunctions,
+  diatonicDescendingFifthsMap,
 } from '../model/cadence';
 import { getRandomFromArray } from '../utils';
 
 const dominantWeight = 8;
 const diatonicIIWeight = 16;
+const diatonicDescedningFifthWeight = diatonicIIWeight;
 const nonFunctionalDiatonicWeight = 4;
 const allDiatonicWeight = 1;
 
@@ -42,6 +44,11 @@ export function getRandomCadence({
 
     pushWeighted(chordPool, dominantMap[prev], dominantWeight);
     pushWeighted(chordPool, diatonicIIMap[prev], diatonicIIWeight);
+    pushWeighted(
+      chordPool,
+      diatonicDescendingFifthsMap[prev],
+      diatonicDescedningFifthWeight
+    );
 
     const nextNonFunctionalDiatonic = getRandomFromArray(
       nonFunctionalDiatonicChordFunctions.filter((chord) => chord !== prev)
