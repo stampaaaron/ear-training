@@ -1,5 +1,4 @@
 import { AppShell, createTheme, MantineProvider } from '@mantine/core';
-
 import './styles.css';
 import '@mantine/core/styles.css';
 import { Quiz } from './pages/quiz/Quiz';
@@ -25,8 +24,8 @@ function App() {
                 <Route path="" element={<Quiz />} />
                 <Route path="new" element={<NewQuiz />} />
               </Route>
-              <Route path='/cadence'>
-                <Route path='' element={<Cadence />} />
+              <Route path="/cadence">
+                <Route path="" element={<Cadence />} />
               </Route>
               <Route path="/settings" element={<Settings />} />
             </Routes>

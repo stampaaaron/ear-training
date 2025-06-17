@@ -72,6 +72,28 @@ export const chordFunctionVoicings: Record<ChordFunction, Chord> = {
   'subV7/VI': seventhChords['dom.b7'],
 };
 
+export const chordFunctionIntervalMap: Record<ChordFunction, Interval> = {
+  I6: '1',
+  Ij7: '1',
+  IIm7: '2',
+  IIIm7: '3',
+  IVj7: '4',
+  V7: '5',
+  VIm7: '6',
+  VIIm7b5: '7',
+  'V7/II': '6',
+  'V7/III': '7',
+  'V7/IV': '1',
+  'V7/V': '2',
+  'V7/VI': '3',
+  'subV7/I': 'b2',
+  'subV7/II': 'b3',
+  'subV7/III': '4',
+  'subV7/IV': 'b5',
+  'subV7/V': 'b6',
+  'subV7/VI': 'b7',
+};
+
 export const dominantMap: { [F in ChordFunction]?: ChordFunction } = {
   ['I6']: DiatonicChordFunction.V7,
   ['Ij7']: DiatonicChordFunction.V7,

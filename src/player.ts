@@ -3,6 +3,11 @@ import { Interval, intervalDistanceMap } from './model/interval';
 import { useStore } from '@nanostores/react';
 import { $settings } from './store/settings';
 import { QuizOption, QuizMode } from './model/quiz';
+import {
+  ChordFunction,
+  chordFunctionIntervalMap,
+  chordFunctionVoicings,
+} from './model/cadence';
 
 export const piano = new Tone.Sampler({
   urls: {
@@ -92,6 +97,31 @@ export const usePlayer = () => {
     piano.triggerAttackRelease(transposedNote, releaseDelay, now);
   };
 
+  const playCadence = (
+    cadence: ChordFunction[],
+    startNote = getRandomMidiNote()
+  ) => {
+    let now = Tone.now();
+
+    cadence.forEach((chordFunction) => {
+      const root = Tone.Frequency(startNote, 'midi')
+        .transpose(intervalDistanceMap[chordFunctionIntervalMap[chordFunction]])
+        .toMidi();
+
+      const notes = chordFunctionVoicings[chordFunction].intervals.map((note) =>
+        Tone.Frequency(root, 'midi')
+          .transpose(intervalDistanceMap[note])
+          .toMidi()
+      );
+
+      notes.push(Tone.Frequency(root, 'midi').transpose(-12).toMidi());
+
+      piano.triggerAttack(notes, now, 0.8);
+      now += releaseDelay;
+      piano.releaseAll(now);
+    });
+  };
+
   const getRandomMidiNote = ([start, end] = startNoteRange) => {
     return Math.floor(Math.random() * (end - start) + start);
   };
@@ -103,15 +133,27 @@ export const usePlayer = () => {
   ) => {
     switch (mode) {
       case QuizMode.chords:
-        playChord((quizOption as QuizOption<QuizMode.chords>).intervals, startNote);
+        playChord(
+          (quizOption as QuizOption<QuizMode.chords>).intervals,
+          startNote
+        );
         break;
       case QuizMode.intervals:
-        playChord(['1', (quizOption as QuizOption<QuizMode.intervals>).interval], startNote);
+        playChord(
+          ['1', (quizOption as QuizOption<QuizMode.intervals>).interval],
+          startNote
+        );
         break;
       default:
         break;
     }
   };
 
-  return { playChord, playInterval, handlePlayOption, getRandomMidiNote };
+  return {
+    playChord,
+    playInterval,
+    handlePlayOption,
+    getRandomMidiNote,
+    playCadence,
+  };
 };
