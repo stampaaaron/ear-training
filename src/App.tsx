@@ -13,7 +13,7 @@ const theme = createTheme({});
 
 function App() {
   return (
-    <BrowserRouter basename="/ear-training">
+    <BrowserRouter>
       <MantineProvider theme={theme}>
         <AppShell bg="blue" py="lg">
           <AppShell.Main>
