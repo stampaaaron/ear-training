@@ -1,4 +1,5 @@
 import { Chord, seventhChords } from './chord';
+import { Interval } from './interval';
 
 export enum DiatonicChordFunction {
   'I6' = 'I6',
