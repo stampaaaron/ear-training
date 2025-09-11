@@ -33,6 +33,7 @@ export function OptionsGrid<M extends QuizMode>({
           return (
             !!optionsInGroup.length && (
               <OptionSet
+                key={groupKey}
                 label={groupName}
                 options={optionsInGroup}
                 selectedOptions={selectedOptions}

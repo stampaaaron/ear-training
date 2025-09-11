@@ -20,7 +20,7 @@ export enum ChordBase {
 
 export type Chord = QuizOptionBase<ChordBase> & {
   intervals: Interval[];
-  tensions?: ChordTension[];
+  tensions?: [ChordTension, ChordTension][];
 };
 
 export const chordGroupNaming: { [K in ChordBase]?: string } = {
@@ -42,38 +42,79 @@ const chordBaseIntervals: Record<ChordBase, Interval[]> = {
   sus2: ['1', '2', '5'],
 };
 
-const chords =
-// : {
-//   [b in ChordBase]: {
-//     [e in ChordExtension]?: ChordTension[];
-//   };
-// }
-{
+const chords: {
+  [b in ChordBase]: {
+    [e in ChordExtension]?: [ChordTension, ChordTension][];
+  };
+} = {
   maj: {
-    '7': ['9', '#11', '13'],
-    '6': ['9', '#11'],
+    '7': [
+      ['9', '#11'],
+      ['#11', '13'],
+    ],
+    '6': [['9', '#11']],
     b7: [],
   },
   dom: {
-    b7: ['b9', '9', '#9', '#11', 'b13', '13'],
+    b7: [
+      ['b9', '#9'],
+      ['b9', '#11'],
+      ['b9', 'b13'],
+      ['b9', '13'],
+      ['9', '#11'],
+      ['9', 'b13'],
+      ['9', '13'],
+      ['#9', '#11'],
+      ['#9', 'b13'],
+      ['#9', '13'],
+      ['#11', 'b13'],
+      ['#11', '13'],
+    ],
   },
   sus: {
-    b7: ['b9', '9', '10', '13'],
+    b7: [
+      ['b9', '10'],
+      ['b9', '13'],
+      ['9', '10'],
+      ['10', '13'],
+    ],
   },
-  sus2: undefined,
+  sus2: {},
   min: {
-    b7: ['9', '11', '13'],
-    '6': ['9', '11'],
-    '7': ['9', '11', '13'],
+    b7: [
+      ['9', '11'],
+      ['9', '13'],
+      ['11', '13'],
+    ],
+    '6': [['9', '11']],
+    '7': [
+      ['9', '11'],
+      ['9', '13'],
+      ['11', '13'],
+    ],
   },
   dim: {
     '7': [],
-    b7: ['9', '11', 'b13'],
-    bb7: ['9', '11', 'b13', '14'],
+    b7: [
+      ['9', '11'],
+      ['9', 'b13'],
+      ['11', 'b13'],
+    ],
+    bb7: [
+      ['9', '11'],
+      ['9', 'b13'],
+      ['9', '14'],
+      ['11', 'b13'],
+      ['11', '14'],
+      ['b13', '14'],
+    ],
   },
   aug: {
-    '7': ['9', '#11'],
-    b7: ['b9', '9', '#11'],
+    '7': [['9', '#11']],
+    b7: [
+      ['b9', '#11'],
+      ['9', '#11'],
+    ],
   },
 };
 
@@ -159,7 +200,7 @@ export const seventhChords = (
 
       acc[`${base}.${extension}`] = {
         intervals: [...chordBaseIntervals[base], extension],
-        tensions: tensions as ChordTension[],
+        tensions,
         group,
         name,
       };
@@ -169,11 +210,25 @@ export const seventhChords = (
   return acc;
 }, {} as SeventhChords);
 
-export function getAllTensionChords(chord: Chord): Chord[] {
+export function getAllOneTensionChords(chord: Chord): Chord[] {
+  const uniqueTensions = chord.tensions
+    ?.flat()
+    .filter((value, index, array) => array.indexOf(value) === index);
+
+  return (
+    uniqueTensions?.map((t) => ({
+      ...chord,
+      intervals: [...chord.intervals, t],
+      name: `${chord.name}(${t})`,
+    })) ?? []
+  );
+}
+
+export function getAllTwoTensionChords(chord: Chord): Chord[] {
   return (
     chord.tensions?.map((t) => ({
       ...chord,
-      intervals: [...chord.intervals, t],
+      intervals: [...chord.intervals, ...t],
       name: `${chord.name}(${t})`,
     })) ?? []
   );

@@ -1,7 +1,8 @@
 import {
   baseChords,
   Chord,
-  getAllTensionChords,
+  getAllOneTensionChords,
+  getAllTwoTensionChords,
   seventhChords,
   SeventhChords,
 } from './chord';
@@ -37,7 +38,12 @@ const basicSeventhChords = [
 const basicSeventhChordsWithTensions = [
   ...basicSenventhChordsWithoutDominant,
   seventhChords['dom.b7'],
-].flatMap(getAllTensionChords);
+].flatMap(getAllOneTensionChords);
+
+const basicSeventhChordsWithTwoTensions = [
+  ...basicSenventhChordsWithoutDominant,
+  seventhChords['dom.b7'],
+].flatMap(getAllTwoTensionChords);
 
 const allSeventhChords = (
   Object.entries(seventhChords) as Entries<SeventhChords>
@@ -46,13 +52,19 @@ const allSeventhChords = (
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   .map(([_, value]) => value);
 
-const allChordsWithTensions =
-  Object.values(seventhChords).flatMap(getAllTensionChords);
+const allChordsWithTensions = Object.values(seventhChords).flatMap(
+  getAllOneTensionChords
+);
+
+const allChordsWithTwoTensions = Object.values(seventhChords).flatMap(
+  getAllTwoTensionChords
+);
 
 export const allChords = [
   ...allTriads,
   ...allSeventhChords,
   ...allChordsWithTensions,
+  ...allChordsWithTwoTensions,
 ];
 
 export const chordSets: ChordSet[] = [
@@ -75,15 +87,27 @@ export const chordSets: ChordSet[] = [
     description: allSeventhChords.map(({ name }) => name).join(', '),
   },
   {
-    key: 'basic-tensions',
-    label: 'Basic Tensions',
+    key: 'basic-single-tensions',
+    label: 'Basic Tensions (1 Tensions)',
     options: basicSeventhChordsWithTensions,
-    description: `${basicSeventhChords.map(({ name }) => name).join(', ')} with Tensions`,
+    description: `${basicSeventhChords.map(({ name }) => name).join(', ')} with one Tension`,
   },
   {
-    key: 'all-tensions',
-    label: 'All Tensions',
+    key: 'all-single-tensions',
+    label: 'All Tensions (1 Tensions)',
     options: allChordsWithTensions,
-    description: `${allSeventhChords.map(({ name }) => name).join(', ')} with Tensions`,
+    description: `${allSeventhChords.map(({ name }) => name).join(', ')} with one Tensions`,
+  },
+  {
+    key: 'basic-two-tensions',
+    label: 'Basic Tensions (2 Tensions)',
+    options: basicSeventhChordsWithTwoTensions,
+    description: `${basicSeventhChords.map(({ name }) => name).join(', ')} with two Tension`,
+  },
+  {
+    key: 'all-two-tensions',
+    label: 'All Tensions (2 Tensions)',
+    options: allChordsWithTwoTensions,
+    description: `${allSeventhChords.map(({ name }) => name).join(', ')} with two Tensions`,
   },
 ];
