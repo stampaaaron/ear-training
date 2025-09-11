@@ -5,6 +5,7 @@ export type Interval =
   | '1'
   | 'b2'
   | '2'
+  | '#2'
   | 'b3'
   | '3'
   | '4'
@@ -32,6 +33,7 @@ export const intervalDistanceMap: Record<Interval, number> = {
   1: 0,
   b2: 1,
   '2': 2,
+  '#2': 3,
   b3: 3,
   '3': 4,
   '4': 5,
@@ -60,6 +62,7 @@ const intervalNaming: Record<Interval, string> = {
   1: '1',
   b2: 'b2',
   '2': '2',
+  '#2': '#2',
   b3: 'b3',
   '3': '3',
   '4': '4',

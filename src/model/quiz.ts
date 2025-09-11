@@ -1,6 +1,7 @@
 import { chordGroupNaming } from './chord';
 import { allChords } from './chordSet';
 import { allIntervals } from './interval';
+import { allScales, scaleGroupNaming } from './scale';
 
 export enum QuizMode {
   intervals = 'intervals',
@@ -17,7 +18,7 @@ export const quizModeNames: Record<QuizMode, string> = {
 export const quizOptions = {
   [QuizMode.intervals]: allIntervals,
   [QuizMode.chords]: allChords,
-  [QuizMode.scales]: [],
+  [QuizMode.scales]: allScales,
 } as const;
 
 export type QuizOption<M extends QuizMode = keyof typeof quizOptions> =
@@ -26,5 +27,5 @@ export type QuizOption<M extends QuizMode = keyof typeof quizOptions> =
 export const quizGroups: { [M in QuizMode]: Record<string, string> } = {
   [QuizMode.intervals]: {},
   [QuizMode.chords]: chordGroupNaming,
-  [QuizMode.scales]: {},
+  [QuizMode.scales]: scaleGroupNaming,
 };

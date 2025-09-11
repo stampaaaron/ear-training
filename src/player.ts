@@ -39,7 +39,7 @@ export const usePlayer = () => {
     playBackModes,
   } = useStore($settings);
 
-  const playChord = async (
+  const playIntervals = async (
     chord: Interval[],
     startNote = getRandomMidiNote(),
     modes: PlaybackMode[] = playBackModes
@@ -133,15 +133,22 @@ export const usePlayer = () => {
   ) => {
     switch (mode) {
       case QuizMode.chords:
-        playChord(
+        playIntervals(
           (quizOption as QuizOption<QuizMode.chords>).intervals,
           startNote
         );
         break;
       case QuizMode.intervals:
-        playChord(
+        playIntervals(
           ['1', (quizOption as QuizOption<QuizMode.intervals>).interval],
           startNote
+        );
+        break;
+      case QuizMode.scales:
+        playIntervals(
+          (quizOption as QuizOption<QuizMode.scales>).intervals,
+          startNote,
+          playBackModes.filter((mode) => mode !== PlaybackMode.harmonic)
         );
         break;
       default:
@@ -150,7 +157,7 @@ export const usePlayer = () => {
   };
 
   return {
-    playChord,
+    playIntervals,
     playInterval,
     handlePlayOption,
     getRandomMidiNote,
