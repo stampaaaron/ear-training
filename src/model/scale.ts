@@ -16,19 +16,19 @@ type Scale = QuizOptionBase<ScaleGroup> & {
 };
 
 // Pentatonic scales
-const pentaDur: Scale = {
+const pentaMaj: Scale = {
   name: 'Pentatonic Major',
   group: 'penta',
   intervals: ['1', '2', '3', '5', '6'],
 };
 
-const pentaMoll: Scale = {
+const pentaMin: Scale = {
   name: 'Pentatonic Minor',
   group: 'penta',
   intervals: ['1', 'b3', '4', '5', 'b7'],
 };
 
-const pentatonicScales: Scale[] = [pentaDur, pentaMoll];
+const pentatonicScales: Scale[] = [pentaMaj, pentaMin];
 
 // Major scales (with major 3rd)
 const ionian: Scale = {
@@ -200,7 +200,7 @@ const advancedMixed = [
 
 export const scaleSets: QuizSet<Scale>[] = [
   {
-    key: 'basic',
+    key: 'basic-scales',
     label: 'Basic scales',
     description: basicScales.map(({ name }) => name).join(', '),
     options: basicScales,
