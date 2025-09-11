@@ -146,7 +146,7 @@ export const usePlayer = () => {
         break;
       case QuizMode.scales:
         playIntervals(
-          (quizOption as QuizOption<QuizMode.scales>).intervals,
+          [...(quizOption as QuizOption<QuizMode.scales>).intervals, '8'],
           startNote,
           playBackModes.filter((mode) => mode !== PlaybackMode.harmonic)
         );
