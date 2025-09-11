@@ -1,6 +1,7 @@
 import { chordSets } from './chordSet';
 import { intervalSets } from './interval';
 import { QuizOption, QuizMode } from './quiz';
+import { scaleSets } from './scale';
 
 export type QuizSet<O extends QuizOptionBase> = {
   key: string;
@@ -12,7 +13,7 @@ export type QuizSet<O extends QuizOptionBase> = {
 export const quizSets: { [M in QuizMode]: QuizSet<QuizOption<M>>[] } = {
   [QuizMode.intervals]: intervalSets,
   [QuizMode.chords]: chordSets,
-  [QuizMode.scales]: [],
+  [QuizMode.scales]: scaleSets,
 };
 
 export const allSets = Object.values(quizSets).flat();
