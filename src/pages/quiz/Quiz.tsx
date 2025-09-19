@@ -107,7 +107,9 @@ export function Quiz() {
           </Button>
           <Button
             flex={1}
-            disabled={!current || (current && guess && guessedCorrectly)}
+            disabled={
+              !current || (current && guess && guessedCorrectly && autoPlayNext)
+            }
             variant="outline"
             rightSection={<IconChevronRight size={16} />}
             onClick={handlePlayNext}
