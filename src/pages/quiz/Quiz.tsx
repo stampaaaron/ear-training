@@ -1,21 +1,25 @@
 import { useState } from 'react';
-import { Button, Flex, Stack } from '@mantine/core';
+import { ActionIcon, Button, Flex, Group, Stack, Switch } from '@mantine/core';
 import { getRandomFromArray } from '../../utils';
 import { usePlayer } from '../../player';
 import { OptionsGrid } from '../../components/OptionsGrid';
 import {
   IconCheck,
   IconChevronRight,
+  IconPlayerPause,
+  IconPlayerPlay,
   IconRepeat,
+  IconSettings,
   IconVolume,
   IconX,
 } from '@tabler/icons-react';
 import { Shell } from '../../layout/Shell';
-import { useSearchParams } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { $currentSet } from '../../store/currentSet';
 import { useStore } from '@nanostores/react';
 import { QuizOption, QuizMode } from '../../model/quiz';
 import { allSets } from '../../model/quizSet';
+import { $settings } from '../../store/settings';
 
 export function Quiz() {
   const [searchParams] = useSearchParams();
@@ -23,6 +27,8 @@ export function Quiz() {
   const mode = searchParams.get('mode') as QuizMode;
 
   const { handlePlayOption, getRandomMidiNote } = usePlayer();
+
+  const { autoPlayNext, ...restSettings } = useStore($settings);
 
   const customSet = useStore($currentSet);
 
@@ -49,7 +55,28 @@ export function Quiz() {
   };
 
   return (
-    <Shell title="Choose the correct answer">
+    <Shell
+      title="Choose the correct answer"
+      rightSection={
+        <Group>
+          <Group>
+            <Switch
+              labelPosition="left"
+              onLabel={<IconPlayerPlay size={12} />}
+              offLabel={<IconPlayerPause size={12} />}
+              checked={autoPlayNext}
+              onChange={({ target: { checked } }) =>
+                $settings.set({ ...restSettings, autoPlayNext: checked })
+              }
+              label="Autoplay next"
+            />
+          </Group>
+          <ActionIcon component={Link} variant="subtle" to="/settings">
+            <IconSettings />
+          </ActionIcon>
+        </Group>
+      }
+    >
       <Stack>
         <Flex justify="center" p="xl">
           {current ? (
@@ -80,12 +107,14 @@ export function Quiz() {
           </Button>
           <Button
             flex={1}
-            disabled={!current}
+            disabled={!current || (current && guess && guessedCorrectly)}
             variant="outline"
             rightSection={<IconChevronRight size={16} />}
             onClick={handlePlayNext}
           >
-            Skip
+            {current && guess && guessedCorrectly && !autoPlayNext
+              ? 'Next'
+              : 'Skip'}
           </Button>
         </Button.Group>
 
@@ -95,7 +124,9 @@ export function Quiz() {
             onSelect={(option) => {
               setGuess(option);
               if (option.name === current?.name) {
-                setTimeout(handlePlayNext, 1000);
+                if (autoPlayNext) {
+                  setTimeout(handlePlayNext, 1000);
+                }
               }
             }}
             guess={guess}

@@ -7,6 +7,7 @@ export const defaultSettings = {
   releaseDelay: 2,
   playBackModes: ['harmonic', 'ascending'] as PlaybackMode[],
   delayBetweenModes: 0.5,
+  autoPlayNext: true,
 };
 
 export const $settings = persistentAtom<typeof defaultSettings>(
