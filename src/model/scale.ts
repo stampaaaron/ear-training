@@ -154,13 +154,13 @@ const wholeTone: Scale = {
 const halfWholeDim: Scale = {
   name: 'Half-Whole Diminished',
   group: 'sym',
-  intervals: ['1', '2', 'b3', '4', 'b5', 'b6', '6', '7'],
+  intervals: ['1', 'b2', '#2', '3', '#4', '5', '6', 'b7'],
 };
 
 const wholeHalfDim: Scale = {
   name: 'Whole-Half Diminished',
   group: 'sym',
-  intervals: ['1', 'b2', '#2', '3', '#4', '5', '6', 'b7'],
+  intervals: ['1', '2', 'b3', '4', 'b5', 'b6', '6', '7'],
 };
 
 const symmetricScales: Scale[] = [wholeTone, halfWholeDim, wholeHalfDim];
