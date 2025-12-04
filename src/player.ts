@@ -42,6 +42,7 @@ export const usePlayer = () => {
   const playIntervals = async (
     chord: Interval[],
     startNote = getRandomMidiNote(),
+    sustained = true,
     modes: PlaybackMode[] = playBackModes
   ) => {
     await Tone.start();
@@ -63,11 +64,25 @@ export const usePlayer = () => {
           notes = notes.reverse();
         // falls through
         case 'ascending':
-          notes.forEach((note, index) => {
-            piano.triggerAttack(note, now + index * noteToNoteDelay, 0.8);
-          });
-          now = now + notes.length * noteToNoteDelay + releaseDelay;
-          piano.releaseAll(now);
+            if (sustained) {
+              notes.forEach((note, index) => {
+                piano.triggerAttack(note, now + index * noteToNoteDelay, 0.8);
+              });
+
+              now = now + notes.length * noteToNoteDelay + releaseDelay;
+              piano.releaseAll(now);
+            } else {
+              notes.forEach((note, index) => {
+                piano.triggerAttackRelease(
+                  note,
+                  now + releaseDelay,
+                  now + index * noteToNoteDelay,
+                  0.8
+                );
+              });
+              now = now + notes.length * noteToNoteDelay + releaseDelay;
+            }
+
           break;
         case 'harmonic':
           piano.triggerAttack(notes, now, 0.8);
@@ -148,6 +163,7 @@ export const usePlayer = () => {
         playIntervals(
           [...(quizOption as QuizOption<QuizMode.scales>).intervals, '8'],
           startNote,
+          false,
           playBackModes.filter((mode) => mode !== PlaybackMode.harmonic)
         );
         break;
