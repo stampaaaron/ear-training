@@ -1,5 +1,5 @@
+import { QuizOptionBase, QuizSet } from '../store/sets';
 import { Entries } from './helper';
-import { QuizOptionBase, QuizSet } from './quizSet';
 
 export type Interval =
   | '1'
@@ -87,7 +87,7 @@ const intervalNaming: Record<Interval, string> = {
   14: '14',
 };
 
-type IntervalOption = QuizOptionBase & {
+export type IntervalOption = QuizOptionBase & {
   interval: Interval;
 };
 

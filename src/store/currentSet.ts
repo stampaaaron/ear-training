@@ -1,6 +1,6 @@
 import { persistentAtom } from '@nanostores/persistent';
-import { QuizSet } from '../model/quizSet';
 import { QuizOption } from '../model/quiz';
+import { QuizSet } from './sets';
 
 export const $currentSet = persistentAtom<QuizSet<QuizOption>>(
   'currentChordSet',

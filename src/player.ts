@@ -1,22 +1,13 @@
 import * as Tone from 'tone';
 import { Interval, intervalDistanceMap } from './model/interval';
-import { useStore } from '@nanostores/react';
-import { $settings } from './store/settings';
+import { Settings } from './store/settings';
 import { QuizOption, QuizMode } from './model/quiz';
 import {
   ChordFunction,
   chordFunctionIntervalMap,
   chordFunctionVoicings,
 } from './model/cadence';
-
-export const piano = new Tone.Sampler({
-  urls: {
-    A3: 'A3.wav',
-    A4: 'A4.wav',
-    A5: 'A5.wav',
-  },
-  baseUrl: './',
-}).toDestination();
+import { useAudio } from './pages/AudioProvider';
 
 export enum PlaybackMode {
   ascending = 'ascending',
@@ -30,22 +21,28 @@ export const playbackModeTranslationMap: Record<PlaybackMode, string> = {
   harmonic: 'Harmonic',
 };
 
-export const usePlayer = () => {
-  const {
-    noteToNoteDelay,
-    releaseDelay,
-    delayBetweenModes,
-    startNoteRange,
-    playBackModes,
-  } = useStore($settings);
+export const getRandomMidiNote = ([start, end]: [number, number]) => {
+  return Math.floor(Math.random() * (end - start) + start);
+};
+
+export const usePlayer = ({
+  noteToNoteDelay,
+  releaseDelay,
+  delayBetweenModes,
+  startNoteRange,
+  playBackModes,
+}: Settings) => {
+  const { piano } = useAudio();
 
   const playIntervals = async (
     chord: Interval[],
-    startNote = getRandomMidiNote(),
+    startNote = getRandomMidiNote(startNoteRange),
     sustained = true,
     modes: PlaybackMode[] = playBackModes
   ) => {
     await Tone.start();
+    await Tone.loaded();
+
     let now = Tone.now();
 
     let notes = chord.map((note) =>
@@ -64,30 +61,30 @@ export const usePlayer = () => {
           notes = notes.reverse();
         // falls through
         case 'ascending':
-            if (sustained) {
-              notes.forEach((note, index) => {
-                piano.triggerAttack(note, now + index * noteToNoteDelay, 0.8);
-              });
+          if (sustained) {
+            notes.forEach((note, index) => {
+              piano?.triggerAttack(note, now + index * noteToNoteDelay, 0.8);
+            });
 
-              now = now + notes.length * noteToNoteDelay + releaseDelay;
-              piano.releaseAll(now);
-            } else {
-              notes.forEach((note, index) => {
-                piano.triggerAttackRelease(
-                  note,
-                  now + releaseDelay,
-                  now + index * noteToNoteDelay,
-                  0.8
-                );
-              });
-              now = now + notes.length * noteToNoteDelay + releaseDelay;
-            }
+            now = now + notes.length * noteToNoteDelay + releaseDelay;
+            piano?.releaseAll(now);
+          } else {
+            notes.forEach((note, index) => {
+              piano?.triggerAttackRelease(
+                note,
+                now + releaseDelay,
+                now + index * noteToNoteDelay,
+                0.8
+              );
+            });
+            now = now + notes.length * noteToNoteDelay + releaseDelay;
+          }
 
           break;
         case 'harmonic':
-          piano.triggerAttack(notes, now, 0.8);
+          piano?.triggerAttack(notes, now, 0.8);
           now += releaseDelay;
-          piano.releaseAll(now);
+          piano?.releaseAll(now);
           break;
         default:
           break;
@@ -96,25 +93,9 @@ export const usePlayer = () => {
     });
   };
 
-  const playInterval = async (
-    interval: Interval,
-    startNote = getRandomMidiNote()
-  ) => {
-    await Tone.start();
-    let now = Tone.now();
-
-    const transposedNote = Tone.Frequency(startNote, 'midi')
-      .transpose(intervalDistanceMap[interval])
-      .toMidi();
-
-    piano.triggerAttackRelease(startNote, releaseDelay, now);
-    now += noteToNoteDelay;
-    piano.triggerAttackRelease(transposedNote, releaseDelay, now);
-  };
-
   const playCadence = (
     cadence: ChordFunction[],
-    startNote = getRandomMidiNote()
+    startNote = getRandomMidiNote(startNoteRange)
   ) => {
     let now = Tone.now();
 
@@ -131,14 +112,10 @@ export const usePlayer = () => {
 
       notes.push(Tone.Frequency(root, 'midi').transpose(-12).toMidi());
 
-      piano.triggerAttack(notes, now, 0.8);
+      piano?.triggerAttack(notes, now, 0.8);
       now += releaseDelay;
-      piano.releaseAll(now);
+      piano?.releaseAll(now);
     });
-  };
-
-  const getRandomMidiNote = ([start, end] = startNoteRange) => {
-    return Math.floor(Math.random() * (end - start) + start);
   };
 
   const handlePlayOption = <M extends QuizMode>(
@@ -174,7 +151,6 @@ export const usePlayer = () => {
 
   return {
     playIntervals,
-    playInterval,
     handlePlayOption,
     getRandomMidiNote,
     playCadence,

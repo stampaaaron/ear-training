@@ -1,35 +1,33 @@
 import { ActionIcon, Card, Flex, Group, Title } from '@mantine/core';
-import { IconChevronLeft, IconSettings } from '@tabler/icons-react';
+import { IconChevronLeft } from '@tabler/icons-react';
 import { PropsWithChildren, ReactNode } from 'react';
-import { Link } from 'react-router';
+import { Link, To } from 'react-router';
 
 type ShellProps = {
-  title: string;
+  title: ReactNode;
   rightSection?: ReactNode;
-  backUrl?: string;
+  backUrl?: To;
 };
 
 export function Shell({
   title,
   children,
-  rightSection = (
-    <ActionIcon component={Link} variant="subtle" to="/settings">
-      <IconSettings />
-    </ActionIcon>
-  ),
+  rightSection,
   backUrl,
 }: PropsWithChildren<ShellProps>) {
   return (
     <Card padding="lg" h="100%">
       <Card.Section inheritPadding withBorder py="sm" mb="lg">
-        <Flex justify="space-between" align="center">
-          <Group>
+        <Flex justify="space-between" align="center" gap="md">
+          <Group flex={1}>
             {backUrl && (
               <ActionIcon component={Link} variant="subtle" to={backUrl}>
                 <IconChevronLeft />
               </ActionIcon>
             )}
-            <Title order={3}>{title}</Title>
+            <Title order={3} flex={1}>
+              {title}
+            </Title>
           </Group>
           {rightSection}
         </Flex>

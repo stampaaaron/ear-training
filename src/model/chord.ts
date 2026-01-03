@@ -1,6 +1,6 @@
+import { QuizOptionBase } from '../store/sets';
 import { Entries } from './helper';
 import { Interval } from './interval';
-import { QuizOptionBase } from './quizSet';
 
 type ChordExtension = Extract<Interval, '6' | 'bb7' | 'b7' | '7'>;
 export type ChordTension = Extract<

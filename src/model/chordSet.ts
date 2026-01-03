@@ -1,3 +1,4 @@
+import { QuizSet } from '../store/sets';
 import {
   baseChords,
   Chord,
@@ -7,7 +8,6 @@ import {
   SeventhChords,
 } from './chord';
 import { Entries } from './helper';
-import { QuizSet } from './quizSet';
 
 export type ChordSet = QuizSet<Chord>;
 

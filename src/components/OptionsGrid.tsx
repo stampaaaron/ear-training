@@ -6,8 +6,9 @@ type OptionsGridProps<M extends QuizMode> = {
   availableOptions?: QuizOption<M>[];
   guess?: QuizOption<M>;
   guessedCorrectly?: boolean;
-  selectedOptions?: QuizOption<M>[];
-  onSelect: (option: QuizOption<M>) => void;
+  value?: QuizOption<M>[];
+  onChange?: (options: QuizOption<M>[]) => void;
+  onSelect?: (option: QuizOption<M>) => void;
   quizMode: M;
 };
 
@@ -16,11 +17,21 @@ export function OptionsGrid<M extends QuizMode>({
   onSelect,
   guess: optionGuess,
   guessedCorrectly,
-  selectedOptions,
+  value: selectedOptions,
+  onChange,
   quizMode,
 }: OptionsGridProps<M>) {
   const groupEntries = Object.entries(quizGroups[quizMode]);
-  const options = availableOptions ?? quizOptions[quizMode] ?? [];  
+  const options = availableOptions ?? quizOptions[quizMode] ?? [];
+
+  const handleSelect = (option: QuizOption<M>) => {
+    onSelect?.(option);
+    onChange?.(
+      selectedOptions?.some((c) => c.name === option.name)
+        ? selectedOptions.filter((c) => c.name !== option.name)
+        : [...(selectedOptions ?? []), option]
+    );
+  };
 
   return (
     <Stack>
@@ -37,7 +48,7 @@ export function OptionsGrid<M extends QuizMode>({
                 label={groupName}
                 options={optionsInGroup}
                 selectedOptions={selectedOptions}
-                onSelect={onSelect}
+                onSelect={handleSelect}
                 guess={optionGuess}
                 guessedCorrectly={guessedCorrectly}
               />
@@ -47,9 +58,9 @@ export function OptionsGrid<M extends QuizMode>({
       ) : (
         <OptionSet
           label=""
-          options={options as QuizOption<M>[]} // TODO remove type assertion once all modes are implemented
+          options={options}
           selectedOptions={selectedOptions}
-          onSelect={onSelect}
+          onSelect={handleSelect}
           guess={optionGuess}
           guessedCorrectly={guessedCorrectly}
         />

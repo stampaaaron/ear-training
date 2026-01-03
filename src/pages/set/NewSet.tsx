@@ -1,15 +1,21 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { OptionsGrid } from '../../components/OptionsGrid';
 import { Shell } from '../../layout/Shell';
 import { Button, Stack } from '@mantine/core';
-import { createSearchParams, Link, useSearchParams } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { useStore } from '@nanostores/react';
 import { $currentSet } from '../../store/currentSet';
 import { QuizMode } from '../../model/quiz';
+import { $sets } from '../../store/sets';
+import { defaultSettings } from '../../store/settings';
 
-export function NewQuiz() {
+export function NewSet() {
   const [searchParams] = useSearchParams();
   const mode = searchParams.get('mode') as QuizMode;
+
+  const uuid = useRef(crypto.randomUUID());
+
+  const sets = useStore($sets);
 
   const quizSet = useStore($currentSet);
   const [selectedOptions, setSelectedOptions] = useState(quizSet.options ?? []);
@@ -19,32 +25,26 @@ export function NewQuiz() {
       <Stack>
         <OptionsGrid
           quizMode={mode}
-          onSelect={(option) => {
-            setSelectedOptions(
-              selectedOptions?.some((c) => c.name === option.name)
-                ? selectedOptions.filter((c) => c.name !== option.name)
-                : [...selectedOptions, option]
-            );
-          }}
-          selectedOptions={selectedOptions}
+          onChange={setSelectedOptions}
+          value={selectedOptions}
         />
 
         <Button
           component={Link}
           onClick={() =>
-            $currentSet.set({
-              key: 'custom',
-              options: selectedOptions,
-              label: '',
+            $sets.set({
+              ...sets,
+              [mode]: [
+                ...sets[mode],
+                {
+                  key: uuid.current,
+                  options: selectedOptions,
+                  settings: defaultSettings,
+                },
+              ],
             })
           }
-          to={{
-            pathname: '/quiz',
-            search: createSearchParams({
-              quizSet: 'custom',
-              mode,
-            }).toString(),
-          }}
+          to={`/sets/${uuid.current}`}
         >
           Continue
         </Button>

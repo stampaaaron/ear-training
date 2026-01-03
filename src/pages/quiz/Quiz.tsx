@@ -1,6 +1,4 @@
-import { useState } from 'react';
-import { ActionIcon, Button, Flex, Group, Stack, Switch } from '@mantine/core';
-import { getRandomFromArray } from '../../utils';
+import { Button, Flex, Group, Stack, Switch } from '@mantine/core';
 import { usePlayer } from '../../player';
 import { OptionsGrid } from '../../components/OptionsGrid';
 import {
@@ -9,49 +7,38 @@ import {
   IconPlayerPause,
   IconPlayerPlay,
   IconRepeat,
-  IconSettings,
   IconVolume,
   IconX,
 } from '@tabler/icons-react';
 import { Shell } from '../../layout/Shell';
-import { Link, useSearchParams } from 'react-router';
-import { $currentSet } from '../../store/currentSet';
+import { useSearchParams } from 'react-router';
 import { useStore } from '@nanostores/react';
-import { QuizOption, QuizMode } from '../../model/quiz';
-import { allSets } from '../../model/quizSet';
-import { $settings } from '../../store/settings';
+import { $settings, defaultSettings } from '../../store/settings';
+import { useSet } from '../../store/sets';
+import { useQuiz } from '../../store/quiz';
 
 export function Quiz() {
   const [searchParams] = useSearchParams();
   const quizSetKey = searchParams.get('quizSet');
-  const mode = searchParams.get('mode') as QuizMode;
-
-  const { handlePlayOption, getRandomMidiNote } = usePlayer();
 
   const { autoPlayNext, ...restSettings } = useStore($settings);
 
-  const customSet = useStore($currentSet);
+  const { set, mode } = useSet(quizSetKey ?? '');
+  const availableOptions = set?.options ?? [];
 
-  const availableOptions =
-    allSets.find(({ key }) => key === quizSetKey)?.options ??
-    customSet.options ??
-    [];
+  const { handlePlayOption } = usePlayer(set?.settings ?? defaultSettings);
 
-  const [startNote, setStartNote] = useState<number>();
-  const [current, setCurrent] = useState<QuizOption<typeof mode>>();
-  const [guess, setGuess] = useState<QuizOption<typeof mode>>();
+  const {
+    quiz: { current, guess },
+    nextQuestion,
+    setGuess,
+  } = useQuiz();
 
-  const guessedCorrectly = guess?.name === current?.name;
+  const guessedCorrectly = guess?.name === current?.option.name;
 
-  const handlePlayNext = () => {
-    const randomOption = getRandomFromArray(availableOptions);
-
-    const startNote = getRandomMidiNote();
-    setStartNote(startNote);
-    setGuess(undefined);
-    setCurrent(randomOption);
-
-    handlePlayOption(mode, randomOption, startNote);
+  const handlePlayNext = async () => {
+    const current = nextQuestion(availableOptions);
+    handlePlayOption(mode, current.option, current.startNote);
   };
 
   return (
@@ -71,9 +58,6 @@ export function Quiz() {
               label="Autoplay next"
             />
           </Group>
-          <ActionIcon component={Link} variant="subtle" to="/settings">
-            <IconSettings />
-          </ActionIcon>
         </Group>
       }
     >
@@ -90,7 +74,7 @@ export function Quiz() {
               <IconVolume size={50} />
             )
           ) : (
-            <Button onClick={handlePlayNext}>Start</Button>
+            <Button onClick={handlePlayNext}>Continue</Button>
           )}
         </Flex>
         <Button.Group w="100%">
@@ -100,7 +84,8 @@ export function Quiz() {
             disabled={!current}
             leftSection={<IconRepeat size={16} />}
             onClick={() => {
-              if (current) handlePlayOption(mode, current, startNote);
+              if (current)
+                handlePlayOption(mode, current.option, current.startNote);
             }}
           >
             Replay
@@ -125,7 +110,8 @@ export function Quiz() {
             availableOptions={availableOptions}
             onSelect={(option) => {
               setGuess(option);
-              if (option.name === current?.name) {
+
+              if (option.name === current?.option.name) {
                 if (autoPlayNext) {
                   setTimeout(handlePlayNext, 1000);
                 }

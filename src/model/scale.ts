@@ -1,5 +1,5 @@
+import { QuizOptionBase, QuizSet } from '../store/sets';
 import { Interval } from './interval';
-import { QuizOptionBase, QuizSet } from './quizSet';
 
 type ScaleGroup = 'penta' | 'maj' | 'min' | 'dom' | 'sym';
 
@@ -11,7 +11,7 @@ export const scaleGroupNaming: { [K in ScaleGroup]?: string } = {
   ['sym']: 'Symmetric',
 };
 
-type Scale = QuizOptionBase<ScaleGroup> & {
+export type Scale = QuizOptionBase<ScaleGroup> & {
   intervals: Interval[];
 };
 

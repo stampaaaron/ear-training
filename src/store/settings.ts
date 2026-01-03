@@ -10,7 +10,9 @@ export const defaultSettings = {
   autoPlayNext: true,
 };
 
-export const $settings = persistentAtom<typeof defaultSettings>(
+export type Settings = typeof defaultSettings;
+
+export const $settings = persistentAtom<Settings>(
   'settings',
   defaultSettings,
   {
