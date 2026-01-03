@@ -1,7 +1,7 @@
 import { Button, Stack, Title, Text } from '@mantine/core';
 import { createSearchParams, Link, To } from 'react-router';
-import { QuizSet } from '../model/quizSet';
 import { QuizMode, QuizOption } from '../model/quiz';
+import { QuizSet } from '../store/sets';
 
 type SetButtonType<M extends QuizMode> = {
   quizSet: QuizSet<QuizOption<M>>;
