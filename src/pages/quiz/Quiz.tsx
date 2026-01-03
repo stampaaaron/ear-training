@@ -11,7 +11,7 @@ import {
   IconX,
 } from '@tabler/icons-react';
 import { Shell } from '../../layout/Shell';
-import { useSearchParams } from 'react-router';
+import { createSearchParams, useSearchParams } from 'react-router';
 import { useStore } from '@nanostores/react';
 import { $settings, defaultSettings } from '../../store/settings';
 import { useSet } from '../../store/sets';
@@ -60,6 +60,10 @@ export function Quiz() {
           </Group>
         </Group>
       }
+      backUrl={{
+        pathname: '/sets',
+        search: createSearchParams({ mode }).toString(),
+      }}
     >
       <Stack>
         <Flex justify="center" p="xl">
