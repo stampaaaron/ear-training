@@ -37,7 +37,10 @@ export function Set() {
   const isCreateForm = !set?.label;
 
   const form = useForm<QuizSet<QuizOption>>({
-    initialValues: set,
+    initialValues: set && {
+      ...set,
+      settings: set?.settings ?? defaultSettings,
+    },
     validate: {
       label: isNotEmpty('Title must be set.'),
       options: hasLength(
