@@ -32,13 +32,14 @@ export function Quiz() {
     quiz: { current, guess },
     nextQuestion,
     setGuess,
-  } = useQuiz();
+  } = useQuiz(set);
 
   const guessedCorrectly = guess?.name === current?.option.name;
 
   const handlePlayNext = async () => {
     const current = nextQuestion(availableOptions);
-    handlePlayOption(mode, current.option, current.startNote);
+
+    handlePlayOption(mode, current.option, current.startNote, current.voicing);
   };
 
   return (
@@ -89,7 +90,12 @@ export function Quiz() {
             leftSection={<IconRepeat size={16} />}
             onClick={() => {
               if (current)
-                handlePlayOption(mode, current.option, current.startNote);
+                handlePlayOption(
+                  mode,
+                  current.option,
+                  current.startNote,
+                  current.voicing
+                );
             }}
           >
             Replay

@@ -6,6 +6,7 @@ import {
   Slider,
   Space,
   Stack,
+  Switch,
   Text,
 } from '@mantine/core';
 import { Form, UseFormReturnType } from '@mantine/form';
@@ -193,6 +194,14 @@ export function SettingsForm<F extends { settings?: SettingsForm }>({
             </Flex>
           </div>
         </Stack>
+
+        <Switch
+          label="Alternative voicings"
+          labelPosition="left"
+          {...form.getInputProps('settings.alternativeVoicings', {
+            type: 'checkbox',
+          })}
+        />
       </Stack>
     </Form>
   );

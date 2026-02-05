@@ -30,9 +30,9 @@ export function Set() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { nextQuestion } = useQuiz();
-
   const { set, mode, updateSet, deleteSet } = useSet(id ?? '');
+
+  const { nextQuestion } = useQuiz(set);
 
   const isCreateForm = !set?.label;
 

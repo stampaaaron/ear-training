@@ -1,12 +1,119 @@
 import { QuizOptionBase } from '../store/sets';
+import { getRandomFromArray } from '../utils';
 import { Entries } from './helper';
-import { Interval } from './interval';
+import { Interval, intervalDistanceMap } from './interval';
 
 type ChordExtension = Extract<Interval, '6' | 'bb7' | 'b7' | '7'>;
 export type ChordTension = Extract<
   Interval,
   'b9' | '9' | '#9' | '10' | '11' | '#11' | 'b13' | '13' | '14'
 >;
+
+type VoicingInterval = 1 | 3 | 5 | 7 | 9 | 11 | 13;
+
+export const chordIntervalBaseMap: Record<VoicingInterval, Interval[]> = {
+  '1': ['1'],
+  '3': ['b3', '3', '4'],
+  '5': ['5', '#5', 'b5'],
+  '7': ['bb7', 'b7', '7', '6'],
+  '9': ['b9', '9', '#9'],
+  '11': ['11', '#11'],
+  '13': ['b13', '13'],
+};
+
+type VoicingIntervalOctave = VoicingInterval[];
+
+export type Vocing = [VoicingIntervalOctave, VoicingIntervalOctave];
+
+export const alternativeVoicings: Vocing[] = [
+  [
+    [1, 3, 5, 7],
+    [9, 11, 13],
+  ],
+  [
+    [1, 3, 5],
+    [9, 11, 13, 7],
+  ],
+  [
+    [1, 3, 7],
+    [9, 11, 5],
+  ],
+  [
+    [1, 3, 11, 13],
+    [5, 7],
+  ],
+  [
+    [1, 3],
+    [9, 11, 5, 7],
+  ],
+  [
+    [1, 5],
+    [3, 11, 13, 7],
+  ],
+  [
+    [1, 5, 13],
+    [3, 7],
+  ],
+  [
+    [1, 5, 7],
+    [3, 11, 13],
+  ],
+  [
+    [1, 5, 7],
+    [9, 3],
+  ],
+  [
+    [1, 5],
+    [9, 3, 7],
+  ],
+  [
+    [1, 7],
+    [3, 5, 13],
+  ],
+  [
+    [1, 7],
+    [3, 11, 5],
+  ],
+  [
+    [1, 7],
+    [9, 3, 5],
+  ],
+  [[1, 9, 3, 5, 7], []],
+  [[1, 3, 11, 5, 7], []],
+  [[1, 3, 5, 13, 7], []],
+];
+
+export const resolveVoicingOctaveIntervals = (
+  chord: Interval[],
+  voicing = getRandomFromArray(alternativeVoicings)
+) =>
+  voicing.map((octave) =>
+    octave
+      .map((voicingInterval) => {
+        const interval = chordIntervalBaseMap[voicingInterval].find((i) =>
+          chord.includes(i)
+        );
+
+        if (!interval) return;
+
+        const semitones = intervalDistanceMap[interval];
+
+        if (semitones < 12) return interval;
+
+        const intervalOneOctaveLower = Object.entries(intervalDistanceMap).find(
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          ([_, value]) => value === semitones - 12
+        )?.[0];
+
+        return intervalOneOctaveLower;
+      })
+      .filter((x): x is Interval => !!x)
+  );
+
+export const isTensionsVoicing = (voicing: Vocing, tensions: ChordTension[]) =>
+  tensions?.every((t) =>
+    voicing.flat().some((i) => chordIntervalBaseMap[i].includes(t))
+  );
 
 export enum ChordBase {
   maj = 'maj',

@@ -8,15 +8,12 @@ export const defaultSettings = {
   playBackModes: ['harmonic', 'ascending'] as PlaybackMode[],
   delayBetweenModes: 0.5,
   autoPlayNext: true,
+  alternativeVoicings: true,
 };
 
 export type Settings = typeof defaultSettings;
 
-export const $settings = persistentAtom<Settings>(
-  'settings',
-  defaultSettings,
-  {
-    encode: JSON.stringify,
-    decode: JSON.parse,
-  }
-);
+export const $settings = persistentAtom<Settings>('settings', defaultSettings, {
+  encode: JSON.stringify,
+  decode: JSON.parse,
+});

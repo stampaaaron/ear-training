@@ -8,6 +8,7 @@ import {
   chordFunctionVoicings,
 } from './model/cadence';
 import { useAudio } from './pages/AudioProvider';
+import { resolveVoicingOctaveIntervals, Vocing } from './model/chord';
 
 export enum PlaybackMode {
   ascending = 'ascending',
@@ -125,15 +126,22 @@ export const usePlayer = ({
   const handlePlayOption = <M extends QuizMode>(
     mode: M,
     quizOption: QuizOption<M>,
-    startNote?: number
+    startNote?: number,
+    voicing?: Vocing
   ) => {
     switch (mode) {
-      case QuizMode.chords:
-        playIntervals(
-          (quizOption as QuizOption<QuizMode.chords>).intervals,
-          startNote
-        );
+      case QuizMode.chords: {
+        const chordIntervals = (quizOption as QuizOption<QuizMode.chords>)
+          .intervals;
+
+        const intervals = voicing
+          ? resolveVoicingOctaveIntervals(chordIntervals, voicing)
+          : chordIntervals;
+
+        playIntervals(intervals, startNote);
+
         break;
+      }
       case QuizMode.intervals:
         playIntervals(
           ['1', (quizOption as QuizOption<QuizMode.intervals>).interval],
