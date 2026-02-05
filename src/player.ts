@@ -35,7 +35,7 @@ export const usePlayer = ({
   const { piano } = useAudio();
 
   const playIntervals = async (
-    chord: Interval[],
+    chord: Interval[][] | Interval[],
     startNote = getRandomMidiNote(startNoteRange),
     sustained = true,
     modes: PlaybackMode[] = playBackModes
@@ -45,10 +45,14 @@ export const usePlayer = ({
 
     let now = Tone.now();
 
-    let notes = chord.map((note) =>
-      Tone.Frequency(startNote, 'midi')
-        .transpose(intervalDistanceMap[note])
-        .toNote()
+    const octaves = (Array.isArray(chord[0]) ? chord : [chord]) as Interval[][];
+
+    let notes = octaves.flatMap((intervals, index) =>
+      intervals.map((note) =>
+        Tone.Frequency(startNote, 'midi')
+          .transpose(intervalDistanceMap[note] + index * 12)
+          .toNote()
+      )
     );
 
     modes.forEach((mode) => {
