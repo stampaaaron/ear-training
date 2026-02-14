@@ -3,7 +3,7 @@ import { getRandomFromArray } from '../utils';
 import { Entries } from './helper';
 import { Interval, intervalDistanceMap } from './interval';
 
-type ChordExtension = Extract<Interval, '6' | 'bb7' | 'b7' | '7'>;
+type ChordExtension = Extract<Interval, '6' | 'bb7' | 'b7' | '7'> | 'add';
 export type ChordTension = Extract<
   Interval,
   'b9' | '9' | '#9' | '10' | '11' | '#11' | 'b13' | '13' | '14'
@@ -158,9 +158,15 @@ const chords: {
     '7': [
       ['9', '#11'],
       ['#11', '13'],
+      ['9', '13'],
     ],
     '6': [['9', '#11']],
     b7: [],
+    add: [
+      ['9', '#11'],
+      ['#11', '13'],
+      ['9', '13'],
+    ],
   },
   dom: {
     b7: [
@@ -185,6 +191,12 @@ const chords: {
       ['9', '10'],
       ['10', '13'],
     ],
+    add: [
+      ['b9', '10'],
+      ['b9', '13'],
+      ['9', '10'],
+      ['10', '13'],
+    ],
   },
   sus2: {},
   min: {
@@ -195,6 +207,11 @@ const chords: {
     ],
     '6': [['9', '11']],
     '7': [
+      ['9', '11'],
+      ['9', '13'],
+      ['11', '13'],
+    ],
+    add: [
       ['9', '11'],
       ['9', '13'],
       ['11', '13'],
@@ -230,6 +247,7 @@ const chordExtensionNames: Record<ChordExtension, string> = {
   6: '6',
   bb7: '7',
   b7: '7',
+  add: ' add',
 };
 
 const chordNaming: {
@@ -305,8 +323,13 @@ export const seventhChords = (
         chordGrouping[base].customExtensionGroups?.[extension] ??
         chordGrouping[base].group;
 
+      const intervals = [
+        ...chordBaseIntervals[base],
+        ...(extension === 'add' ? [] : [extension]),
+      ];
+
       acc[`${base}.${extension}`] = {
-        intervals: [...chordBaseIntervals[base], extension],
+        intervals,
         tensions,
         group,
         name,
