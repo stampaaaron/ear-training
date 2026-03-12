@@ -20,6 +20,12 @@ const allTriads = [
   baseChords['sus2'],
 ];
 
+const allAddChords = [
+  seventhChords['maj.add'],
+  seventhChords['sus.add'],
+  seventhChords['min.add'],
+].flatMap(getAllTwoTensionChords);
+
 const basicSenventhChordsWithoutDominant = [
   seventhChords['maj.7'],
   seventhChords['maj.6'],
@@ -44,6 +50,11 @@ const basicSeventhChordsWithTwoTensions = [
   ...basicSenventhChordsWithoutDominant,
   seventhChords['dom.b7'],
 ].flatMap(getAllTwoTensionChords);
+
+export const basicSeventhChordsWithAllTensions = [
+  ...basicSeventhChordsWithTensions,
+  ...basicSeventhChordsWithTwoTensions,
+];
 
 const allSeventhChords = (
   Object.entries(seventhChords) as Entries<SeventhChords>
@@ -110,4 +121,11 @@ export const chordSets: ChordSet[] = [
     options: allChordsWithTwoTensions,
     description: `${allSeventhChords.map(({ name }) => name).join(', ')} with two Tensions`,
   },
+];
+
+export const possibleChordsForAlternativeVoicings = [
+  ...basicSeventhChordsWithAllTensions.filter(
+    ({ name }) => !name.includes('Min7b5') && !name.includes('Min(maj7)')
+  ),
+  ...allAddChords,
 ];

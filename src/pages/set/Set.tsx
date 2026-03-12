@@ -10,6 +10,7 @@ import {
   Menu,
   Pill,
   Stack,
+  Switch,
   Title,
 } from '@mantine/core';
 import { usePlayer } from '../../player';
@@ -20,10 +21,12 @@ import { SettingsForm } from '../../components/SettingsForm';
 import { OptionsGrid } from '../../components/OptionsGrid';
 import { Form, hasLength, isNotEmpty, useForm } from '@mantine/form';
 import { defaultSettings } from '../../store/settings';
+import { useState } from 'react';
 
 enum ConfigSection {
   options = 'options',
   playback = 'playback',
+  voicings = 'voicings',
 }
 
 export function Set() {
@@ -48,6 +51,15 @@ export function Set() {
         'At least two options have to be seleced.'
       ),
     },
+  });
+
+  const [openSections, setOpenSections] = useState([ConfigSection.playback]);
+  form.watch('settings.alternativeVoicings', ({ value }) => {
+    if (value) {
+      setOpenSections([...openSections, ConfigSection.voicings]);
+    } else {
+      setOpenSections(openSections.filter((s) => s !== ConfigSection.voicings));
+    }
   });
 
   const { handlePlayOption } = usePlayer(
@@ -115,7 +127,13 @@ export function Set() {
         backUrl={backUrl}
       >
         <Stack>
-          <Accordion multiple defaultValue={[ConfigSection.playback]}>
+          <Accordion
+            multiple
+            value={openSections}
+            onChange={(sections) =>
+              setOpenSections(sections as ConfigSection[])
+            }
+          >
             <Accordion.Item value={ConfigSection.options}>
               <Accordion.Control>
                 <Stack gap="sm">
@@ -148,6 +166,61 @@ export function Set() {
               </Accordion.Panel>
             </Accordion.Item>
           </Accordion>
+          <Switch
+            label="Alternative voicings"
+            labelPosition="left"
+            {...form.getInputProps('settings.alternativeVoicings', {
+              type: 'checkbox',
+            })}
+          />
+          {/* {form.getValues().settings?.alternativeVoicings && (
+            <Accordion defaultValue={ConfigSection.voicings}>
+              <Accordion.Item value={ConfigSection.voicings}>
+                <Accordion.Control>
+                  <Stack>
+                    <Title order={3}>Voicings</Title>
+                  </Stack>
+                </Accordion.Control>
+                <Accordion.Panel>
+                  <Checkbox.Group>
+                    <Table>
+                      <Table.Thead>
+                        <Table.Tr>
+                          <Table.Th></Table.Th>
+                          {[
+                            ...Array(
+                              Math.max(
+                                ...alternativeVoicings.map((v) => v.length)
+                              )
+                            ).keys(),
+                          ].map((v) => (
+                            <Table.Th>Octave {v + 1}</Table.Th>
+                          ))}
+                        </Table.Tr>
+                      </Table.Thead>
+                      {alternativeVoicings.map((voicing) => (
+                        <Table.Tr>
+                          <Table.Td>
+                            <Checkbox />
+                          </Table.Td>
+
+                          {voicing.map((intervals) => (
+                            <Table.Td>
+                              <Group>
+                                {intervals.map((i) => (
+                                  <Badge variant="outline">{i}</Badge>
+                                ))}
+                              </Group>
+                            </Table.Td>
+                          ))}
+                        </Table.Tr>
+                      ))}
+                    </Table>
+                  </Checkbox.Group>
+                </Accordion.Panel>
+              </Accordion.Item>
+            </Accordion>
+          )} */}
 
           <Group>
             {isCreateForm && (

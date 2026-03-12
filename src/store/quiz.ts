@@ -7,12 +7,10 @@ import { getRandomMidiNote } from '../player';
 import {
   alternativeVoicings,
   Chord,
-  ChordTension,
-  isTensionsVoicing,
   Vocing,
+  voicingContainsChord,
 } from '../model/chord';
 import { QuizSet } from './sets';
-import { intervalDistanceMap } from '../model/interval';
 
 type QuizState = {
   current?: {
@@ -35,12 +33,12 @@ export function useQuiz(set?: QuizSet<QuizOption>) {
 
     const chord = randomOption as Chord;
 
-    const actualTensions = chord.intervals.filter(
-      (i) => intervalDistanceMap[i] > 12
-    ) as ChordTension[];
+    // const actualTensions = chord.intervals.filter(
+    //   (i) => intervalDistanceMap[i] > 12
+    // ) as ChordTension[];
 
     const availableVoicings = alternativeVoicings.filter((voicing) =>
-      isTensionsVoicing(voicing, actualTensions)
+      voicingContainsChord(voicing, chord)
     );
 
     const voicing = set?.settings?.alternativeVoicings
