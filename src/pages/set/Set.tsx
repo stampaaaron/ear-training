@@ -12,10 +12,11 @@ import {
   Stack,
   Switch,
   Title,
+  Tooltip,
 } from '@mantine/core';
 import { usePlayer } from '../../player';
 import { useQuiz } from '../../store/quiz';
-import { IconDots, IconTrash } from '@tabler/icons-react';
+import { IconDots, IconInfoCircle, IconTrash } from '@tabler/icons-react';
 import { QuizOption } from '../../model/quiz';
 import { SettingsForm } from '../../components/SettingsForm';
 import { OptionsGrid } from '../../components/OptionsGrid';
@@ -167,7 +168,17 @@ export function Set() {
             </Accordion.Item>
           </Accordion>
           <Switch
-            label="Alternative voicings"
+            label={
+              <Group gap={0}>
+                Alternative Vocings (Beta){' '}
+                <Tooltip
+                  children={<IconInfoCircle />}
+                  label={
+                    "It might create some voicings that aren't very musical. This feature is still in beta and will improved."
+                  }
+                ></Tooltip>
+              </Group>
+            }
             labelPosition="left"
             {...form.getInputProps('settings.alternativeVoicings', {
               type: 'checkbox',
