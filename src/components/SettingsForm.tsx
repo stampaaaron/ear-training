@@ -6,7 +6,6 @@ import {
   Slider,
   Space,
   Stack,
-  Switch,
   Text,
 } from '@mantine/core';
 import { Form, UseFormReturnType } from '@mantine/form';
