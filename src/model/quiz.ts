@@ -15,6 +15,12 @@ export const quizModeNames: Record<QuizMode, string> = {
   [QuizMode.scales]: 'Scales',
 };
 
+export const quizModeNamesSignular: Record<QuizMode, string> = {
+  [QuizMode.intervals]: 'Interval',
+  [QuizMode.chords]: 'Chord',
+  [QuizMode.scales]: 'Scale',
+};
+
 export const quizOptions = {
   [QuizMode.intervals]: allIntervals,
   [QuizMode.chords]: allChords,

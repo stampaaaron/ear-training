@@ -25,6 +25,7 @@ import { useStore } from '@nanostores/react';
 import { $settings, defaultSettings } from '../../store/settings';
 import { useSet } from '../../store/sets';
 import { useQuiz } from '../../store/quiz';
+import { quizModeNamesSignular } from '../../model/quiz';
 
 export function Quiz() {
   const [searchParams] = useSearchParams();
@@ -120,7 +121,7 @@ export function Quiz() {
               </Group>
             ) : (
               <Flex justify="space-between">
-                {guess ? 'Try again' : 'Choose the correct answer'}
+                {guess ? 'Try again' : `Choose ${quizModeNamesSignular[mode]}`}
                 {!guessedCorrectly && (
                   <Button
                     size="xs"
