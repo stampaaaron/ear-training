@@ -1,6 +1,7 @@
 import { Button, Fieldset, SimpleGrid } from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { QuizOption, QuizMode } from '../model/quiz';
+import { useQuiz } from '../store/quiz';
 
 type OptionSetProps<M extends QuizMode> = {
   options: QuizOption<M>[];
@@ -19,6 +20,10 @@ export function OptionSet<M extends QuizMode>({
   guessedCorrectly,
   selectedOptions,
 }: OptionSetProps<M>) {
+  const {
+    quiz: { revealed },
+  } = useQuiz();
+
   return (
     <Fieldset legend={label} p="sm">
       <SimpleGrid cols={2}>
@@ -32,11 +37,14 @@ export function OptionSet<M extends QuizMode>({
                   ? 'outline'
                   : 'default'
               }
-              onClick={() => onSelect(option)}
+              disabled={guessedCorrectly && guess !== option}
+              onClick={revealed ? undefined : () => onSelect(option)}
               color={
                 option === guess
                   ? guessedCorrectly
-                    ? 'green'
+                    ? revealed
+                      ? 'orange'
+                      : 'green'
                     : 'red'
                   : selectedOptions?.some((c) => c.name === option.name)
                     ? 'blue'

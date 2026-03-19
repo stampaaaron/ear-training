@@ -1,9 +1,18 @@
-import { Button, Flex, Group, Stack, Switch } from '@mantine/core';
+import {
+  Alert,
+  Badge,
+  Button,
+  Flex,
+  Group,
+  Stack,
+  Switch,
+} from '@mantine/core';
 import { usePlayer } from '../../player';
 import { OptionsGrid } from '../../components/OptionsGrid';
 import {
   IconCheck,
   IconChevronRight,
+  IconInfoCircle,
   IconPlayerPause,
   IconPlayerPlay,
   IconRepeat,
@@ -29,7 +38,7 @@ export function Quiz() {
   const { handlePlayOption } = usePlayer(set?.settings ?? defaultSettings);
 
   const {
-    quiz: { current, guess },
+    quiz: { current, guess, revealed },
     nextQuestion,
     setGuess,
   } = useQuiz(set);
@@ -42,23 +51,45 @@ export function Quiz() {
     handlePlayOption(mode, current.option, current.startNote, current.voicing);
   };
 
+  const resolveIcon = () =>
+    guessedCorrectly ? (
+      revealed ? (
+        <IconInfoCircle size={50} />
+      ) : (
+        <IconCheck size={50} />
+      )
+    ) : (
+      <IconX size={50} />
+    );
+
+  const playNextDelayed = (delay = 1000) => {
+    setTimeout(handlePlayNext, delay);
+  };
+
+  const resolveColor = () =>
+    guess
+      ? guessedCorrectly
+        ? revealed
+          ? 'orange'
+          : 'green'
+        : 'red'
+      : 'blue';
+
   return (
     <Shell
       title="Choose the correct answer"
       rightSection={
         <Group>
-          <Group>
-            <Switch
-              labelPosition="left"
-              onLabel={<IconPlayerPlay size={12} />}
-              offLabel={<IconPlayerPause size={12} />}
-              checked={autoPlayNext}
-              onChange={({ target: { checked } }) =>
-                $settings.set({ ...restSettings, autoPlayNext: checked })
-              }
-              label="Autoplay next"
-            />
-          </Group>
+          <Switch
+            labelPosition="left"
+            onLabel={<IconPlayerPlay size={12} />}
+            offLabel={<IconPlayerPause size={12} />}
+            checked={autoPlayNext}
+            onChange={({ target: { checked } }) =>
+              $settings.set({ ...restSettings, autoPlayNext: checked })
+            }
+            label="Autoplay next"
+          />
         </Group>
       }
       backUrl={{
@@ -67,53 +98,83 @@ export function Quiz() {
       }}
     >
       <Stack>
-        <Flex justify="center" p="xl">
-          {current ? (
-            guess ? (
-              guessedCorrectly ? (
-                <IconCheck size={50} color="green" />
-              ) : (
-                <IconX size={50} color="red" />
-              )
-            ) : (
-              <IconVolume size={50} />
-            )
-          ) : (
-            <Button onClick={handlePlayNext}>Continue</Button>
-          )}
-        </Flex>
-        <Button.Group w="100%">
-          <Button
-            flex={1}
-            variant="outline"
-            disabled={!current}
-            leftSection={<IconRepeat size={16} />}
-            onClick={() => {
-              if (current)
-                handlePlayOption(
-                  mode,
-                  current.option,
-                  current.startNote,
-                  current.voicing
-                );
-            }}
-          >
-            Replay
-          </Button>
-          <Button
-            flex={1}
-            disabled={
-              !current || (current && guess && guessedCorrectly && autoPlayNext)
+        {!current && <Button onClick={handlePlayNext}>Continue</Button>}
+        {current && (
+          <Alert
+            h={90}
+            title={
+              <Flex w="100%" justify="space-between">
+                {guess ? guess.name : 'Listen'}
+              </Flex>
             }
-            variant="outline"
-            rightSection={<IconChevronRight size={16} />}
-            onClick={handlePlayNext}
+            icon={guess ? resolveIcon() : <IconVolume />}
+            color={resolveColor()}
           >
-            {current && guess && guessedCorrectly && !autoPlayNext
-              ? 'Next'
-              : 'Skip'}
-          </Button>
-        </Button.Group>
+            {guess && (guessedCorrectly || revealed) && 'intervals' in guess ? (
+              <Group gap="xs">
+                {guess.intervals.map((i) => (
+                  <Badge color={resolveColor()} variant="outline">
+                    <span style={{ textTransform: 'none' }}>{i}</span>
+                  </Badge>
+                ))}
+              </Group>
+            ) : (
+              <Flex justify="space-between">
+                {guess ? 'Try again' : 'Choose the correct answer'}
+                {!guessedCorrectly && (
+                  <Button
+                    size="xs"
+                    variant="subtle"
+                    onClick={() => {
+                      setGuess(current.option, true);
+
+                      if (autoPlayNext) {
+                        playNextDelayed(2000);
+                      }
+                    }}
+                  >
+                    Reveal Answer
+                  </Button>
+                )}
+              </Flex>
+            )}
+          </Alert>
+        )}
+        <div>
+          <Button.Group w="100%">
+            <Button
+              flex={1}
+              variant="outline"
+              disabled={!current}
+              leftSection={<IconRepeat size={16} />}
+              onClick={() => {
+                if (current)
+                  handlePlayOption(
+                    mode,
+                    current.option,
+                    current.startNote,
+                    current.voicing
+                  );
+              }}
+            >
+              Replay
+            </Button>
+            <Button
+              flex={1}
+              disabled={
+                !current ||
+                (current && guess && guessedCorrectly && autoPlayNext)
+              }
+              variant="outline"
+              rightSection={<IconChevronRight size={16} />}
+              onClick={handlePlayNext}
+            >
+              {current && guess && guessedCorrectly && !autoPlayNext
+                ? 'Next'
+                : 'Skip'}
+            </Button>
+          </Button.Group>
+        </div>
 
         {current && (
           <OptionsGrid
@@ -123,7 +184,7 @@ export function Quiz() {
 
               if (option.name === current?.option.name) {
                 if (autoPlayNext) {
-                  setTimeout(handlePlayNext, 1000);
+                  playNextDelayed();
                 }
               }
             }}

@@ -19,6 +19,7 @@ type QuizState = {
     option: QuizOption;
   };
   guess?: QuizOption;
+  revealed?: boolean;
 };
 
 export const $quiz = atom<QuizState>({});
@@ -53,13 +54,14 @@ export function useQuiz(set?: QuizSet<QuizOption>) {
     $quiz.set({
       current,
       guess: undefined,
+      revealed: false,
     });
 
     return current;
   }
 
-  function setGuess(guess: QuizOption) {
-    $quiz.set({ ...quiz, guess });
+  function setGuess(guess: QuizOption, revealed?: true) {
+    $quiz.set({ ...quiz, guess, revealed });
   }
 
   return { quiz, nextQuestion, setGuess };
