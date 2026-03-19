@@ -77,7 +77,7 @@ export function Quiz() {
 
   return (
     <Shell
-      title="Choose the correct answer"
+      title={set?.label}
       rightSection={
         <Group>
           <Switch
