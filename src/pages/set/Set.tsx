@@ -17,7 +17,7 @@ import {
 import { usePlayer } from '../../player';
 import { useQuiz } from '../../store/quiz';
 import { IconDots, IconInfoCircle, IconTrash } from '@tabler/icons-react';
-import { QuizOption } from '../../model/quiz';
+import { QuizMode, QuizOption } from '../../model/quiz';
 import { SettingsForm } from '../../components/SettingsForm';
 import { OptionsGrid } from '../../components/OptionsGrid';
 import { Form, hasLength, isNotEmpty, useForm } from '@mantine/form';
@@ -167,23 +167,26 @@ export function Set() {
               </Accordion.Panel>
             </Accordion.Item>
           </Accordion>
-          <Switch
-            label={
-              <Group gap={0}>
-                Alternative Vocings (Beta){' '}
-                <Tooltip
-                  children={<IconInfoCircle />}
-                  label={
-                    "It might create some voicings that aren't very musical. This feature is still in beta and will improved."
-                  }
-                ></Tooltip>
-              </Group>
-            }
-            labelPosition="left"
-            {...form.getInputProps('settings.alternativeVoicings', {
-              type: 'checkbox',
-            })}
-          />
+          {mode === QuizMode.chords && (
+            <Switch
+              label={
+                <Group gap={0}>
+                  Alternative Vocings (Beta){' '}
+                  <Tooltip
+                    label={
+                      "It might create some voicings that aren't very musical. This feature is still in beta and will improved."
+                    }
+                  >
+                    <IconInfoCircle />
+                  </Tooltip>
+                </Group>
+              }
+              labelPosition="left"
+              {...form.getInputProps('settings.alternativeVoicings', {
+                type: 'checkbox',
+              })}
+            />
+          )}
           {/* {form.getValues().settings?.alternativeVoicings && (
             <Accordion defaultValue={ConfigSection.voicings}>
               <Accordion.Item value={ConfigSection.voicings}>
