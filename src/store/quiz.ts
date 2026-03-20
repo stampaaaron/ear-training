@@ -6,7 +6,6 @@ import { $settings } from './settings';
 import { getRandomMidiNote } from '../player';
 import {
   alternativeVoicings,
-  Chord,
   Vocing,
   voicingContainsChord,
 } from '../model/chord';
@@ -32,24 +31,23 @@ export function useQuiz(set?: QuizSet<QuizOption>) {
   function nextQuestion(options: QuizOption[]) {
     const randomOption = getRandomFromArray(options);
 
-    const chord = randomOption as Chord;
-
-    // const actualTensions = chord.intervals.filter(
-    //   (i) => intervalDistanceMap[i] > 12
-    // ) as ChordTension[];
-
-    const availableVoicings = alternativeVoicings.filter((voicing) =>
-      voicingContainsChord(voicing, chord)
-    );
-
-    const voicing = set?.settings?.alternativeVoicings
-      ? getRandomFromArray(availableVoicings)
-      : undefined;
-
     const startNote = getRandomMidiNote(
       set?.settings?.startNoteRange ?? startNoteRange
     );
-    const current = { startNote, option: randomOption, voicing };
+
+    const current: QuizState['current'] = { startNote, option: randomOption };
+
+    if ('tensions' in randomOption) {
+      const availableVoicings = alternativeVoicings.filter((voicing) =>
+        voicingContainsChord(voicing, randomOption)
+      );
+
+      const voicing = set?.settings?.alternativeVoicings
+        ? getRandomFromArray(availableVoicings)
+        : undefined;
+
+      current.voicing = voicing;
+    }
 
     $quiz.set({
       current,

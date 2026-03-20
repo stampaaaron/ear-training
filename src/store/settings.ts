@@ -8,7 +8,7 @@ export const defaultSettings = {
   playBackModes: ['harmonic', 'ascending'] as PlaybackMode[],
   delayBetweenModes: 0.5,
   autoPlayNext: true,
-  alternativeVoicings: true,
+  alternativeVoicings: false,
 };
 
 export type Settings = typeof defaultSettings;
