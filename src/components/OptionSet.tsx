@@ -10,6 +10,8 @@ type OptionSetProps<M extends QuizMode> = {
   guessedCorrectly?: boolean;
   selectedOptions?: QuizOption<M>[];
   onSelect: (option: QuizOption<M>) => void;
+  isDisabled?: (option: QuizOption<M>) => boolean;
+  resolveColor?: (option: QuizOption<M>) => string | undefined;
 };
 
 export function OptionSet<M extends QuizMode>({
@@ -19,6 +21,8 @@ export function OptionSet<M extends QuizMode>({
   guess,
   guessedCorrectly,
   selectedOptions,
+  isDisabled,
+  resolveColor,
 }: OptionSetProps<M>) {
   const {
     quiz: { revealed },
@@ -37,18 +41,13 @@ export function OptionSet<M extends QuizMode>({
                   ? 'outline'
                   : 'default'
               }
-              disabled={guessedCorrectly && guess !== option}
+              disabled={isDisabled?.(option)}
               onClick={revealed ? undefined : () => onSelect(option)}
               color={
-                option === guess
-                  ? guessedCorrectly
-                    ? revealed
-                      ? 'orange'
-                      : 'green'
-                    : 'red'
-                  : selectedOptions?.some((c) => c.name === option.name)
-                    ? 'blue'
-                    : undefined
+                resolveColor?.(option) ||
+                (selectedOptions?.some((c) => c.name === option.name)
+                  ? 'blue'
+                  : undefined)
               }
               rightSection={
                 option === guess &&

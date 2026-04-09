@@ -9,6 +9,8 @@ type OptionsGridProps<M extends QuizMode> = {
   value?: QuizOption<M>[];
   onChange?: (options: QuizOption<M>[]) => void;
   onSelect?: (option: QuizOption<M>) => void;
+  isDisabled?: (option: QuizOption<M>) => boolean;
+  resolveColor?: (option: QuizOption<M>) => string | undefined;
   quizMode: M;
 };
 
@@ -19,6 +21,8 @@ export function OptionsGrid<M extends QuizMode>({
   guessedCorrectly,
   value: selectedOptions,
   onChange,
+  isDisabled,
+  resolveColor,
   quizMode,
 }: OptionsGridProps<M>) {
   const groupEntries = Object.entries(quizGroups[quizMode]);
@@ -49,6 +53,8 @@ export function OptionsGrid<M extends QuizMode>({
                 options={optionsInGroup}
                 selectedOptions={selectedOptions}
                 onSelect={handleSelect}
+                isDisabled={isDisabled}
+                resolveColor={resolveColor}
                 guess={optionGuess}
                 guessedCorrectly={guessedCorrectly}
               />
@@ -63,6 +69,7 @@ export function OptionsGrid<M extends QuizMode>({
           onSelect={handleSelect}
           guess={optionGuess}
           guessedCorrectly={guessedCorrectly}
+          isDisabled={isDisabled}
         />
       )}
     </Stack>

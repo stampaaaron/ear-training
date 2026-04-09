@@ -4,11 +4,11 @@ import { QuizSet, useSet } from '../../store/sets';
 import {
   Accordion,
   ActionIcon,
+  Badge,
   Button,
   Group,
   Input,
   Menu,
-  Pill,
   Stack,
   Switch,
   Title,
@@ -16,13 +16,26 @@ import {
 } from '@mantine/core';
 import { usePlayer } from '../../player';
 import { useQuiz } from '../../store/quiz';
-import { IconDots, IconInfoCircle, IconTrash } from '@tabler/icons-react';
+import {
+  IconAlertTriangle,
+  IconDots,
+  IconInfoCircle,
+  IconTrash,
+} from '@tabler/icons-react';
 import { QuizMode, QuizOption } from '../../model/quiz';
 import { SettingsForm } from '../../components/SettingsForm';
 import { OptionsGrid } from '../../components/OptionsGrid';
-import { Form, hasLength, isNotEmpty, useForm } from '@mantine/form';
+import {
+  Form,
+  formRootRule,
+  hasLength,
+  isNotEmpty,
+  useForm,
+} from '@mantine/form';
 import { defaultSettings } from '../../store/settings';
 import { useState } from 'react';
+import { possibleChordsForAlternativeVoicings } from '../../model/chordSet';
+import { Chord } from '../../model/chord';
 
 enum ConfigSection {
   options = 'options',
@@ -40,6 +53,11 @@ export function Set() {
 
   const isCreateForm = !set?.label;
 
+  const chordSupportAlternativeVoicings = (chord: Chord) =>
+    possibleChordsForAlternativeVoicings.some(
+      ({ name }) => chord.name === name
+    );
+
   const form = useForm<QuizSet<QuizOption>>({
     initialValues: set && {
       ...set,
@@ -47,10 +65,15 @@ export function Set() {
     },
     validate: {
       label: isNotEmpty('Title must be set.'),
-      options: hasLength(
-        { min: 2 },
-        'At least two options have to be seleced.'
-      ),
+      options: {
+        [formRootRule]:
+          hasLength({ min: 2 }, 'At least two options have to be seleced.') &&
+          ((value, values) =>
+            values.settings?.alternativeVoicings &&
+            (value as Chord[])?.every(chordSupportAlternativeVoicings)
+              ? ''
+              : "Some of your chords selected doesn't support alternative voicings"),
+      },
     },
   });
 
@@ -140,11 +163,31 @@ export function Set() {
                 <Stack gap="sm">
                   <Title order={3}>Options</Title>
                   <Group gap="sm">
-                    {form
-                      .getValues()
-                      .options?.map(({ name }) => (
-                        <Pill key={name}>{name}</Pill>
-                      ))}
+                    {form.getValues().options?.map((option) => {
+                      const showWarning =
+                        form.getValues().settings?.alternativeVoicings &&
+                        !chordSupportAlternativeVoicings(option as Chord);
+
+                      return (
+                        <Tooltip
+                          disabled={!showWarning}
+                          label={
+                            'Chord is not available for alternative voicings.'
+                          }
+                        >
+                          <Badge
+                            variant="outline"
+                            color={showWarning ? 'orange' : undefined}
+                            leftSection={
+                              showWarning && <IconAlertTriangle size={12} />
+                            }
+                            key={option.name}
+                          >
+                            {option.name}
+                          </Badge>
+                        </Tooltip>
+                      );
+                    })}
                   </Group>
                   {form.errors.options && (
                     <Input.Error>{form.errors.options}</Input.Error>
@@ -153,6 +196,23 @@ export function Set() {
               </Accordion.Control>
               <Accordion.Panel>
                 <OptionsGrid
+                  isDisabled={
+                    form.getValues().settings?.alternativeVoicings
+                      ? (option) =>
+                          !chordSupportAlternativeVoicings(option as Chord) &&
+                          !form
+                            .getValues()
+                            .options?.some(({ name }) => option.name === name)
+                      : undefined
+                  }
+                  resolveColor={
+                    form.getValues().settings?.alternativeVoicings
+                      ? (option) =>
+                          !chordSupportAlternativeVoicings(option as Chord)
+                            ? 'orange'
+                            : undefined
+                      : undefined
+                  }
                   quizMode={mode}
                   {...form.getInputProps('options')}
                 />

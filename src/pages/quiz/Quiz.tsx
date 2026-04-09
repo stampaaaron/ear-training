@@ -189,6 +189,16 @@ export function Quiz() {
                 }
               }
             }}
+            isDisabled={(option) => guessedCorrectly && guess !== option}
+            resolveColor={(option) =>
+              option === guess
+                ? guessedCorrectly
+                  ? revealed
+                    ? 'orange'
+                    : 'green'
+                  : 'red'
+                : undefined
+            }
             guess={guess}
             guessedCorrectly={guessedCorrectly}
             quizMode={mode}
