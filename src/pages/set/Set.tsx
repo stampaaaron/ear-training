@@ -69,7 +69,7 @@ export function Set() {
         [formRootRule]:
           hasLength({ min: 2 }, 'At least two options have to be seleced.') &&
           ((value, values) =>
-            values.settings?.alternativeVoicings &&
+            !values.settings?.alternativeVoicings ||
             (value as Chord[])?.every(chordSupportAlternativeVoicings)
               ? ''
               : "Some of your chords selected doesn't support alternative voicings"),
