@@ -26,6 +26,7 @@ import { $settings, defaultSettings } from '../../store/settings';
 import { useSet } from '../../store/sets';
 import { useQuiz } from '../../store/quiz';
 import { quizModeNamesSignular } from '../../model/quiz';
+import { resolveVoicingOctaveIntervals } from '../../model/chord';
 
 export function Quiz() {
   const [searchParams] = useSearchParams();
@@ -113,7 +114,13 @@ export function Quiz() {
           >
             {guess && (guessedCorrectly || revealed) && 'intervals' in guess ? (
               <Group gap="xs">
-                {guess.intervals.map((i) => (
+                {(current.voicing
+                  ? resolveVoicingOctaveIntervals(
+                      guess.intervals,
+                      current.voicing
+                    ).flat()
+                  : guess.intervals
+                ).map((i) => (
                   <Badge color={resolveColor()} variant="outline">
                     <span style={{ textTransform: 'none' }}>{i}</span>
                   </Badge>
