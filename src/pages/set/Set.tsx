@@ -21,6 +21,7 @@ import {
   IconDots,
   IconInfoCircle,
   IconTrash,
+  IconX,
 } from '@tabler/icons-react';
 import { QuizMode, QuizOption } from '../../model/quiz';
 import { SettingsForm } from '../../components/SettingsForm';
@@ -182,6 +183,27 @@ export function Set() {
                               showWarning && <IconAlertTriangle size={12} />
                             }
                             key={option.name}
+                            rightSection={
+                              showWarning && (
+                                <ActionIcon
+                                  size="xs"
+                                  color="orange"
+                                  variant="subtle"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    form.setValues({
+                                      options: form
+                                        .getValues()
+                                        .options?.filter(
+                                          ({ name }) => name !== option.name
+                                        ),
+                                    });
+                                  }}
+                                >
+                                  <IconX />
+                                </ActionIcon>
+                              )
+                            }
                           >
                             {option.name}
                           </Badge>
