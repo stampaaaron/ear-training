@@ -72,7 +72,7 @@ export function Set() {
           ((value, values) =>
             !values.settings?.alternativeVoicings ||
             (value as Chord[])?.every(chordSupportAlternativeVoicings)
-              ? ''
+              ? undefined
               : "Some of your chords selected doesn't support alternative voicings"),
       },
     },
@@ -191,13 +191,14 @@ export function Set() {
                                   variant="subtle"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    form.setValues({
-                                      options: form
+                                    form.setFieldValue(
+                                      'options',
+                                      form
                                         .getValues()
                                         .options?.filter(
                                           ({ name }) => name !== option.name
-                                        ),
-                                    });
+                                        )
+                                    );
                                   }}
                                 >
                                   <IconX />
