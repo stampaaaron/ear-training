@@ -3,10 +3,9 @@ import { OptionsGrid } from '../../components/OptionsGrid';
 import { Shell } from '../../layout/Shell';
 import { Button, Stack } from '@mantine/core';
 import { Link, useSearchParams } from 'react-router';
-import { useStore } from '@nanostores/react';
-import { $currentSet } from '../../store/currentSet';
+import { useCurrentSet } from '../../store/currentSet';
 import { QuizMode } from '../../model/quiz';
-import { $sets } from '../../store/sets';
+import { useSetsStore } from '../../store/sets';
 import { defaultSettings } from '../../store/settings';
 
 export function NewSet() {
@@ -15,10 +14,12 @@ export function NewSet() {
 
   const uuid = useRef(crypto.randomUUID());
 
-  const sets = useStore($sets);
+  const sets = useSetsStore((s) => s.sets);
 
-  const quizSet = useStore($currentSet);
-  const [selectedOptions, setSelectedOptions] = useState(quizSet.options ?? []);
+  const currentSet = useCurrentSet((s) => s.currentSet);
+  const [selectedOptions, setSelectedOptions] = useState(
+    currentSet.options ?? []
+  );
 
   return (
     <Shell title="Create your custom set">
@@ -32,16 +33,18 @@ export function NewSet() {
         <Button
           component={Link}
           onClick={() =>
-            $sets.set({
-              ...sets,
-              [mode]: [
-                ...sets[mode],
-                {
-                  key: uuid.current,
-                  options: selectedOptions,
-                  settings: defaultSettings,
-                },
-              ],
+            useSetsStore.setState({
+              sets: {
+                ...sets,
+                [mode]: [
+                  ...sets[mode],
+                  {
+                    key: uuid.current,
+                    options: selectedOptions,
+                    settings: defaultSettings,
+                  },
+                ],
+              },
             })
           }
           to={`/sets/${uuid.current}`}

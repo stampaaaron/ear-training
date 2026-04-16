@@ -1,17 +1,21 @@
-import { persistentAtom } from '@nanostores/persistent';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { QuizOption } from '../model/quiz';
 import { QuizSet } from './sets';
 
-export const $currentSet = persistentAtom<QuizSet<QuizOption>>(
-  'currentChordSet',
-  {
-    key: '',
-    label: '',
-    description: '',
-    options: [],
-  },
-  {
-    encode: JSON.stringify,
-    decode: JSON.parse,
-  }
+type CurrentSetState = {
+  currentSet: QuizSet<QuizOption>;
+};
+
+const initialCurrentSet: QuizSet<QuizOption> = {
+  key: '',
+  label: '',
+  description: '',
+  options: [],
+};
+
+export const useCurrentSet = create<CurrentSetState>()(
+  persist(() => ({ currentSet: initialCurrentSet }), {
+    name: 'currentChordSet',
+  })
 );

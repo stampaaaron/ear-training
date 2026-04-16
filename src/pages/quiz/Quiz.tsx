@@ -21,8 +21,7 @@ import {
 } from '@tabler/icons-react';
 import { Shell } from '../../layout/Shell';
 import { createSearchParams, useSearchParams } from 'react-router';
-import { useStore } from '@nanostores/react';
-import { $settings, defaultSettings } from '../../store/settings';
+import { defaultSettings, useSettings } from '../../store/settings';
 import { useSet } from '../../store/sets';
 import { useQuiz } from '../../store/quiz';
 import { quizModeNamesSignular } from '../../model/quiz';
@@ -32,7 +31,7 @@ export function Quiz() {
   const [searchParams] = useSearchParams();
   const quizSetKey = searchParams.get('quizSet');
 
-  const { autoPlayNext, ...restSettings } = useStore($settings);
+  const autoPlayNext = useSettings((s) => s.autoPlayNext);
 
   const { set, mode } = useSet(quizSetKey ?? '');
   const availableOptions = set?.options ?? [];
@@ -88,7 +87,7 @@ export function Quiz() {
             offLabel={<IconPlayerPause size={12} />}
             checked={autoPlayNext}
             onChange={({ target: { checked } }) =>
-              $settings.set({ ...restSettings, autoPlayNext: checked })
+              useSettings.setState({ autoPlayNext: checked })
             }
             label="Autoplay next"
           />

@@ -1,8 +1,7 @@
-import { atom } from 'nanostores';
+import { create } from 'zustand';
 import { QuizOption } from '../model/quiz';
 import { getRandomFromArray } from '../utils';
-import { useStore } from '@nanostores/react';
-import { $settings } from './settings';
+import { useSettings } from './settings';
 import { getRandomMidiNote } from '../player';
 import {
   alternativeVoicings,
@@ -21,12 +20,12 @@ type QuizState = {
   revealed?: boolean;
 };
 
-export const $quiz = atom<QuizState>({});
+export const useQuizStore = create<QuizState>()(() => ({}));
 
 export function useQuiz(set?: QuizSet<QuizOption>) {
-  const quiz = useStore($quiz);
+  const quiz = useQuizStore();
 
-  const { startNoteRange } = useStore($settings);
+  const startNoteRange = useSettings((s) => s.startNoteRange);
 
   function nextQuestion(options: QuizOption[]) {
     const randomOption = getRandomFromArray(options);
@@ -49,17 +48,20 @@ export function useQuiz(set?: QuizSet<QuizOption>) {
       current.voicing = voicing;
     }
 
-    $quiz.set({
-      current,
-      guess: undefined,
-      revealed: false,
-    });
+    useQuizStore.setState(
+      {
+        current,
+        guess: undefined,
+        revealed: false,
+      },
+      true
+    );
 
     return current;
   }
 
   function setGuess(guess: QuizOption, revealed?: true) {
-    $quiz.set({ ...quiz, guess, revealed });
+    useQuizStore.setState({ guess, revealed });
   }
 
   return { quiz, nextQuestion, setGuess };

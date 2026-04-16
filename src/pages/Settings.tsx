@@ -10,22 +10,19 @@ import {
 } from '@mantine/core';
 import { Shell } from '../layout/Shell';
 import { useForm } from '@mantine/form';
-import { useStore } from '@nanostores/react';
-import { $settings, defaultSettings } from '../store/settings';
+import { Settings as SettingsType, defaultSettings, useSettings } from '../store/settings';
 import { Frequency } from 'tone';
 import { arrayRange } from '../utils';
 import { PlaybackMode, playbackModeTranslationMap } from '../player';
 import { IconPlus, IconX } from '@tabler/icons-react';
 import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 
-type SettingsForm = NonNullable<typeof $settings.value>;
-
 export function Settings() {
-  const settings = useStore($settings);
+  const settings = useSettings();
 
-  const form = useForm<SettingsForm>({
+  const form = useForm<SettingsType>({
     initialValues: settings,
-    onValuesChange: $settings.set,
+    onValuesChange: (values) => useSettings.setState(values),
   });
 
   return (
@@ -36,7 +33,7 @@ export function Settings() {
           variant="subtle"
           p="xs"
           onClick={() => {
-            $settings.set(defaultSettings);
+            useSettings.setState(defaultSettings, true);
             form.setValues(defaultSettings);
           }}
         >

@@ -1,5 +1,7 @@
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import { alternativeVoicings } from '../model/chord';
 import { PlaybackMode } from '../player';
-import { persistentAtom } from '@nanostores/persistent';
 
 export const defaultSettings = {
   startNoteRange: [48, 72] as [number, number], // C3 - C5
@@ -9,11 +11,11 @@ export const defaultSettings = {
   delayBetweenModes: 0.5,
   autoPlayNext: true,
   alternativeVoicings: false,
+  voicings: alternativeVoicings,
 };
 
 export type Settings = typeof defaultSettings;
 
-export const $settings = persistentAtom<Settings>('settings', defaultSettings, {
-  encode: JSON.stringify,
-  decode: JSON.parse,
-});
+export const useSettings = create<Settings>()(
+  persist(() => ({ ...defaultSettings }), { name: 'settings' })
+);

@@ -4,14 +4,13 @@ import { SetButton } from '../../components/SetButton';
 import { useSearchParams, createSearchParams, Link } from 'react-router';
 import { QuizMode } from '../../model/quiz';
 import { IconPlus } from '@tabler/icons-react';
-import { useStore } from '@nanostores/react';
-import { $sets } from '../../store/sets';
+import { useSetsStore } from '../../store/sets';
 
 export function Sets() {
   const [searchParams] = useSearchParams();
   const mode = searchParams.get('mode');
 
-  const sets = useStore($sets);
+  const sets = useSetsStore((s) => s.sets);
 
   if (!mode) return null;
 
