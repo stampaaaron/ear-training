@@ -1,4 +1,5 @@
 import { QuizSet } from '../store/sets';
+import { defaultSettings } from '../store/settings';
 import {
   baseChords,
   Chord,
@@ -78,6 +79,13 @@ export const allChords = [
   ...allChordsWithTwoTensions,
 ];
 
+export const possibleChordsForAlternativeVoicings = [
+  ...basicSeventhChordsWithAllTensions.filter(
+    ({ name }) => !name.includes('Min7b5') && !name.includes('Min(maj7)')
+  ),
+  ...allAddChords,
+];
+
 export const chordSets: ChordSet[] = [
   {
     key: 'triads',
@@ -121,11 +129,12 @@ export const chordSets: ChordSet[] = [
     options: allChordsWithTwoTensions,
     description: `${allSeventhChords.map(({ name }) => name).join(', ')} with two Tensions`,
   },
-];
-
-export const possibleChordsForAlternativeVoicings = [
-  ...basicSeventhChordsWithAllTensions.filter(
-    ({ name }) => !name.includes('Min7b5') && !name.includes('Min(maj7)')
-  ),
-  ...allAddChords,
+  {
+    key: 'alternative-voicings',
+    label: 'Chords with alternative Voicings (Beta)',
+    options: possibleChordsForAlternativeVoicings,
+    description:
+      'A list of voicings where the intervals are played in a diffrent order',
+    settings: { ...defaultSettings, alternativeVoicings: true },
+  },
 ];
