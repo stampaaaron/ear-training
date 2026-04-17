@@ -25,9 +25,9 @@ export const chordIntervalBaseMap: Record<VoicingInterval, Interval[]> = {
 
 type VoicingIntervalOctave = VoicingInterval[];
 
-export type Vocing = VoicingIntervalOctave[];
+export type Voicing = VoicingIntervalOctave[];
 
-export const alternativeVoicings: Vocing[] = [
+export const alternativeVoicings: Voicing[] = [
   // 1,5
   [
     [1, 5],
@@ -419,7 +419,7 @@ export function getAllTwoTensionChords(chord: Chord): Chord[] {
   );
 }
 
-export const voicingContainsChord = (voicing: Vocing, chord: Chord) => {
+export const voicingContainsChord = (voicing: Voicing, chord: Chord) => {
   const chordWithFiveNotes = resolveChordIntervalsForVoicings(chord);
 
   return voicing

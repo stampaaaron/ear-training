@@ -5,7 +5,7 @@ import { useSettings } from './settings';
 import { getRandomMidiNote } from '../player';
 import {
   alternativeVoicings,
-  Vocing,
+  Voicing,
   voicingContainsChord,
 } from '../model/chord';
 import { QuizSet } from './sets';
@@ -13,7 +13,7 @@ import { QuizSet } from './sets';
 type QuizState = {
   current?: {
     startNote: number;
-    voicing?: Vocing;
+    voicing?: Voicing;
     option: QuizOption;
   };
   guess?: QuizOption;
