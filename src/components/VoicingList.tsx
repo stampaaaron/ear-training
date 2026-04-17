@@ -1,6 +1,20 @@
-import { Badge, Checkbox, Divider, Group, SimpleGrid } from '@mantine/core';
-import { alternativeVoicings, Voicing } from '../model/chord';
+import {
+  Badge,
+  Checkbox,
+  Divider,
+  Group,
+  SimpleGrid,
+  Tooltip,
+} from '@mantine/core';
+import {
+  alternativeVoicings,
+  chordIntervalBaseMap,
+  Voicing,
+  voicingContainsChord,
+} from '../model/chord';
 import classes from './VoicingList.module.css';
+import { possibleChordsForAlternativeVoicings } from '../model/chordSet';
+import { IconInfoCircle } from '@tabler/icons-react';
 
 type Props = {
   voicings?: Voicing[];
@@ -26,6 +40,10 @@ export function VoicingList({
     >
       <SimpleGrid cols={{ xs: 1, sm: 2 }} spacing="sm">
         {voicings.map((voicing) => {
+          const possibleChords = possibleChordsForAlternativeVoicings.filter(
+            (chord) => voicingContainsChord(voicing, chord)
+          );
+
           return (
             <Checkbox.Card
               className={classes.root}
@@ -40,13 +58,29 @@ export function VoicingList({
                     <>
                       <Group>
                         {octave.map((interval) => (
-                          <Badge variant="default">{interval}</Badge>
+                          <Badge
+                            variant="default"
+                            style={{ textTransform: 'lowercase' }}
+                          >
+                            {chordIntervalBaseMap[interval]
+                              .filter((i) =>
+                                possibleChords.some((chord) =>
+                                  chord.intervals.includes(i)
+                                )
+                              )
+                              .join(' / ')}
+                          </Badge>
                         ))}
                       </Group>
                       {index < length - 1 && <Divider orientation="vertical" />}
                     </>
                   ))}
                 </Group>
+                <Tooltip
+                  label={`This voicing work for the following chords: ${possibleChords.map((chord) => chord.name).join(', ')}`}
+                >
+                  <IconInfoCircle style={{ marginLeft: 'auto' }} />
+                </Tooltip>
               </Group>
             </Checkbox.Card>
           );
