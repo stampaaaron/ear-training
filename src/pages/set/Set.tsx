@@ -37,6 +37,7 @@ import { defaultSettings } from '../../store/settings';
 import { useState } from 'react';
 import { possibleChordsForAlternativeVoicings } from '../../model/chordSet';
 import { Chord } from '../../model/chord';
+import { VoicingList } from '../../components/VoicingList';
 
 enum ConfigSection {
   options = 'options',
@@ -270,7 +271,7 @@ export function Set() {
               })}
             />
           )}
-          {/* {form.getValues().settings?.alternativeVoicings && (
+          {form.getValues().settings?.alternativeVoicings && (
             <Accordion defaultValue={ConfigSection.voicings}>
               <Accordion.Item value={ConfigSection.voicings}>
                 <Accordion.Control>
@@ -279,45 +280,11 @@ export function Set() {
                   </Stack>
                 </Accordion.Control>
                 <Accordion.Panel>
-                  <Checkbox.Group>
-                    <Table>
-                      <Table.Thead>
-                        <Table.Tr>
-                          <Table.Th></Table.Th>
-                          {[
-                            ...Array(
-                              Math.max(
-                                ...alternativeVoicings.map((v) => v.length)
-                              )
-                            ).keys(),
-                          ].map((v) => (
-                            <Table.Th>Octave {v + 1}</Table.Th>
-                          ))}
-                        </Table.Tr>
-                      </Table.Thead>
-                      {alternativeVoicings.map((voicing) => (
-                        <Table.Tr>
-                          <Table.Td>
-                            <Checkbox />
-                          </Table.Td>
-
-                          {voicing.map((intervals) => (
-                            <Table.Td>
-                              <Group>
-                                {intervals.map((i) => (
-                                  <Badge variant="outline">{i}</Badge>
-                                ))}
-                              </Group>
-                            </Table.Td>
-                          ))}
-                        </Table.Tr>
-                      ))}
-                    </Table>
-                  </Checkbox.Group>
+                  <VoicingList {...form.getInputProps('settings.voicings')} />
                 </Accordion.Panel>
               </Accordion.Item>
             </Accordion>
-          )} */}
+          )}
 
           <Group>
             {isCreateForm && (
