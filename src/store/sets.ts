@@ -5,6 +5,7 @@ import { Settings } from './settings';
 import { chordSets } from '../model/chordSet';
 import { intervalSets } from '../model/interval';
 import { scaleSets } from '../model/scale';
+import { alternativeVoicings } from '../model/chord';
 
 export type QuizOptionBase<G extends string = string> = {
   name: string;
@@ -32,7 +33,21 @@ type SetsState = {
 };
 
 export const useSetsStore = create<SetsState>()(
-  persist(() => ({ sets: initialSets }), { name: 'sets' })
+  persist(() => ({ sets: initialSets }), {
+    name: 'sets',
+    version: 1,
+    migrate: (prevState, prevVersion) => {
+      if (prevVersion === 0) {
+        (prevState as SetsState).sets.chords.forEach((chord) => {
+          if (chord.settings) {
+            chord.settings.voicings = alternativeVoicings;
+          }
+        });
+      }
+
+      return prevState;
+    },
+  })
 );
 
 export function useSet(key: string) {
