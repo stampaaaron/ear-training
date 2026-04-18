@@ -1,11 +1,4 @@
-import {
-  Badge,
-  Checkbox,
-  Divider,
-  Group,
-  SimpleGrid,
-  Tooltip,
-} from '@mantine/core';
+import { Badge, Checkbox, Divider, Group, Stack, Tooltip } from '@mantine/core';
 import {
   alternativeVoicings,
   chordIntervalBaseMap,
@@ -38,7 +31,7 @@ export function VoicingList({
         onChange?.(voicings.filter((v) => keys.includes(getVoicingKey(v))));
       }}
     >
-      <SimpleGrid cols={{ xs: 1, sm: 2 }} spacing="sm">
+      <Stack>
         {voicings.map((voicing) => {
           const possibleChords = possibleChordsForAlternativeVoicings.filter(
             (chord) => voicingContainsChord(voicing, chord)
@@ -85,7 +78,7 @@ export function VoicingList({
             </Checkbox.Card>
           );
         })}
-      </SimpleGrid>
+      </Stack>
     </Checkbox.Group>
   );
 }
