@@ -172,9 +172,13 @@ export function Set() {
 
                       return (
                         <Tooltip
-                          disabled={!showWarning}
+                          disabled={!('intervals' in option)}
                           label={
-                            'Chord is not available for alternative voicings.'
+                            showWarning
+                              ? 'Chord is not available for alternative voicings.'
+                              : 'intervals' in option
+                                ? option.intervals.join(',')
+                                : ''
                           }
                         >
                           <Badge
