@@ -35,6 +35,13 @@ export const usePlayer = ({
 }: Settings) => {
   const { piano } = useAudio();
 
+  const stopAll = () => {
+    const transport = Tone.getTransport();
+    transport.cancel();
+    transport.stop();
+    piano?.releaseAll(Tone.now());
+  };
+
   const playIntervals = async (
     chord: Interval[][] | Interval[],
     startNote = getRandomMidiNote(startNoteRange),
@@ -44,7 +51,8 @@ export const usePlayer = ({
     await Tone.start();
     await Tone.loaded();
 
-    let now = Tone.now();
+    stopAll();
+    Tone.getTransport().position = 0;
 
     const octaves = (Array.isArray(chord[0]) ? chord : [chord]) as Interval[][];
 
@@ -55,6 +63,8 @@ export const usePlayer = ({
           .toNote()
       )
     );
+
+    let offset = 0;
 
     modes.forEach((mode) => {
       // TODO lautstärke
@@ -68,41 +78,52 @@ export const usePlayer = ({
         case 'ascending':
           if (sustained) {
             notes.forEach((note, index) => {
-              piano?.triggerAttack(note, now + index * noteToNoteDelay, 0.8);
+              const t = offset + index * noteToNoteDelay;
+              Tone.getTransport().schedule((time) => {
+                piano?.triggerAttack(note, time, 0.8);
+              }, t);
             });
-
-            now = now + notes.length * noteToNoteDelay + releaseDelay;
-            piano?.releaseAll(now);
+            offset = offset + notes.length * noteToNoteDelay + releaseDelay;
+            Tone.getTransport().schedule((time) => {
+              piano?.releaseAll(time);
+            }, offset);
           } else {
             notes.forEach((note, index) => {
-              piano?.triggerAttackRelease(
-                note,
-                now + releaseDelay,
-                now + index * noteToNoteDelay,
-                0.8
-              );
+              const t = offset + index * noteToNoteDelay;
+              Tone.getTransport().schedule((time) => {
+                piano?.triggerAttackRelease(note, releaseDelay, time, 0.8);
+              }, t);
             });
-            now = now + notes.length * noteToNoteDelay + releaseDelay;
+            offset = offset + notes.length * noteToNoteDelay + releaseDelay;
           }
 
           break;
         case 'harmonic':
-          piano?.triggerAttack(notes, now, 0.8);
-          now += releaseDelay;
-          piano?.releaseAll(now);
+          Tone.getTransport().schedule((time) => {
+            piano?.triggerAttack(notes, time, 0.8);
+          }, offset);
+          offset += releaseDelay;
+          Tone.getTransport().schedule((time) => {
+            piano?.releaseAll(time);
+          }, offset);
           break;
         default:
           break;
       }
-      now += delayBetweenModes;
+      offset += delayBetweenModes;
     });
+
+    Tone.getTransport().start();
   };
 
   const playCadence = (
     cadence: ChordFunction[],
     startNote = getRandomMidiNote(startNoteRange)
   ) => {
-    let now = Tone.now();
+    stopAll();
+    Tone.getTransport().position = 0;
+
+    let offset = 0;
 
     cadence.forEach((chordFunction) => {
       const root = Tone.Frequency(startNote, 'midi')
@@ -117,10 +138,16 @@ export const usePlayer = ({
 
       notes.push(Tone.Frequency(root, 'midi').transpose(-12).toMidi());
 
-      piano?.triggerAttack(notes, now, 0.8);
-      now += releaseDelay;
-      piano?.releaseAll(now);
+      Tone.getTransport().schedule((time) => {
+        piano?.triggerAttack(notes, time, 0.8);
+      }, offset);
+      offset += releaseDelay;
+      Tone.getTransport().schedule((time) => {
+        piano?.releaseAll(time);
+      }, offset);
     });
+
+    Tone.getTransport().start();
   };
 
   const handlePlayOption = <M extends QuizMode>(
@@ -166,5 +193,6 @@ export const usePlayer = ({
     handlePlayOption,
     getRandomMidiNote,
     playCadence,
+    stopAll,
   };
 };
