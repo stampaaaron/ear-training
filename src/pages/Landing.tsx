@@ -53,7 +53,7 @@ const steps: Feature[] = [
     icon: IconTargetArrow,
     title: 'Pick a mode',
     description:
-      'Choose intervals, chords, scales or cadences, and build your own practice sets.',
+      'Choose intervals, chords or scales, and build your own practice sets.',
   },
   {
     icon: IconHeadphones,
@@ -83,8 +83,8 @@ export function Landing() {
             freear
           </Title>
           <Text size="lg" c="dimmed" maw={480}>
-            Train your ear for intervals, chords, scales and cadences — right
-            in your browser.
+            Train your ear for intervals, chords and scales — right in your
+            browser.
           </Text>
           <Button component={Link} to="/modes" size="md" mt="sm">
             Start training
