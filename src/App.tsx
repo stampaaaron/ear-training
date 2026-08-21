@@ -3,7 +3,8 @@ import './styles.css';
 import '@mantine/core/styles.css';
 import { Quiz } from './pages/quiz/Quiz';
 import { BrowserRouter, Route, Routes } from 'react-router';
-import { Home } from './pages/Home';
+import { Landing } from './pages/Landing';
+import { Modes } from './pages/Modes';
 import { Settings } from './pages/Settings';
 import { NewSet } from './pages/set/NewSet';
 import { Cadence } from './pages/cadance/Cadence';
@@ -21,7 +22,8 @@ function App() {
           <AppShell bg="blue" py="lg">
             <AppShell.Main>
               <Routes>
-                <Route path="/" element={<Home />} />
+                <Route path="/" element={<Landing />} />
+                <Route path="/modes" element={<Modes />} />
                 <Route path="/sets">
                   <Route path="" element={<Sets />} />
                   <Route path=":id" element={<Set />} />
