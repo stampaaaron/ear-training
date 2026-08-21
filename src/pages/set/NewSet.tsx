@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { OptionsGrid } from '../../components/OptionsGrid';
 import { Shell } from '../../layout/Shell';
 import { Button, Stack } from '@mantine/core';
-import { Link, useSearchParams } from 'react-router';
+import { createSearchParams, Link, useSearchParams } from 'react-router';
 import { useCurrentSet } from '../../store/currentSet';
 import { QuizMode } from '../../model/quiz';
 import { useSetsStore } from '../../store/sets';
@@ -22,7 +22,13 @@ export function NewSet() {
   );
 
   return (
-    <Shell title="Create your custom set">
+    <Shell
+      title="Create your custom set"
+      backUrl={{
+        pathname: '/sets',
+        search: createSearchParams({ mode }).toString(),
+      }}
+    >
       <Stack>
         <OptionsGrid
           quizMode={mode}
