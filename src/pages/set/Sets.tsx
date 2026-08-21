@@ -1,4 +1,4 @@
-import { Button, Stack } from '@mantine/core';
+import { Button, Card, Stack, Text } from '@mantine/core';
 import { Shell } from '../../layout/Shell';
 import { SetButton } from '../../components/SetButton';
 import { useSearchParams, createSearchParams, Link } from 'react-router';
@@ -14,15 +14,24 @@ export function Sets() {
 
   if (!mode) return null;
 
+  const modeSets = sets[mode as QuizMode];
+
   return (
-    <Shell title="Choose your set" backUrl="/">
+    <Shell title="Choose your set" backUrl="/modes">
       <Stack>
-        {sets[mode as QuizMode].length ? (
-          sets[mode as QuizMode].map((quizSet) => (
-            <SetButton key={quizSet.key} quizSet={quizSet} to={quizSet.key} />
-          ))
+        {modeSets.length ? (
+          <Card padding={0} withBorder>
+            {modeSets.map((quizSet, index) => (
+              <SetButton
+                key={quizSet.key}
+                quizSet={quizSet}
+                to={quizSet.key}
+                withDivider={index > 0}
+              />
+            ))}
+          </Card>
         ) : (
-          <p>Comming soon</p>
+          <Text c="dimmed">Coming soon</Text>
         )}
         <Button
           component={Link}

@@ -2,13 +2,13 @@ import { createSearchParams, To, useNavigate, useParams } from 'react-router';
 import { Shell } from '../../layout/Shell';
 import { QuizSet, useSet } from '../../store/sets';
 import {
-  Accordion,
   ActionIcon,
   Badge,
   Button,
   Group,
   Input,
   Menu,
+  Modal,
   Stack,
   Switch,
   Title,
@@ -20,6 +20,7 @@ import {
   IconAlertTriangle,
   IconDots,
   IconInfoCircle,
+  IconPencil,
   IconTrash,
   IconX,
 } from '@tabler/icons-react';
@@ -38,12 +39,6 @@ import { useState } from 'react';
 import { possibleChordsForAlternativeVoicings } from '../../model/chordSet';
 import { Chord } from '../../model/chord';
 import { VoicingList } from '../../components/VoicingList';
-
-enum ConfigSection {
-  options = 'options',
-  playback = 'playback',
-  voicings = 'voicings',
-}
 
 export function Set() {
   const { id } = useParams();
@@ -79,14 +74,7 @@ export function Set() {
     },
   });
 
-  const [openSections, setOpenSections] = useState([ConfigSection.playback]);
-  form.watch('settings.alternativeVoicings', ({ value }) => {
-    if (value) {
-      setOpenSections([...openSections, ConfigSection.voicings]);
-    } else {
-      setOpenSections(openSections.filter((s) => s !== ConfigSection.voicings));
-    }
-  });
+  const [optionsModalOpen, setOptionsModalOpen] = useState(false);
 
   const { handlePlayOption } = usePlayer(
     form.getValues().settings ?? defaultSettings
@@ -153,112 +141,111 @@ export function Set() {
         backUrl={backUrl}
       >
         <Stack>
-          <Accordion
-            multiple
-            value={openSections}
-            onChange={(sections) =>
-              setOpenSections(sections as ConfigSection[])
-            }
-          >
-            <Accordion.Item value={ConfigSection.options}>
-              <Accordion.Control>
-                <Stack gap="sm">
-                  <Title order={3}>Options</Title>
-                  <Group gap="sm">
-                    {form.getValues().options?.map((option) => {
-                      const showWarning =
-                        form.getValues().settings?.alternativeVoicings &&
-                        !chordSupportAlternativeVoicings(option as Chord);
+          <Stack gap="sm">
+            <Group gap="xs">
+              <Title order={3}>Options</Title>
+              <Button
+                variant="subtle"
+                size="compact-xs"
+                leftSection={<IconPencil size={14} />}
+                onClick={() => setOptionsModalOpen(true)}
+              >
+                Edit
+              </Button>
+            </Group>
+            <Group gap="sm">
+              {form.getValues().options?.map((option) => {
+                const showWarning =
+                  form.getValues().settings?.alternativeVoicings &&
+                  !chordSupportAlternativeVoicings(option as Chord);
 
-                      return (
-                        <Tooltip
-                          disabled={!('intervals' in option)}
-                          label={
-                            showWarning
-                              ? 'Chord is not available for alternative voicings.'
-                              : 'intervals' in option
-                                ? option.intervals.join(',')
-                                : ''
-                          }
+                return (
+                  <Tooltip
+                    disabled={!('intervals' in option)}
+                    label={
+                      showWarning
+                        ? 'Chord is not available for alternative voicings.'
+                        : 'intervals' in option
+                          ? option.intervals.join(',')
+                          : ''
+                    }
+                  >
+                    <Badge
+                      variant="light"
+                      color={showWarning ? 'orange' : ''}
+                      leftSection={
+                        showWarning && <IconAlertTriangle size={12} />
+                      }
+                      key={option.name}
+                      style={{ paddingRight: 4 }}
+                      rightSection={
+                        <ActionIcon
+                          size={16}
+                          color={showWarning ? 'orange' : ''}
+                          variant="subtle"
+                          onClick={() => {
+                            form.setFieldValue(
+                              'options',
+                              form
+                                .getValues()
+                                .options?.filter(
+                                  ({ name }) => name !== option.name
+                                )
+                            );
+                          }}
                         >
-                          <Badge
-                            variant="outline"
-                            color={showWarning ? 'orange' : undefined}
-                            leftSection={
-                              showWarning && <IconAlertTriangle size={12} />
-                            }
-                            key={option.name}
-                            rightSection={
-                              showWarning && (
-                                <ActionIcon
-                                  size="xs"
-                                  color="orange"
-                                  variant="subtle"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    form.setFieldValue(
-                                      'options',
-                                      form
-                                        .getValues()
-                                        .options?.filter(
-                                          ({ name }) => name !== option.name
-                                        )
-                                    );
-                                  }}
-                                >
-                                  <IconX />
-                                </ActionIcon>
-                              )
-                            }
-                          >
-                            {option.name}
-                          </Badge>
-                        </Tooltip>
-                      );
-                    })}
-                  </Group>
-                  {form.errors.options && (
-                    <Input.Error>{form.errors.options}</Input.Error>
-                  )}
-                </Stack>
-              </Accordion.Control>
-              <Accordion.Panel>
-                <OptionsGrid
-                  isDisabled={
-                    form.getValues().settings?.alternativeVoicings
-                      ? (option) =>
-                          !chordSupportAlternativeVoicings(option as Chord) &&
-                          !form
-                            .getValues()
-                            .options?.some(({ name }) => option.name === name)
-                      : undefined
-                  }
-                  resolveColor={
-                    form.getValues().settings?.alternativeVoicings
-                      ? (option) =>
-                          !chordSupportAlternativeVoicings(option as Chord)
-                            ? 'orange'
-                            : undefined
-                      : undefined
-                  }
-                  quizMode={mode}
-                  {...form.getInputProps('options')}
-                />
-              </Accordion.Panel>
-            </Accordion.Item>
-            <Accordion.Item value={ConfigSection.playback}>
-              <Accordion.Control>
-                <Title order={3}>Playback settings</Title>
-              </Accordion.Control>
-              <Accordion.Panel>
-                <SettingsForm form={form} {...form.getInputProps('settings')} />
-              </Accordion.Panel>
-            </Accordion.Item>
-          </Accordion>
+                          <IconX size={11} />
+                        </ActionIcon>
+                      }
+                    >
+                      {option.name}
+                    </Badge>
+                  </Tooltip>
+                );
+              })}
+            </Group>
+            {form.errors.options && (
+              <Input.Error>{form.errors.options}</Input.Error>
+            )}
+          </Stack>
+
+          <Modal
+            opened={optionsModalOpen}
+            onClose={() => setOptionsModalOpen(false)}
+            title="Choose options"
+            size="lg"
+          >
+            <OptionsGrid
+              isDisabled={
+                form.getValues().settings?.alternativeVoicings
+                  ? (option) =>
+                      !chordSupportAlternativeVoicings(option as Chord) &&
+                      !form
+                        .getValues()
+                        .options?.some(({ name }) => option.name === name)
+                  : undefined
+              }
+              resolveColor={
+                form.getValues().settings?.alternativeVoicings
+                  ? (option) =>
+                      !chordSupportAlternativeVoicings(option as Chord)
+                        ? 'orange'
+                        : undefined
+                  : undefined
+              }
+              quizMode={mode}
+              {...form.getInputProps('options')}
+            />
+          </Modal>
+
+          <Stack gap="sm">
+            <Title order={3}>Playback settings</Title>
+            <SettingsForm form={form} {...form.getInputProps('settings')} />
+          </Stack>
           {mode === QuizMode.chords && (
             <Switch
               label={
-                <Group gap={0}>
+                <Group gap="xs">
                   Alternative Vocings (Beta){' '}
                   <Tooltip
                     label={
@@ -276,18 +263,10 @@ export function Set() {
             />
           )}
           {form.getValues().settings?.alternativeVoicings && (
-            <Accordion defaultValue={ConfigSection.voicings}>
-              <Accordion.Item value={ConfigSection.voicings}>
-                <Accordion.Control>
-                  <Stack>
-                    <Title order={3}>Voicings</Title>
-                  </Stack>
-                </Accordion.Control>
-                <Accordion.Panel>
-                  <VoicingList {...form.getInputProps('settings.voicings')} />
-                </Accordion.Panel>
-              </Accordion.Item>
-            </Accordion>
+            <Stack gap="sm">
+              <Title order={3}>Voicings</Title>
+              <VoicingList {...form.getInputProps('settings.voicings')} />
+            </Stack>
           )}
 
           <Group>
