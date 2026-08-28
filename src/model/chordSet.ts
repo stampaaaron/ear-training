@@ -6,9 +6,7 @@ import {
   getAllOneTensionChords,
   getAllTwoTensionChords,
   seventhChords,
-  SeventhChords,
 } from './chord';
-import { Entries } from './helper';
 
 export type ChordSet = QuizSet<Chord>;
 
@@ -27,7 +25,7 @@ const allAddChords = [
   seventhChords['min.add'],
 ].flatMap(getAllTwoTensionChords);
 
-const basicSenventhChordsWithoutDominant = [
+const basicSeventhChords = [
   seventhChords['maj.7'],
   seventhChords['maj.6'],
   seventhChords['min.b7'],
@@ -35,40 +33,21 @@ const basicSenventhChordsWithoutDominant = [
   seventhChords['min.7'],
   seventhChords['sus.b7'],
   seventhChords['dim.b7'],
-];
-
-const basicSeventhChords = [
-  ...basicSenventhChordsWithoutDominant,
   seventhChords['maj.b7'],
 ];
 
-const basicSeventhChordsWithTensions = [
-  ...basicSenventhChordsWithoutDominant,
-  seventhChords['dom.b7'],
-].flatMap(getAllOneTensionChords);
-
-const basicSeventhChordsWithTwoTensions = [
-  ...basicSenventhChordsWithoutDominant,
-  seventhChords['dom.b7'],
-].flatMap(getAllTwoTensionChords);
-
-export const basicSeventhChordsWithAllTensions = [
-  ...basicSeventhChordsWithTensions,
-  ...basicSeventhChordsWithTwoTensions,
-];
-
-const allSeventhChords = (
-  Object.entries(seventhChords) as Entries<SeventhChords>
-)
-  .filter(([key]) => key !== 'dom.b7')
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  .map(([_, value]) => value);
-
-const allChordsWithTensions = Object.values(seventhChords).flatMap(
+const basicSeventhChordsWithTensions = basicSeventhChords.flatMap(
   getAllOneTensionChords
 );
+const basicSeventhChordsWithTwoTensions = basicSeventhChords.flatMap(
+  getAllTwoTensionChords
+);
 
-const allChordsWithTwoTensions = Object.values(seventhChords).flatMap(
+const allSeventhChords = Object.values(seventhChords);
+
+const allChordsWithTensions = allSeventhChords.flatMap(getAllOneTensionChords);
+
+const allChordsWithTwoTensions = allSeventhChords.flatMap(
   getAllTwoTensionChords
 );
 
@@ -77,6 +56,11 @@ export const allChords = [
   ...allSeventhChords,
   ...allChordsWithTensions,
   ...allChordsWithTwoTensions,
+];
+
+const basicSeventhChordsWithAllTensions = [
+  ...basicSeventhChordsWithTensions,
+  ...basicSeventhChordsWithTwoTensions,
 ];
 
 export const possibleChordsForAlternativeVoicings = [

@@ -231,10 +231,6 @@ const chords: {
       ['9', '13'],
     ],
     '6': [['9', '#11']],
-    b7: [],
-    add: [['9', '#11']],
-  },
-  dom: {
     b7: [
       ['b9', '#9'],
       ['b9', '#11'],
@@ -249,7 +245,9 @@ const chords: {
       ['#11', 'b13'],
       ['#11', '13'],
     ],
+    add: [['9', '#11']],
   },
+  dom: {},
   sus: {
     b7: [
       ['b9', '10'],
@@ -338,7 +336,7 @@ const chordGrouping: ChordGrouping = {
   maj: { group: ChordBase.maj, customExtensionGroups: { b7: ChordBase.dom } },
   min: { group: ChordBase.min },
   dom: { group: ChordBase.dom },
-  sus: { group: ChordBase.sus, customExtensionGroups: { b7: ChordBase.dom } },
+  sus: { group: ChordBase.sus },
   sus2: { group: ChordBase.sus },
   aug: {
     group: ChordBase.aug,
@@ -402,28 +400,24 @@ export const seventhChords = (
   return acc;
 }, {} as SeventhChords);
 
+function addTensions(chord: Chord, tensions: ChordTension[]): Chord {
+  return {
+    ...chord,
+    intervals: [...chord.intervals, ...tensions],
+    name: `${chord.name}(${tensions.join(',')})`,
+  };
+}
+
 export function getAllOneTensionChords(chord: Chord): Chord[] {
   const uniqueTensions = chord.tensions
     ?.flat()
     .filter((value, index, array) => array.indexOf(value) === index);
 
-  return (
-    uniqueTensions?.map((t) => ({
-      ...chord,
-      intervals: [...chord.intervals, t],
-      name: `${chord.name}(${t})`,
-    })) ?? []
-  );
+  return uniqueTensions?.map((t) => addTensions(chord, [t])) ?? [];
 }
 
 export function getAllTwoTensionChords(chord: Chord): Chord[] {
-  return (
-    chord.tensions?.map((t) => ({
-      ...chord,
-      intervals: [...chord.intervals, ...t],
-      name: `${chord.name}(${t})`,
-    })) ?? []
-  );
+  return chord.tensions?.map((t) => addTensions(chord, t)) ?? [];
 }
 
 export const voicingContainsChord = (voicing: Voicing, chord: Chord) => {
