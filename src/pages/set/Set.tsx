@@ -11,6 +11,7 @@ import {
   Modal,
   Stack,
   Switch,
+  Text,
   Title,
   Tooltip,
 } from '@mantine/core';
@@ -75,6 +76,7 @@ export function Set() {
   });
 
   const [optionsModalOpen, setOptionsModalOpen] = useState(false);
+  const [voicingsModalOpen, setVoicingsModalOpen] = useState(false);
   const [discardModalOpen, setDiscardModalOpen] = useState(false);
 
   const { handlePlayOption } = usePlayer(
@@ -239,6 +241,45 @@ export function Set() {
             {form.errors.options && (
               <Input.Error>{form.errors.options}</Input.Error>
             )}
+            {mode === QuizMode.chords && (
+              <Stack gap="xs">
+                <Switch
+                  size="sm"
+                  label={
+                    <Group gap="xs">
+                      Alternative Vocings (Beta){' '}
+                      <Tooltip
+                        label={
+                          "It might create some voicings that aren't very musical. This feature is still in beta and will improved."
+                        }
+                      >
+                        <IconInfoCircle size={14} />
+                      </Tooltip>
+                    </Group>
+                  }
+                  labelPosition="left"
+                  {...form.getInputProps('settings.alternativeVoicings', {
+                    type: 'checkbox',
+                  })}
+                />
+                {form.getValues().settings?.alternativeVoicings && (
+                  <Group gap="xs">
+                    <Text c="dimmed" size="sm">
+                      {form.getValues().settings?.voicings.length} voicings
+                      selected
+                    </Text>
+                    <Button
+                      variant="subtle"
+                      size="compact-xs"
+                      leftSection={<IconPencil size={12} />}
+                      onClick={() => setVoicingsModalOpen(true)}
+                    >
+                      Edit
+                    </Button>
+                  </Group>
+                )}
+              </Stack>
+            )}
           </Stack>
 
           <Modal
@@ -270,36 +311,19 @@ export function Set() {
             />
           </Modal>
 
+          <Modal
+            opened={voicingsModalOpen}
+            onClose={() => setVoicingsModalOpen(false)}
+            title="Choose voicings"
+            size="lg"
+          >
+            <VoicingList {...form.getInputProps('settings.voicings')} />
+          </Modal>
+
           <Stack gap="sm">
             <Title order={3}>Playback settings</Title>
             <SettingsForm form={form} {...form.getInputProps('settings')} />
           </Stack>
-          {mode === QuizMode.chords && (
-            <Switch
-              label={
-                <Group gap="xs">
-                  Alternative Vocings (Beta){' '}
-                  <Tooltip
-                    label={
-                      "It might create some voicings that aren't very musical. This feature is still in beta and will improved."
-                    }
-                  >
-                    <IconInfoCircle />
-                  </Tooltip>
-                </Group>
-              }
-              labelPosition="left"
-              {...form.getInputProps('settings.alternativeVoicings', {
-                type: 'checkbox',
-              })}
-            />
-          )}
-          {form.getValues().settings?.alternativeVoicings && (
-            <Stack gap="sm">
-              <Title order={3}>Voicings</Title>
-              <VoicingList {...form.getInputProps('settings.voicings')} />
-            </Stack>
-          )}
 
           <Group>
             {isCreateForm && (

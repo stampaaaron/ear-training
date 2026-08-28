@@ -9,6 +9,39 @@ import classes from './VoicingList.module.css';
 import { possibleChordsForAlternativeVoicings } from '../model/chordSet';
 import { IconInfoCircle } from '@tabler/icons-react';
 
+export const getVoicingKey = (voicing: Voicing) => voicing.flat().join(',');
+
+type VoicingBadgesProps = {
+  voicing: Voicing;
+};
+
+export function VoicingBadges({ voicing }: VoicingBadgesProps) {
+  const possibleChords = possibleChordsForAlternativeVoicings.filter(
+    (chord) => voicingContainsChord(voicing, chord)
+  );
+
+  return (
+    <Group gap="sm">
+      {voicing.map((octave, index, { length }) => (
+        <>
+          <Group>
+            {octave.map((interval) => (
+              <Badge variant="default" style={{ textTransform: 'lowercase' }}>
+                {chordIntervalBaseMap[interval]
+                  .filter((i) =>
+                    possibleChords.some((chord) => chord.intervals.includes(i))
+                  )
+                  .join(' / ')}
+              </Badge>
+            ))}
+          </Group>
+          {index < length - 1 && <Divider orientation="vertical" />}
+        </>
+      ))}
+    </Group>
+  );
+}
+
 type Props = {
   voicings?: Voicing[];
   value?: Voicing[];
@@ -20,8 +53,6 @@ export function VoicingList({
   value,
   onChange,
 }: Props) {
-  const getVoicingKey = (voicing: Voicing) => voicing.flat().join(',');
-
   const selectedKeys = value?.map(getVoicingKey) ?? [];
 
   return (
@@ -46,29 +77,7 @@ export function VoicingList({
             >
               <Group>
                 <Checkbox.Indicator />
-                <Group gap="sm">
-                  {voicing.map((octave, index, { length }) => (
-                    <>
-                      <Group>
-                        {octave.map((interval) => (
-                          <Badge
-                            variant="default"
-                            style={{ textTransform: 'lowercase' }}
-                          >
-                            {chordIntervalBaseMap[interval]
-                              .filter((i) =>
-                                possibleChords.some((chord) =>
-                                  chord.intervals.includes(i)
-                                )
-                              )
-                              .join(' / ')}
-                          </Badge>
-                        ))}
-                      </Group>
-                      {index < length - 1 && <Divider orientation="vertical" />}
-                    </>
-                  ))}
-                </Group>
+                <VoicingBadges voicing={voicing} />
                 <Tooltip
                   label={`This voicing work for the following chords: ${possibleChords.map((chord) => chord.name).join(', ')}`}
                 >
