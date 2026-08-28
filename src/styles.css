@@ -6,6 +6,6 @@ main {
 @media (max-width: 800px) {
   .mantine-AppShell-root {
     background-color: white !important;
-    padding-block: 0 !important;
+    --app-shell-padding: 0 !important;
   }
 }

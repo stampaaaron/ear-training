@@ -19,7 +19,7 @@ function App() {
     <BrowserRouter>
       <MantineProvider theme={theme}>
         <AudioProvider>
-          <AppShell bg="blue" py="lg">
+          <AppShell bg="blue" padding="lg">
             <AppShell.Main>
               <Routes>
                 <Route path="/" element={<Landing />} />
