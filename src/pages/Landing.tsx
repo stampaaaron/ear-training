@@ -1,4 +1,5 @@
 import {
+  Anchor,
   Badge,
   Button,
   Card,
@@ -12,6 +13,7 @@ import {
 import { Link } from 'react-router';
 import {
   IconBolt,
+  IconBrandGithub,
   IconEar,
   IconHeadphones,
   IconPiano,
@@ -138,6 +140,23 @@ export function Landing() {
             Start training now
           </Button>
         </Group>
+
+        <Text size="sm" c="dimmed" ta="center">
+          Found a bug or have a feature request?{' '}
+          <Anchor
+            href="https://github.com/stampaaaron/ear-training/issues"
+            target="_blank"
+            rel="noopener noreferrer"
+            size="sm"
+          >
+            <IconBrandGithub
+              size={14}
+              style={{ verticalAlign: 'text-bottom' }}
+            />{' '}
+            Open a GitHub issue
+          </Anchor>{' '}
+          or <Anchor href="mailto:aaron@stampa.ch" size="sm">send an email</Anchor>.
+        </Text>
       </Stack>
     </Card>
   );
