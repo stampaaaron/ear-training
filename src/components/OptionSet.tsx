@@ -49,6 +49,9 @@ export function OptionSet<M extends QuizMode>({
                   ? 'blue'
                   : undefined)
               }
+              h="auto"
+              py="xs"
+              styles={{ label: { whiteSpace: 'normal', textAlign: 'center' } }}
               rightSection={
                 option === guess &&
                 (guessedCorrectly ? (
