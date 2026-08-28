@@ -1,4 +1,4 @@
-import { Card, NavLink, Stack } from '@mantine/core';
+import { Card, NavLink } from '@mantine/core';
 import { Shell } from '../../layout/Shell';
 import { SetButton } from '../../components/SetButton';
 import { useSearchParams, createSearchParams, Link } from 'react-router';
@@ -17,36 +17,34 @@ export function Sets() {
   const modeSets = sets[mode as QuizMode];
 
   return (
-    <Shell title="Choose your set" backUrl="/modes">
-      <Stack>
-        <Card padding={0} withBorder>
-          {modeSets.map((quizSet, index) => (
-            <SetButton
-              key={quizSet.key}
-              quizSet={quizSet}
-              to={quizSet.key}
-              withDivider={index > 0}
-            />
-          ))}
-          <NavLink
-            component={Link}
-            to={{
-              pathname: 'new',
-              search: createSearchParams({ mode }).toString(),
-            }}
-            label="New set"
-            leftSection={<IconPlus size={16} />}
-            variant="subtle"
-            active
-            p="md"
-            style={
-              modeSets.length > 0
-                ? { borderTop: '1px solid var(--mantine-color-default-border)' }
-                : undefined
-            }
+    <Shell title="Choose your set" backUrl="/modes" noContentGap>
+      <Card.Section withBorder>
+        {modeSets.map((quizSet, index) => (
+          <SetButton
+            key={quizSet.key}
+            quizSet={quizSet}
+            to={quizSet.key}
+            withDivider={index > 0}
           />
-        </Card>
-      </Stack>
+        ))}
+        <NavLink
+          component={Link}
+          to={{
+            pathname: 'new',
+            search: createSearchParams({ mode }).toString(),
+          }}
+          label="New set"
+          leftSection={<IconPlus size={16} />}
+          variant="subtle"
+          active
+          p="md"
+          style={
+            modeSets.length > 0
+              ? { borderTop: '1px solid var(--mantine-color-default-border)' }
+              : undefined
+          }
+        />
+      </Card.Section>
     </Shell>
   );
 }

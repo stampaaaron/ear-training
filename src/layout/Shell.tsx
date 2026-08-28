@@ -7,6 +7,7 @@ type ShellProps = {
   title: ReactNode;
   rightSection?: ReactNode;
   backUrl?: To;
+  noContentGap?: boolean;
 };
 
 export function Shell({
@@ -14,10 +15,16 @@ export function Shell({
   children,
   rightSection,
   backUrl,
+  noContentGap,
 }: PropsWithChildren<ShellProps>) {
   return (
     <Card padding="lg" h="100%">
-      <Card.Section inheritPadding withBorder py="sm" mb="lg">
+      <Card.Section
+        inheritPadding
+        withBorder
+        py="sm"
+        mb={noContentGap ? 0 : 'lg'}
+      >
         <Flex justify="space-between" align="center" gap="md">
           <Group flex={1}>
             {backUrl && (
