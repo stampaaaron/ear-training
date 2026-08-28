@@ -75,6 +75,7 @@ export function Set() {
   });
 
   const [optionsModalOpen, setOptionsModalOpen] = useState(false);
+  const [discardModalOpen, setDiscardModalOpen] = useState(false);
 
   const { handlePlayOption } = usePlayer(
     form.getValues().settings ?? defaultSettings
@@ -99,6 +100,14 @@ export function Set() {
   const handleDelete = () => {
     deleteSet(set.key);
     goBack();
+  };
+
+  const handleBack = () => {
+    if (isCreateForm) {
+      setDiscardModalOpen(true);
+    } else {
+      goBack();
+    }
   };
 
   return (
@@ -139,7 +148,30 @@ export function Set() {
           />
         }
         backUrl={backUrl}
+        onBack={handleBack}
       >
+        <Modal
+          opened={discardModalOpen}
+          onClose={() => setDiscardModalOpen(false)}
+          title="Discard set?"
+        >
+          <Stack>
+            <p>
+              This set hasn't been saved yet. Going back will discard it.
+            </p>
+            <Group justify="flex-end">
+              <Button
+                variant="default"
+                onClick={() => setDiscardModalOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button color="red" onClick={handleDelete}>
+                Discard
+              </Button>
+            </Group>
+          </Stack>
+        </Modal>
         <Stack>
           <Stack gap="sm">
             <Group gap="xs">

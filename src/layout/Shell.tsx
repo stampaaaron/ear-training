@@ -7,6 +7,7 @@ type ShellProps = {
   title: ReactNode;
   rightSection?: ReactNode;
   backUrl?: To;
+  onBack?: () => void;
   noContentGap?: boolean;
 };
 
@@ -15,6 +16,7 @@ export function Shell({
   children,
   rightSection,
   backUrl,
+  onBack,
   noContentGap,
 }: PropsWithChildren<ShellProps>) {
   return (
@@ -27,8 +29,13 @@ export function Shell({
       >
         <Flex justify="space-between" align="center" gap="md">
           <Group flex={1}>
-            {backUrl && (
+            {backUrl && !onBack && (
               <ActionIcon component={Link} variant="subtle" to={backUrl}>
+                <IconChevronLeft />
+              </ActionIcon>
+            )}
+            {backUrl && onBack && (
+              <ActionIcon variant="subtle" onClick={onBack}>
                 <IconChevronLeft />
               </ActionIcon>
             )}
