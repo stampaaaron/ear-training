@@ -1,54 +1,59 @@
-# React + TypeScript + Vite
+# freear
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A free, browser-based ear trainer. Train your relative pitch on intervals,
+chords and scales: a sound plays, you pick the answer from a set of options,
+and get instant feedback.
 
-Currently, two official plugins are available:
+- **Intervals** — from a unison up through compound intervals
+- **Chords** — seventh chords across major, minor, dominant, diminished,
+  augmented and sus qualities, including tensions and alternate voicings
+- **Scales** — pentatonic, major-mode, minor, dominant and symmetric scales
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Pick a mode, build your own practice sets with the options you want to drill,
+and go. Everything runs client-side — no account, no server, no data leaving
+your browser.
 
-## Expanding the ESLint configuration
+## Tech stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- [React](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/), built with [Vite](https://vite.dev/)
+- [Mantine](https://mantine.dev/) for UI components
+- [Tone.js](https://tonejs.github.io/) for audio playback
+- [Zustand](https://zustand-demo.pmnd.rs/) for state, persisted in the browser
+- [React Router](https://reactrouter.com/) for routing
+- Installable as a PWA ([vite-plugin-pwa](https://vite-pwa-org.netlify.app/))
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Local development
+
+### Prerequisites
+
+This repo includes a [dev container](https://containers.dev/) config
+(`.devcontainer/`) — the recommended way to get set up. Open the repo in
+VS Code or GitHub Codespaces and reopen in container; Node is preinstalled,
+just run `corepack enable` once inside for pnpm.
+
+Without the dev container, you'll need:
+
+- [Node.js](https://nodejs.org/) 18 or newer
+- [pnpm](https://pnpm.io/) (the pinned version in `package.json` is picked up automatically once you run `corepack enable`)
+
+### Setup
+
+```bash
+pnpm install
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The dev server starts at `http://localhost:5173` with hot module reloading.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Other scripts
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+| Command        | Description                              |
+| -------------- | ----------------------------------------- |
+| `pnpm dev`     | Start the Vite dev server                 |
+| `pnpm build`   | Type-check and build for production       |
+| `pnpm preview` | Preview the production build locally      |
+| `pnpm lint`    | Run ESLint over the project               |
+
+## Contributing
+
+Found a bug or have a feature request? [Open a GitHub issue](https://github.com/stampaaaron/ear-training/issues).
