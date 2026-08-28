@@ -15,6 +15,7 @@ import {
   Title,
   Tooltip,
 } from '@mantine/core';
+import { useIsMobile } from '../../hooks/useIsMobile';
 import { usePlayer } from '../../player';
 import { useQuiz } from '../../store/quiz';
 import {
@@ -78,6 +79,11 @@ export function Set() {
   const [optionsModalOpen, setOptionsModalOpen] = useState(false);
   const [voicingsModalOpen, setVoicingsModalOpen] = useState(false);
   const [discardModalOpen, setDiscardModalOpen] = useState(false);
+  const [optionsModalFullScreen, setOptionsModalFullScreen] =
+    useState(false);
+  const [voicingsModalFullScreen, setVoicingsModalFullScreen] =
+    useState(false);
+  const isMobile = useIsMobile();
 
   const { handlePlayOption } = usePlayer(
     form.getValues().settings ?? defaultSettings
@@ -182,7 +188,10 @@ export function Set() {
                 variant="subtle"
                 size="compact-xs"
                 leftSection={<IconPencil size={14} />}
-                onClick={() => setOptionsModalOpen(true)}
+                onClick={() => {
+                  setOptionsModalFullScreen(!!isMobile);
+                  setOptionsModalOpen(true);
+                }}
               >
                 Edit
               </Button>
@@ -272,7 +281,10 @@ export function Set() {
                       variant="subtle"
                       size="compact-xs"
                       leftSection={<IconPencil size={12} />}
-                      onClick={() => setVoicingsModalOpen(true)}
+                      onClick={() => {
+                        setVoicingsModalFullScreen(!!isMobile);
+                        setVoicingsModalOpen(true);
+                      }}
                     >
                       Edit
                     </Button>
@@ -287,6 +299,7 @@ export function Set() {
             onClose={() => setOptionsModalOpen(false)}
             title="Choose options"
             size="lg"
+            fullScreen={optionsModalFullScreen}
           >
             <OptionsGrid
               isDisabled={
@@ -316,6 +329,7 @@ export function Set() {
             onClose={() => setVoicingsModalOpen(false)}
             title="Choose voicings"
             size="lg"
+            fullScreen={voicingsModalFullScreen}
           >
             <VoicingList {...form.getInputProps('settings.voicings')} />
           </Modal>

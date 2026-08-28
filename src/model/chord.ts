@@ -23,7 +23,7 @@ export const chordIntervalBaseMap: Record<VoicingInterval, Interval[]> = {
   '13': ['b13', '13'],
 };
 
-type VoicingIntervalOctave = VoicingInterval[];
+export type VoicingIntervalOctave = VoicingInterval[];
 
 export type Voicing = VoicingIntervalOctave[];
 
