@@ -3,6 +3,10 @@ main {
   margin-inline: auto;
 }
 
+.shell-footer {
+  margin-bottom: 0 !important;
+}
+
 @media (max-width: 800px) {
   .mantine-AppShell-root {
     background-color: white !important;
@@ -16,7 +20,6 @@ main {
     right: 0;
     z-index: 10;
     margin-inline: 0 !important;
-    margin-bottom: 0 !important;
   }
 
   .shell-content-with-footer {
