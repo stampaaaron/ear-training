@@ -1,4 +1,4 @@
-import { Card, NavLink } from '@mantine/core';
+import { ActionIcon, Card, NavLink } from '@mantine/core';
 import { Shell } from '../../layout/Shell';
 import { SetButton } from '../../components/SetButton';
 import { useSearchParams, createSearchParams, Link } from 'react-router';
@@ -16,8 +16,22 @@ export function Sets() {
 
   const modeSets = sets[mode as QuizMode];
 
+  const newSetTo = {
+    pathname: 'new',
+    search: createSearchParams({ mode }).toString(),
+  };
+
   return (
-    <Shell title="Choose your set" backUrl="/modes" noContentGap>
+    <Shell
+      title="Choose your set"
+      backUrl="/modes"
+      noContentGap
+      rightSection={
+        <ActionIcon component={Link} variant="subtle" to={newSetTo}>
+          <IconPlus />
+        </ActionIcon>
+      }
+    >
       <Card.Section withBorder>
         {modeSets.map((quizSet, index) => (
           <SetButton
@@ -29,10 +43,7 @@ export function Sets() {
         ))}
         <NavLink
           component={Link}
-          to={{
-            pathname: 'new',
-            search: createSearchParams({ mode }).toString(),
-          }}
+          to={newSetTo}
           label="New set"
           leftSection={<IconPlus size={16} />}
           variant="subtle"
