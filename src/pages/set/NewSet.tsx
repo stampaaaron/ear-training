@@ -28,15 +28,9 @@ export function NewSet() {
         pathname: '/sets',
         search: createSearchParams({ mode }).toString(),
       }}
-    >
-      <Stack>
-        <OptionsGrid
-          quizMode={mode}
-          onChange={setSelectedOptions}
-          value={selectedOptions}
-        />
-
+      footer={
         <Button
+          fullWidth
           component={Link}
           onClick={() =>
             useSetsStore.setState({
@@ -57,6 +51,14 @@ export function NewSet() {
         >
           Continue
         </Button>
+      }
+    >
+      <Stack>
+        <OptionsGrid
+          quizMode={mode}
+          onChange={setSelectedOptions}
+          value={selectedOptions}
+        />
       </Stack>
     </Shell>
   );

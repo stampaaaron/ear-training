@@ -157,6 +157,58 @@ export function Set() {
         }
         backUrl={backUrl}
         onBack={handleBack}
+        footer={
+          <Group>
+            {isCreateForm && (
+              <Button
+                variant="outline"
+                flex={1}
+                color="red"
+                onClick={handleDelete}
+              >
+                Discard
+              </Button>
+            )}
+            {form.isTouched() && !isCreateForm && (
+              <Button
+                variant="outline"
+                flex={1}
+                type="reset"
+                onClick={form.reset}
+              >
+                Discard changes
+              </Button>
+            )}
+
+            <Button
+              flex={1}
+              type="submit"
+              onClick={
+                form.isValid()
+                  ? () => {
+                      const current = nextQuestion(
+                        form.getValues().options ?? []
+                      );
+                      handlePlayOption(mode, current.option, current.startNote);
+
+                      navigate({
+                        pathname: '/quiz',
+                        search: createSearchParams({
+                          quizSet: set.key,
+                        }).toString(),
+                      });
+                    }
+                  : undefined
+              }
+            >
+              {isCreateForm
+                ? 'Create and Start'
+                : form.isTouched()
+                  ? 'Update and start'
+                  : 'Start'}
+            </Button>
+          </Group>
+        }
       >
         <Modal
           opened={discardModalOpen}
@@ -338,57 +390,6 @@ export function Set() {
             <Title order={3}>Playback settings</Title>
             <SettingsForm form={form} {...form.getInputProps('settings')} />
           </Stack>
-
-          <Group>
-            {isCreateForm && (
-              <Button
-                variant="outline"
-                flex={1}
-                color="red"
-                onClick={handleDelete}
-              >
-                Discard
-              </Button>
-            )}
-            {form.isTouched() && !isCreateForm && (
-              <Button
-                variant="outline"
-                flex={1}
-                type="reset"
-                onClick={form.reset}
-              >
-                Discard changes
-              </Button>
-            )}
-
-            <Button
-              flex={1}
-              type="submit"
-              onClick={
-                form.isValid()
-                  ? () => {
-                      const current = nextQuestion(
-                        form.getValues().options ?? []
-                      );
-                      handlePlayOption(mode, current.option, current.startNote);
-
-                      navigate({
-                        pathname: '/quiz',
-                        search: createSearchParams({
-                          quizSet: set.key,
-                        }).toString(),
-                      });
-                    }
-                  : undefined
-              }
-            >
-              {isCreateForm
-                ? 'Create and Start'
-                : form.isTouched()
-                  ? 'Update and start'
-                  : 'Start'}
-            </Button>
-          </Group>
         </Stack>
       </Shell>
     </Form>

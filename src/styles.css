@@ -6,6 +6,20 @@ main {
 @media (max-width: 800px) {
   .mantine-AppShell-root {
     background-color: white !important;
-    --app-shell-padding: 0 !important;
+    --app-shell-padding: 0px !important;
+  }
+
+  .shell-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    margin-inline: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .shell-content-with-footer {
+    padding-bottom: 76px;
   }
 }
