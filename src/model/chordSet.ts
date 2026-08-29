@@ -1,11 +1,13 @@
 import { QuizSet } from '../store/sets';
 import { defaultSettings } from '../store/settings';
 import {
+  alternativeVoicings,
   baseChords,
   Chord,
   getAllOneTensionChords,
   getAllTwoTensionChords,
   seventhChords,
+  voicingContainsChord,
 } from './chord';
 
 export type ChordSet = QuizSet<Chord>;
@@ -63,12 +65,17 @@ const basicSeventhChordsWithAllTensions = [
   ...basicSeventhChordsWithTwoTensions,
 ];
 
-export const possibleChordsForAlternativeVoicings = [
+const candidateChordsForAlternativeVoicings = [
   ...basicSeventhChordsWithAllTensions.filter(
     ({ name }) => !name.includes('Min7b5') && !name.includes('Min(maj7)')
   ),
   ...allAddChords,
 ];
+
+export const possibleChordsForAlternativeVoicings =
+  candidateChordsForAlternativeVoicings.filter((chord) =>
+    alternativeVoicings.some((voicing) => voicingContainsChord(voicing, chord))
+  );
 
 export const chordSets: ChordSet[] = [
   {

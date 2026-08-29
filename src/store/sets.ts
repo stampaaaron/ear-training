@@ -35,9 +35,9 @@ type SetsState = {
 export const useSetsStore = create<SetsState>()(
   persist(() => ({ sets: initialSets }), {
     name: 'sets',
-    version: 1,
+    version: 2,
     migrate: (prevState, prevVersion) => {
-      if (prevVersion === 0) {
+      if (prevVersion < 2) {
         (prevState as SetsState).sets.chords.forEach((chord) => {
           if (chord.settings) {
             chord.settings.voicings = alternativeVoicings;
