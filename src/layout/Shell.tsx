@@ -29,7 +29,7 @@ export function Shell({
         h={64}
         mb={noContentGap ? 0 : 'lg'}
         bg="white"
-        style={{ position: 'sticky', top: 0, zIndex: 1 }}
+        style={{ position: 'sticky', top: 0, zIndex: 10 }}
       >
         <Flex h="100%" justify="space-between" align="center" gap="md">
           <Group flex={1} wrap="nowrap" style={{ minWidth: 0 }}>
