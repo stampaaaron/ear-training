@@ -12,7 +12,7 @@ import {
   chordIntervalBaseMap,
   Voicing,
   VoicingIntervalOctave,
-  voicingContainsChord,
+  isVoicingValidForChord,
 } from '../model/voicing';
 import { useIsMobile } from '../hooks/useIsMobile';
 import classes from './VoicingList.module.css';
@@ -33,7 +33,7 @@ export function VoicingBadges({
   isMobile,
 }: VoicingBadgesProps) {
   const possibleChords = possibleChordsForAlternativeVoicings.filter(
-    (chord) => voicingContainsChord(voicing, chord)
+    (chord) => isVoicingValidForChord(voicing, chord)
   );
 
   const renderOctave = (octave: VoicingIntervalOctave) =>
@@ -105,7 +105,7 @@ export function VoicingList({
       <Stack>
         {voicings.map((voicing) => {
           const possibleChords = possibleChordsForAlternativeVoicings.filter(
-            (chord) => voicingContainsChord(voicing, chord)
+            (chord) => isVoicingValidForChord(voicing, chord)
           );
 
           return (

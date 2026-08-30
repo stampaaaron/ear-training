@@ -7,7 +7,7 @@ import {
   getAllTwoTensionChords,
   seventhChords,
 } from './chord';
-import { alternativeVoicings, voicingContainsChord } from './voicing';
+import { alternativeVoicings, isVoicingValidForChord } from './voicing';
 
 export type ChordSet = QuizSet<Chord>;
 
@@ -86,7 +86,7 @@ const candidateChordsForAlternativeVoicings = [
 
 export const possibleChordsForAlternativeVoicings =
   candidateChordsForAlternativeVoicings.filter((chord) =>
-    alternativeVoicings.some((voicing) => voicingContainsChord(voicing, chord))
+    alternativeVoicings.some((voicing) => isVoicingValidForChord(voicing, chord))
   );
 
 export const chordSets: ChordSet[] = [

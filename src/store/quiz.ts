@@ -3,7 +3,7 @@ import { QuizOption } from '../model/quiz';
 import { getRandomFromArray } from '../utils';
 import { useSettings } from './settings';
 import { getRandomMidiNote } from '../player';
-import { Voicing, voicingContainsChord } from '../model/voicing';
+import { Voicing, isVoicingValidForChord } from '../model/voicing';
 import { QuizSet } from './sets';
 
 type QuizState = {
@@ -35,7 +35,7 @@ export function useQuiz(set?: QuizSet<QuizOption>) {
     if ('tensions' in randomOption) {
       const availableVoicings =
         set?.settings?.voicings.filter((voicing) =>
-          voicingContainsChord(voicing, randomOption)
+          isVoicingValidForChord(voicing, randomOption)
         ) ?? [];
 
       const voicing = set?.settings?.alternativeVoicings
