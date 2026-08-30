@@ -23,6 +23,7 @@ import {
 } from '@tabler/icons-react';
 import { ComponentType } from 'react';
 import { BuyMeACoffeeButton } from '../components/BuyMeACoffeeButton';
+import { InstallAppSection } from '../components/InstallAppSection';
 
 type Feature = {
   icon: ComponentType<{ size?: number }>;
@@ -141,6 +142,8 @@ export function Landing() {
             Start training now
           </Button>
         </Group>
+
+        <InstallAppSection />
 
         <Stack gap="md" align="center" ta="center">
           <Title order={2}>Want to support the project?</Title>
