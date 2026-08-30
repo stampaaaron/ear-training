@@ -177,13 +177,6 @@ export const alternativeVoicings: Voicing[] = [
   [[1, 3, 13, 7], [9]],
 ];
 
-// TODO
-// 1, 3, b9, #11, 7b
-// 1, 13, 7, 3 #11
-// 1, 6, 9, 3, 5
-// 1, b7, b9, 3, 13
-// 1, 7, 9, 3, #11
-
 export const isTensionsVoicing = (voicing: Voicing, tensions: ChordTension[]) =>
   tensions?.every((t) =>
     voicing.flat().some((i) => chordIntervalBaseMap[i].includes(t))

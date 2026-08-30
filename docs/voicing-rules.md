@@ -73,9 +73,6 @@ Das hier prüft nicht das einzelne Voicing, sondern die ganze Liste:
 
 ## Offene Lücken
 
-- 5 Muster aus dem `TODO`-Kommentar in `voicing.ts` fehlen noch:
-  `1,3,b9,#11,7b` / `1,13,7,3,#11` / `1,6,9,3,5` / `1,b7,b9,3,13` /
-  `1,7,9,3,#11`.
 - Nach dem Entfernen aller Regel-8-Verstöße haben folgende Akkorde nur
   noch 1 passendes Voicing: `7sus4(10)`, `7sus4(b9,10)`, `7sus4(9,10)`,
   `7sus4(10,13)`, `7(#9)`, `7(b9,#9)`.
