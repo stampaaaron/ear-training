@@ -1,0 +1,16 @@
+.stickyBar {
+  position: sticky;
+  top: 64px;
+  z-index: 5;
+  margin-inline: calc(var(--mantine-spacing-lg) * -1);
+  transition: box-shadow 150ms ease;
+}
+
+.stickyBar[data-stuck] {
+  box-shadow: var(--mantine-shadow-sm);
+}
+
+.sentinel {
+  height: 1px;
+  margin-bottom: -1px;
+}

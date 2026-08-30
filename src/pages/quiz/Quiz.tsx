@@ -1,6 +1,7 @@
 import {
   Alert,
   Badge,
+  Box,
   Button,
   Flex,
   Group,
@@ -20,12 +21,14 @@ import {
   IconX,
 } from '@tabler/icons-react';
 import { Shell } from '../../layout/Shell';
+import { useIntersection } from '@mantine/hooks';
 import { createSearchParams, useSearchParams } from 'react-router';
 import { defaultSettings, useSettings } from '../../store/settings';
 import { useSet } from '../../store/sets';
 import { useQuiz } from '../../store/quiz';
 import { quizModeNamesSignular } from '../../model/quiz';
 import { resolveVoicingOctaveIntervals } from '../../model/chord';
+import classes from './Quiz.module.css';
 
 export function Quiz() {
   const [searchParams] = useSearchParams();
@@ -45,6 +48,11 @@ export function Quiz() {
   } = useQuiz(set);
 
   const guessedCorrectly = guess?.name === current?.option.name;
+
+  const { ref: stickySentinelRef, entry } = useIntersection({
+    rootMargin: '-64px 0px 0px 0px',
+  });
+  const isStuck = !!entry && !entry.isIntersecting;
 
   const handlePlayNext = async () => {
     const current = nextQuestion(availableOptions);
@@ -79,6 +87,7 @@ export function Quiz() {
   return (
     <Shell
       title={set?.label}
+      noContentGap
       rightSection={
         <Group>
           <Switch
@@ -98,117 +107,134 @@ export function Quiz() {
         search: createSearchParams({ mode }).toString(),
       }}
     >
-      <Stack>
-        {!current && <Button onClick={handlePlayNext}>Continue</Button>}
-        {current && (
-          <Alert
-            h={90}
-            title={
-              <Flex w="100%" justify="space-between">
-                {guess ? guess.name : 'Listen'}
-              </Flex>
-            }
-            icon={guess ? resolveIcon() : <IconVolume />}
-            color={resolveColor()}
-          >
-            {guess && (guessedCorrectly || revealed) && 'intervals' in guess ? (
-              <Group gap="xs">
-                {(current.voicing
-                  ? resolveVoicingOctaveIntervals(
-                      guess.intervals,
+      <Stack gap={0}>
+        <div ref={stickySentinelRef} className={classes.sentinel} />
+        <Stack
+          gap="sm"
+          bg="white"
+          px="lg"
+          pt="lg"
+          pb="md"
+          className={classes.stickyBar}
+          data-stuck={isStuck || undefined}
+        >
+          {!current && <Button onClick={handlePlayNext}>Continue</Button>}
+          {current && (
+            <Alert
+              h={90}
+              title={
+                <Flex w="100%" justify="space-between">
+                  {guess ? guess.name : 'Listen'}
+                </Flex>
+              }
+              icon={guess ? resolveIcon() : <IconVolume />}
+              color={resolveColor()}
+            >
+              {guess &&
+              (guessedCorrectly || revealed) &&
+              'intervals' in guess ? (
+                <Group gap="xs">
+                  {(current.voicing
+                    ? resolveVoicingOctaveIntervals(
+                        guess.intervals,
+                        current.voicing
+                      ).flat()
+                    : guess.intervals
+                  ).map((i) => (
+                    <Badge color={resolveColor()} variant="outline">
+                      <span style={{ textTransform: 'none' }}>{i}</span>
+                    </Badge>
+                  ))}
+                </Group>
+              ) : (
+                <Flex justify="space-between">
+                  {guess
+                    ? 'Try again'
+                    : `Choose ${quizModeNamesSignular[mode]}`}
+                  {!guessedCorrectly && (
+                    <Button
+                      size="xs"
+                      variant="subtle"
+                      onClick={() => {
+                        setGuess(current.option, true);
+
+                        if (autoPlayNext) {
+                          playNextDelayed(2000);
+                        }
+                      }}
+                    >
+                      Reveal Answer
+                    </Button>
+                  )}
+                </Flex>
+              )}
+            </Alert>
+          )}
+          <div>
+            <Button.Group w="100%">
+              <Button
+                flex={1}
+                variant="outline"
+                disabled={!current}
+                leftSection={<IconRepeat size={16} />}
+                onClick={() => {
+                  if (current)
+                    handlePlayOption(
+                      mode,
+                      current.option,
+                      current.startNote,
                       current.voicing
-                    ).flat()
-                  : guess.intervals
-                ).map((i) => (
-                  <Badge color={resolveColor()} variant="outline">
-                    <span style={{ textTransform: 'none' }}>{i}</span>
-                  </Badge>
-                ))}
-              </Group>
-            ) : (
-              <Flex justify="space-between">
-                {guess ? 'Try again' : `Choose ${quizModeNamesSignular[mode]}`}
-                {!guessedCorrectly && (
-                  <Button
-                    size="xs"
-                    variant="subtle"
-                    onClick={() => {
-                      setGuess(current.option, true);
-
-                      if (autoPlayNext) {
-                        playNextDelayed(2000);
-                      }
-                    }}
-                  >
-                    Reveal Answer
-                  </Button>
-                )}
-              </Flex>
-            )}
-          </Alert>
-        )}
-        <div>
-          <Button.Group w="100%">
-            <Button
-              flex={1}
-              variant="outline"
-              disabled={!current}
-              leftSection={<IconRepeat size={16} />}
-              onClick={() => {
-                if (current)
-                  handlePlayOption(
-                    mode,
-                    current.option,
-                    current.startNote,
-                    current.voicing
-                  );
-              }}
-            >
-              Replay
-            </Button>
-            <Button
-              flex={1}
-              disabled={
-                !current ||
-                (current && guess && guessedCorrectly && autoPlayNext)
-              }
-              variant="outline"
-              rightSection={<IconChevronRight size={16} />}
-              onClick={handlePlayNext}
-            >
-              {current && guess && guessedCorrectly && !autoPlayNext
-                ? 'Next'
-                : 'Skip'}
-            </Button>
-          </Button.Group>
-        </div>
+                    );
+                }}
+              >
+                Replay
+              </Button>
+              <Button
+                flex={1}
+                disabled={
+                  !current ||
+                  (current && guess && guessedCorrectly && autoPlayNext)
+                }
+                variant="outline"
+                rightSection={<IconChevronRight size={16} />}
+                onClick={handlePlayNext}
+              >
+                {current && guess && guessedCorrectly && !autoPlayNext
+                  ? 'Next'
+                  : 'Skip'}
+              </Button>
+            </Button.Group>
+          </div>
+        </Stack>
 
         {current && (
-          <OptionsGrid
-            availableOptions={availableOptions}
-            onSelect={(option) => {
-              setGuess(option);
+          <Box mt="md">
+            <OptionsGrid
+              availableOptions={availableOptions}
+              onSelect={(option) => {
+                setGuess(option);
 
-              if (option.name === current?.option.name) {
-                if (autoPlayNext) {
-                  playNextDelayed();
+                if (option.name === current?.option.name) {
+                  if (autoPlayNext) {
+                    playNextDelayed();
+                  }
                 }
+              }}
+              isDisabled={(option) => guessedCorrectly && guess !== option}
+              resolveColor={(option) =>
+                option === guess
+                  ? guessedCorrectly
+                    ? revealed
+                      ? 'orange'
+                      : 'green'
+                    : 'red'
+                  : undefined
               }
-            }}
-            isDisabled={(option) => guessedCorrectly && guess !== option}
-            resolveColor={(option) =>
-              option === guess
-                ? guessedCorrectly
-                  ? revealed
-                    ? 'orange'
-                    : 'green'
-                  : 'red'
-                : undefined
-            }
-            guess={guess}
-            guessedCorrectly={guessedCorrectly}
-            quizMode={mode}
-          />
+              guess={guess}
+              guessedCorrectly={guessedCorrectly}
+              quizMode={mode}
+            />
+          </Box>
         )}
       </Stack>
     </Shell>
