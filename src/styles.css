@@ -3,8 +3,8 @@ main {
   margin-inline: auto;
 }
 
-.shell-footer {
-  margin-bottom: 0 !important;
+.shell-content-with-footer {
+  padding-bottom: var(--mantine-spacing-lg);
 }
 
 @media (max-width: 800px) {
@@ -20,9 +20,17 @@ main {
     right: 0;
     z-index: 10;
     margin-inline: 0 !important;
+    margin-bottom: 0 !important;
   }
 
+  /* Fixed footer doesn't reserve space in the flow, so short content
+     would otherwise end with a floating gap before it. Stretch content
+     down to the viewport edge (matching the fixed footer) and pad it
+     by the footer's height so the footer never overlaps content. The
+     card's own bottom padding sits below this element in the flow, so
+     it's subtracted here to avoid overshooting the viewport. */
   .shell-content-with-footer {
-    padding-bottom: 76px;
+    min-height: calc(100dvh - 64px - var(--mantine-spacing-lg));
+    padding-bottom: 72px;
   }
 }
