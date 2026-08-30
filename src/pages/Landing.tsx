@@ -22,6 +22,7 @@ import {
   IconWaveSine,
 } from '@tabler/icons-react';
 import { ComponentType } from 'react';
+import { BuyMeACoffeeButton } from '../components/BuyMeACoffeeButton';
 
 type Feature = {
   icon: ComponentType<{ size?: number }>;
@@ -140,6 +141,15 @@ export function Landing() {
             Start training now
           </Button>
         </Group>
+
+        <Stack gap="md" align="center" ta="center">
+          <Title order={2}>Want to support the project?</Title>
+          <Text c="dimmed" maw={480}>
+            freear is free, ad-free and built in my spare time. If it's
+            helped your ear training, a coffee keeps it going.
+          </Text>
+          <BuyMeACoffeeButton />
+        </Stack>
 
         <Text size="sm" c="dimmed" ta="center">
           Found a bug or have a feature request?{' '}
