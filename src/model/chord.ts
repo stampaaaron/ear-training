@@ -34,12 +34,10 @@ export const alternativeVoicings: Voicing[] = [
     [9, 3, 7],
   ],
   [
-    //   Zu grosser sprung?
     [1, 5],
     [3, 11, 7],
   ],
   [
-    //   Zu grosser sprung?
     [1, 5],
     [3, 13, 7],
   ],
@@ -48,6 +46,10 @@ export const alternativeVoicings: Voicing[] = [
   [
     [1, 5],
     [9, 3, 11],
+  ],
+  [
+    [1, 11],
+    [9, 3, 5],
   ],
 
   // 1,5,13
@@ -148,24 +150,20 @@ export const alternativeVoicings: Voicing[] = [
   ],
 
   [[1, 5], [9, 13], [3]],
+  [
+    [1, 5],
+    [9, 3, 13],
+  ],
 
   // #9
   [
     [1, 3],
     [9, '#9', 7],
   ],
-  // #9 without a plain 9 alongside it
+  // #9 without a b9 alongside it
   [
     [1, 3, 5],
     ['#9', 7],
-  ],
-  [
-    [1, 3],
-    ['#9', 7, 11],
-  ],
-  [
-    [1, 3],
-    ['#9', 7, 13],
   ],
 
   // 10
@@ -184,10 +182,6 @@ export const alternativeVoicings: Voicing[] = [
 
   [[1, 5, 13, 7], [3]],
   [[1, 3, 13, 7], [9]],
-
-  // sus add tensions without a 7th
-  [[1, 5], [9, '10'], [3]],
-  [[1, 5], ['10', 13], [3]],
 ];
 
 // TODO
