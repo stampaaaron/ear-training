@@ -44,11 +44,24 @@ const basicSeventhChordsWithTwoTensions = basicSeventhChords.flatMap(
   getAllTwoTensionChords
 );
 
-const allSeventhChords = Object.values(seventhChords);
+const allSeventhChordsIncludingAdd = Object.values(seventhChords);
 
-const allChordsWithTensions = allSeventhChords.flatMap(getAllOneTensionChords);
+// The "add" entries (Majadd, Minadd, Sus4add) have no interval on their own -
+// they only make sense once a tension is added (e.g. Cadd9). Without a
+// tension they're indistinguishable from the plain triad, so they're
+// excluded from the bare seventh-chord listing but kept for tension
+// generation below.
+const allSeventhChords = (
+  Object.entries(seventhChords) as [string, Chord][]
+)
+  .filter(([key]) => !key.endsWith('.add'))
+  .map(([, chord]) => chord);
 
-const allChordsWithTwoTensions = allSeventhChords.flatMap(
+const allChordsWithTensions = allSeventhChordsIncludingAdd.flatMap(
+  getAllOneTensionChords
+);
+
+const allChordsWithTwoTensions = allSeventhChordsIncludingAdd.flatMap(
   getAllTwoTensionChords
 );
 
