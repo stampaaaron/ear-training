@@ -94,43 +94,59 @@ export const chordSets: ChordSet[] = [
     key: 'triads',
     label: 'Triads',
     options: allTriads,
-    description: `All triads (${allTriads.map(({ name }) => name).join(', ')})`,
+    description: {
+      prefix: 'All triads (',
+      names: allTriads.map(({ name }) => name),
+      suffix: ')',
+    },
   },
   {
     key: 'basic-seventh-chords',
     label: 'Basic Seventh Chords',
     options: basicSeventhChords,
-    description: basicSeventhChords.map(({ name }) => name).join(', '),
+    description: { names: basicSeventhChords.map(({ name }) => name) },
   },
   {
     key: 'all-seventh-chords',
     label: 'All Seventh Chords',
     options: allSeventhChords,
-    description: allSeventhChords.map(({ name }) => name).join(', '),
+    description: { names: allSeventhChords.map(({ name }) => name) },
   },
   {
     key: 'basic-single-tensions',
     label: 'Basic Tensions (1 Tensions)',
     options: basicSeventhChordsWithTensions,
-    description: `${basicSeventhChords.map(({ name }) => name).join(', ')} with one Tension`,
+    description: {
+      names: basicSeventhChords.map(({ name }) => name),
+      suffix: ' with one Tension',
+    },
   },
   {
     key: 'all-single-tensions',
     label: 'All Tensions (1 Tensions)',
     options: allChordsWithTensions,
-    description: `${allSeventhChords.map(({ name }) => name).join(', ')} with one Tensions`,
+    description: {
+      names: allSeventhChords.map(({ name }) => name),
+      suffix: ' with one Tensions',
+    },
   },
   {
     key: 'basic-two-tensions',
     label: 'Basic Tensions (2 Tensions)',
     options: basicSeventhChordsWithTwoTensions,
-    description: `${basicSeventhChords.map(({ name }) => name).join(', ')} with two Tension`,
+    description: {
+      names: basicSeventhChords.map(({ name }) => name),
+      suffix: ' with two Tension',
+    },
   },
   {
     key: 'all-two-tensions',
     label: 'All Tensions (2 Tensions)',
     options: allChordsWithTwoTensions,
-    description: `${allSeventhChords.map(({ name }) => name).join(', ')} with two Tensions`,
+    description: {
+      names: allSeventhChords.map(({ name }) => name),
+      suffix: ' with two Tensions',
+    },
   },
   {
     key: 'alternative-voicings',

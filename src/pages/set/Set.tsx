@@ -38,6 +38,7 @@ import {
 } from '@mantine/form';
 import { defaultSettings } from '../../store/settings';
 import { useState } from 'react';
+import { MusicText } from '../../components/MusicText';
 import { possibleChordsForAlternativeVoicings } from '../../model/chordSet';
 import { Chord } from '../../model/chord';
 import { VoicingList } from '../../components/VoicingList';
@@ -256,12 +257,18 @@ export function Set() {
 
                 return (
                   <Tooltip
+                    key={option.name}
                     disabled={!('intervals' in option)}
                     label={
                       showWarning
                         ? 'Chord is not available for alternative voicings.'
                         : 'intervals' in option
-                          ? option.intervals.join(',')
+                          ? option.intervals.map((interval, index) => (
+                              <span key={interval}>
+                                {index > 0 && ', '}
+                                <MusicText raise={false}>{interval}</MusicText>
+                              </span>
+                            ))
                           : ''
                     }
                   >
@@ -293,7 +300,7 @@ export function Set() {
                         </ActionIcon>
                       }
                     >
-                      {option.name}
+                      <MusicText raise={!('interval' in option)}>{option.name}</MusicText>
                     </Badge>
                   </Tooltip>
                 );

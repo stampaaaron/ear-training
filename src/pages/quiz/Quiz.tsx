@@ -27,6 +27,7 @@ import { useSet } from '../../store/sets';
 import { useQuiz } from '../../store/quiz';
 import { quizModeNamesSignular } from '../../model/quiz';
 import { resolveVoicingOctaveIntervals } from '../../model/voicing';
+import { MusicText } from '../../components/MusicText';
 import classes from './Quiz.module.css';
 
 export function Quiz() {
@@ -159,7 +160,11 @@ export function Quiz() {
             h={90}
             title={
               <Flex w="100%" justify="space-between">
-                {guess ? guess.name : 'Listen'}
+                {guess ? (
+                  <MusicText raise={!('interval' in guess)}>{guess.name}</MusicText>
+                ) : (
+                  'Listen'
+                )}
               </Flex>
             }
             icon={guess ? resolveIcon() : <IconVolume />}
@@ -173,9 +178,11 @@ export function Quiz() {
                       current.voicing
                     ).flat()
                   : guess.intervals
-                ).map((i) => (
-                  <Badge color={resolveColor()} variant="outline">
-                    <span style={{ textTransform: 'none' }}>{i}</span>
+                ).map((i, index) => (
+                  <Badge key={index} color={resolveColor()} variant="outline">
+                    <span style={{ textTransform: 'none' }}>
+                      <MusicText raise={false}>{i}</MusicText>
+                    </span>
                   </Badge>
                 ))}
               </Group>

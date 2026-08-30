@@ -130,7 +130,7 @@ const chordExtensionNames: Record<ChordExtension, string> = {
   6: '6',
   bb7: '7',
   b7: '7',
-  add: ' add',
+  add: 'add',
 };
 
 const chordNaming: {

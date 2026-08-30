@@ -18,6 +18,7 @@ import { useIsMobile } from '../hooks/useIsMobile';
 import classes from './VoicingList.module.css';
 import { possibleChordsForAlternativeVoicings } from '../model/chordSet';
 import { IconInfoCircle } from '@tabler/icons-react';
+import { MusicText } from './MusicText';
 
 export const getVoicingKey = (voicing: Voicing) => voicing.flat().join(',');
 
@@ -47,7 +48,12 @@ export function VoicingBadges({
           .filter((i) =>
             possibleChords.some((chord) => chord.intervals.includes(i))
           )
-          .join(' / ')}
+          .map((i, index) => (
+            <span key={i}>
+              {index > 0 && ' / '}
+              <MusicText raise={false}>{i}</MusicText>
+            </span>
+          ))}
       </Badge>
     ));
 

@@ -148,19 +148,19 @@ export const intervalSets: QuizSet<IntervalOption>[] = [
   {
     key: 'basic',
     label: 'Basic intervals',
-    description: lowerMajorIntervals.map(({ name }) => name).join(', '),
+    description: { names: lowerMajorIntervals.map(({ name }) => name) },
     options: lowerMajorIntervals,
   },
   {
     key: 'lower',
     label: 'All lower intervals',
-    description: allLowerIntervals.map(({ name }) => name).join(', '),
+    description: { names: allLowerIntervals.map(({ name }) => name) },
     options: allLowerIntervals,
   },
   {
     key: 'upper',
     label: 'Upper intervals',
-    description: upperIntervals.map(({ name }) => name).join(', '),
+    description: { names: upperIntervals.map(({ name }) => name) },
     options: upperIntervals,
   },
 ];

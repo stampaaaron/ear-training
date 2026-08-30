@@ -2,6 +2,7 @@ import { Button, Fieldset, SimpleGrid } from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons-react';
 import { QuizOption, QuizMode } from '../model/quiz';
 import { useQuiz } from '../store/quiz';
+import { MusicText } from './MusicText';
 
 type OptionSetProps<M extends QuizMode> = {
   options: QuizOption<M>[];
@@ -61,7 +62,7 @@ export function OptionSet<M extends QuizMode>({
                 ))
               }
             >
-              {option.name}
+              <MusicText raise={!('interval' in option)}>{option.name}</MusicText>
             </Button>
           );
         })}

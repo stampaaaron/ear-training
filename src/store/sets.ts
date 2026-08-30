@@ -16,7 +16,10 @@ export type QuizSet<O extends QuizOptionBase> = {
   key: string;
   label: string;
   settings?: Settings;
-  description?: string;
+  // Either plain text, or a description built from the option names
+  // themselves so it can be rendered with the same chord-symbol/scale-name
+  // formatting as everywhere else.
+  description?: string | { prefix?: string; names: string[]; suffix?: string };
   options?: O[];
 };
 
@@ -35,17 +38,34 @@ type SetsState = {
 export const useSetsStore = create<SetsState>()(
   persist(() => ({ sets: initialSets }), {
     name: 'sets',
-    version: 2,
+    version: 4,
     migrate: (prevState, prevVersion) => {
+      const state = prevState as SetsState;
+
       if (prevVersion < 2) {
-        (prevState as SetsState).sets.chords.forEach((chord) => {
+        state.sets.chords.forEach((chord) => {
           if (chord.settings) {
             chord.settings.voicings = alternativeVoicings;
           }
         });
       }
 
-      return prevState;
+      if (prevVersion < 4) {
+        // Built-in sets are re-derived from the current code (names,
+        // descriptions, ...) instead of staying frozen at whatever they
+        // looked like when first persisted — only user-owned settings carry
+        // over. Sets the user created themselves (no matching key) are left
+        // untouched.
+        (Object.keys(state.sets) as QuizMode[]).forEach((mode) => {
+          state.sets[mode] = state.sets[mode].map((set) => {
+            const fresh = initialSets[mode].find((s) => s.key === set.key);
+
+            return fresh ? { ...fresh, settings: set.settings ?? fresh.settings } : set;
+          });
+        });
+      }
+
+      return state;
     },
   })
 );

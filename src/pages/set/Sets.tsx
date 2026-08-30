@@ -36,6 +36,7 @@ export function Sets() {
         {modeSets.map((quizSet, index) => (
           <SetButton
             key={quizSet.key}
+            mode={mode as QuizMode}
             quizSet={quizSet}
             to={quizSet.key}
             withDivider={index > 0}
