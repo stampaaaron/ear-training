@@ -56,13 +56,16 @@ export const useSetsStore = create<SetsState>()(
         // looked like when first persisted — only user-owned settings carry
         // over. Sets the user created themselves (no matching key) are left
         // untouched.
-        (Object.keys(state.sets) as QuizMode[]).forEach((mode) => {
-          state.sets[mode] = state.sets[mode].map((set) => {
-            const fresh = initialSets[mode].find((s) => s.key === set.key);
+        state.sets = Object.fromEntries(
+          (Object.keys(state.sets) as QuizMode[]).map((mode) => [
+            mode,
+            state.sets[mode].map((set) => {
+              const fresh = initialSets[mode].find((s) => s.key === set.key);
 
-            return fresh ? { ...fresh, settings: set.settings ?? fresh.settings } : set;
-          });
-        });
+              return fresh ? { ...fresh, settings: set.settings ?? fresh.settings } : set;
+            }),
+          ])
+        ) as typeof initialSets;
       }
 
       return state;
