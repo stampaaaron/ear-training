@@ -5,7 +5,7 @@ import { Settings } from './settings';
 import { chordSets } from '../model/chordSet';
 import { intervalSets } from '../model/interval';
 import { scaleSets } from '../model/scale';
-import { alternativeVoicings } from '../model/chord';
+import { alternativeVoicings } from '../model/voicing';
 
 export type QuizOptionBase<G extends string = string> = {
   name: string;

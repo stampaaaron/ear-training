@@ -26,7 +26,7 @@ import { defaultSettings, useSettings } from '../../store/settings';
 import { useSet } from '../../store/sets';
 import { useQuiz } from '../../store/quiz';
 import { quizModeNamesSignular } from '../../model/quiz';
-import { resolveVoicingOctaveIntervals } from '../../model/chord';
+import { resolveVoicingOctaveIntervals } from '../../model/voicing';
 import classes from './Quiz.module.css';
 
 export function Quiz() {

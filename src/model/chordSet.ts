@@ -1,14 +1,13 @@
 import { QuizSet } from '../store/sets';
 import { defaultSettings } from '../store/settings';
 import {
-  alternativeVoicings,
   baseChords,
   Chord,
   getAllOneTensionChords,
   getAllTwoTensionChords,
   seventhChords,
-  voicingContainsChord,
 } from './chord';
+import { alternativeVoicings, voicingContainsChord } from './voicing';
 
 export type ChordSet = QuizSet<Chord>;
 

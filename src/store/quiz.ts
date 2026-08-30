@@ -3,7 +3,7 @@ import { QuizOption } from '../model/quiz';
 import { getRandomFromArray } from '../utils';
 import { useSettings } from './settings';
 import { getRandomMidiNote } from '../player';
-import { Voicing, voicingContainsChord } from '../model/chord';
+import { Voicing, voicingContainsChord } from '../model/voicing';
 import { QuizSet } from './sets';
 
 type QuizState = {

@@ -13,7 +13,7 @@ import {
   Voicing,
   VoicingIntervalOctave,
   voicingContainsChord,
-} from '../model/chord';
+} from '../model/voicing';
 import { useIsMobile } from '../hooks/useIsMobile';
 import classes from './VoicingList.module.css';
 import { possibleChordsForAlternativeVoicings } from '../model/chordSet';

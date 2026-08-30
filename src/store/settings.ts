@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { alternativeVoicings } from '../model/chord';
+import { alternativeVoicings } from '../model/voicing';
 import { PlaybackMode } from '../player';
 
 export const defaultSettings = {

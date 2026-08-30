@@ -8,7 +8,7 @@ import {
   chordFunctionVoicings,
 } from './model/cadence';
 import { useAudio } from './pages/AudioProvider';
-import { resolveVoicingOctaveIntervals, Voicing } from './model/chord';
+import { resolveVoicingOctaveIntervals, Voicing } from './model/voicing';
 
 export enum PlaybackMode {
   ascending = 'ascending',
