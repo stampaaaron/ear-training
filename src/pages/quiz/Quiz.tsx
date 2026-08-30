@@ -20,7 +20,7 @@ import {
   IconX,
 } from '@tabler/icons-react';
 import { Shell } from '../../layout/Shell';
-import { useIntersection } from '@mantine/hooks';
+import { useIntersection, useMediaQuery } from '@mantine/hooks';
 import { createSearchParams, useSearchParams } from 'react-router';
 import { defaultSettings, useSettings } from '../../store/settings';
 import { useSet } from '../../store/sets';
@@ -53,6 +53,10 @@ export function Quiz() {
   });
   const isStuck = !!entry && !entry.isIntersecting;
 
+  const isMobile = useMediaQuery('(max-width: 800px)', false, {
+    getInitialValueInEffect: false,
+  });
+
   const handlePlayNext = async () => {
     const current = nextQuestion(availableOptions);
 
@@ -83,6 +87,41 @@ export function Quiz() {
         : 'red'
       : 'blue';
 
+  const playbackControls = (
+    <Button.Group w="100%">
+      <Button
+        flex={1}
+        variant="outline"
+        disabled={!current}
+        leftSection={<IconRepeat size={16} />}
+        onClick={() => {
+          if (current)
+            handlePlayOption(
+              mode,
+              current.option,
+              current.startNote,
+              current.voicing
+            );
+        }}
+      >
+        Replay
+      </Button>
+      <Button
+        flex={1}
+        disabled={
+          !current || (current && guess && guessedCorrectly && autoPlayNext)
+        }
+        variant="outline"
+        rightSection={<IconChevronRight size={16} />}
+        onClick={handlePlayNext}
+      >
+        {current && guess && guessedCorrectly && !autoPlayNext
+          ? 'Next'
+          : 'Skip'}
+      </Button>
+    </Button.Group>
+  );
+
   return (
     <Shell
       title={set?.label}
@@ -105,40 +144,7 @@ export function Quiz() {
         pathname: '/sets',
         search: createSearchParams({ mode }).toString(),
       }}
-      footer={
-        <Button.Group w="100%">
-          <Button
-            flex={1}
-            variant="outline"
-            disabled={!current}
-            leftSection={<IconRepeat size={16} />}
-            onClick={() => {
-              if (current)
-                handlePlayOption(
-                  mode,
-                  current.option,
-                  current.startNote,
-                  current.voicing
-                );
-            }}
-          >
-            Replay
-          </Button>
-          <Button
-            flex={1}
-            disabled={
-              !current || (current && guess && guessedCorrectly && autoPlayNext)
-            }
-            variant="outline"
-            rightSection={<IconChevronRight size={16} />}
-            onClick={handlePlayNext}
-          >
-            {current && guess && guessedCorrectly && !autoPlayNext
-              ? 'Next'
-              : 'Skip'}
-          </Button>
-        </Button.Group>
-      }
+      footer={isMobile ? playbackControls : undefined}
     >
       <div ref={stickySentinelRef} className={classes.sentinel} />
       <Stack
@@ -195,6 +201,7 @@ export function Quiz() {
             )}
           </Alert>
         )}
+        {!isMobile && playbackControls}
       </Stack>
 
       {current && (
