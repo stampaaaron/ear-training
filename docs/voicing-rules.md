@@ -41,6 +41,12 @@ Regeln, um zu prüfen, ob ein neues Voicing in `alternativeVoicings`
    Tensions oben drauf) — das hört man eh, das ist keine echte
    Alternative. Die Töne müssen wirklich anders angeordnet werden, z. B.
    Grundton zusammen mit einer Tension unten, Terz/Quinte weiter oben.
+   *Ausnahme:* liegt die `7` in einer anderen (höheren) Gruppe als die
+   1-3-5-Gruppe, zählt das nicht als Grundstellung — die 7 in einer
+   eigenen Oktave macht daraus ein eigenständiges, aufgefächertes
+   Voicing, nicht "die gleiche alte Terz mit einer Tension obendrauf".
+   Sitzt die 7 dagegen selbst in der 1-3-5-Gruppe (alles eng in einer
+   Oktave), bleibt es eine Grundstellung.
    Bei **Dominant-Akkorden** gilt zusätzlich `1-3-7` als Grundstellung
    (die App lässt bei Dominanten die Quinte standardmäßig weg,
    `chordBaseIntervals.dom = ['1','3']`) — *aber nur*, wenn die Quinte im
@@ -95,8 +101,8 @@ Das hier prüft nicht das einzelne Voicing, sondern die ganze Liste:
 ## Offene Lücken
 
 - Folgende Akkorde haben aktuell nur 1 regelkonformes Voicing (kein
-  zweites gefunden, das alle Regeln erfüllt): `7sus4(10)`, `7(#9)`,
-  `7(b9,#9)`, `Sus4add(10,13)`.
+  zweites gefunden, das alle Regeln erfüllt): `7sus4(10)`, `7(b9,#9)`,
+  `Sus4add(10,13)`.
 
 ## Wie prüfen?
 

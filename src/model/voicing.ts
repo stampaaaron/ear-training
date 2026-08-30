@@ -318,8 +318,11 @@ export const checkVoicingRules = (
     violations.push({ rule: 1, message: 'Voicing has more or fewer than 5 notes' });
   }
 
-  // Rule 5 — no group may contain the full root-position triad (1-3-5),
-  // regardless of what else is stacked alongside it in that same octave.
+  // Rule 5 — no group may contain the full root-position triad (1-3-5)
+  // with nothing else separating it from the rest of the voicing. If a 7
+  // sits in a different (higher) octave group, the voicing isn't just the
+  // bare triad anymore — the 7 makes it a genuinely different, spread-out
+  // shape, not "the same old triad plus a tension on top".
   //
   // For dominant chords, the app's own chord model (chordBaseIntervals.dom
   // = ['1','3'], no 5th) treats root+3rd+7th as that quality's complete
@@ -332,10 +335,13 @@ export const checkVoicingRules = (
   const rootThirdSeventh: VoicingInterval[] = [1, 3, 7];
   const isDominant = chord.group === ChordBase.dom;
   const hasFifthAnywhere = voicing.flat().includes(5);
-  const hasRootPositionCluster = voicing.some((group) => {
+  const hasRootPositionCluster = voicing.some((group, groupIndex) => {
     const slots = new Set(group);
+    const seventhInAnotherGroup = voicing.some(
+      (g, i) => i !== groupIndex && g.includes(7)
+    );
     return (
-      rootThirdFifth.every((s) => slots.has(s)) ||
+      (rootThirdFifth.every((s) => slots.has(s)) && !seventhInAnotherGroup) ||
       (isDominant && !hasFifthAnywhere && rootThirdSeventh.every((s) => slots.has(s)))
     );
   });
