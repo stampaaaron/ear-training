@@ -7,6 +7,14 @@ main {
   padding-bottom: var(--mantine-spacing-lg);
 }
 
+@media (min-width: 801px) {
+  .shell-footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+  }
+}
+
 @media (max-width: 800px) {
   .mantine-AppShell-root {
     background-color: white !important;
