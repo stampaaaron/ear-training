@@ -259,9 +259,12 @@ export function Set() {
                   <Tooltip
                     key={option.name}
                     disabled={!('intervals' in option)}
+                    events={{ hover: true, focus: false, touch: true }}
+                    multiline
+                    maw={200}
                     label={
                       showWarning
-                        ? 'Chord is not available for alternative voicings.'
+                        ? 'Not available for alternative voicings.'
                         : 'intervals' in option
                           ? option.intervals.map((interval, index) => (
                               <span key={interval}>
@@ -317,9 +320,10 @@ export function Set() {
                     <Group gap="xs">
                       Alternative Vocings (Beta){' '}
                       <Tooltip
-                        label={
-                          "It might create some voicings that aren't very musical. This feature is still in beta and will improved."
-                        }
+                        label="Beta: may produce less musical voicings."
+                        events={{ hover: true, focus: false, touch: true }}
+                        multiline
+                        maw={200}
                       >
                         <IconInfoCircle size={14} />
                       </Tooltip>

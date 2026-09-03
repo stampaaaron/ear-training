@@ -127,9 +127,15 @@ export function VoicingList({
                 trailing={
                   <Group gap="xs" wrap="nowrap" ml="auto">
                     <Tooltip
-                      label={`This voicing work for the following chords: ${possibleChords.map((chord) => chord.name).join(', ')}`}
+                      label={`Works for: ${possibleChords.map((chord) => chord.name).join(', ')}`}
+                      events={{ hover: true, focus: false, touch: true }}
+                      multiline
+                      maw={220}
                     >
-                      <IconInfoCircle size={18} />
+                      <IconInfoCircle
+                        size={18}
+                        onClick={(event) => event.stopPropagation()}
+                      />
                     </Tooltip>
                     <Checkbox.Indicator />
                   </Group>
