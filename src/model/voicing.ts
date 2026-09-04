@@ -355,7 +355,7 @@ const HALFSTEP_EXCEPTION: [Interval, Interval] = ['2', 'b3'];
 const TRITONE = 6; // #4 / b5
 
 export type VoicingRuleViolation = {
-  rule: 1 | 2 | 3 | 4 | 5 | 7 | 8 | 9 | 10 | 11 | 12;
+  rule: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
   message: string;
 };
 
@@ -414,12 +414,12 @@ export const checkVoicingRules = (
 ): VoicingRuleViolation[] => {
   const violations: VoicingRuleViolation[] = [];
 
-  // Rule 1 — always 5 notes
+  // Rule 3 — always 5 notes
   if (voicing.flat().length !== 5) {
-    violations.push({ rule: 1, message: 'Voicing has more or fewer than 5 notes' });
+    violations.push({ rule: 3, message: 'Voicing has more or fewer than 5 notes' });
   }
 
-  // Rule 5 — no group may contain the full root-position triad (1-3-5)
+  // Rule 4 — no group may contain the full root-position triad (1-3-5)
   // with nothing else separating it from the rest of the voicing. If a 7
   // sits in a different (higher) octave group, the voicing isn't just the
   // bare triad anymore — the 7 makes it a genuinely different, spread-out
@@ -447,12 +447,12 @@ export const checkVoicingRules = (
     );
   });
   if (hasRootPositionCluster) {
-    violations.push({ rule: 5, message: 'A group contains the plain root-position cluster' });
+    violations.push({ rule: 4, message: 'A group contains the plain root-position cluster' });
   }
 
-  // Rule 9 — the voicing must start with the root (the root is the bass note)
+  // Rule 1 — the voicing must start with the root (the root is the bass note)
   if (!voicing[0]?.includes(1)) {
-    violations.push({ rule: 9, message: 'The root is not in the bottom octave' });
+    violations.push({ rule: 1, message: 'The root is not in the bottom octave' });
   }
 
   const notes = resolveVoicingNotes(voicing, chord);
@@ -484,7 +484,7 @@ export const checkVoicingRules = (
     });
   }
 
-  // Rule 12 — no tritone between the root and a #4/b5 within the bottom
+  // Rule 9 — no tritone between the root and a #4/b5 within the bottom
   // octave (group 0). Only checked against the root, not between any two
   // notes — a 3-to-b7 tritone in group 0 (the dominant guide-tone pair) is
   // completely normal and not affected by this rule.
@@ -493,18 +493,18 @@ export const checkVoicingRules = (
     for (const note of notes) {
       if (note.group === 0 && note.slot !== 1 && note.semitone - rootNote.semitone === TRITONE) {
         violations.push({
-          rule: 12,
+          rule: 9,
           message: `${note.interval} is a tritone from the root within octave 1`,
         });
       }
     }
   }
 
-  // Rule 7 — ascending in the order the voicing is written
+  // Rule 2 — ascending in the order the voicing is written
   for (let i = 1; i < notes.length; i++) {
     if (notes[i].semitone < notes[i - 1].semitone) {
       violations.push({
-        rule: 7,
+        rule: 2,
         message: `${notes[i - 1].interval} (group ${notes[i - 1].group}) is followed by a lower note ${notes[i].interval} (group ${notes[i].group})`,
       });
       break;
@@ -513,22 +513,22 @@ export const checkVoicingRules = (
 
   const sorted = [...notes].sort((a, b) => a.semitone - b.semitone);
 
-  // Rule 3 — bass interval at least a minor 3rd
+  // Rule 8 — bass interval at least a minor 3rd
   const bassInterval = sorted[1].semitone - sorted[0].semitone;
   if (bassInterval < MIN_BASS_INTERVAL) {
     violations.push({
-      rule: 3,
+      rule: 8,
       message: `Bottom two notes (${sorted[0].interval}, ${sorted[1].interval}) are only ${bassInterval} semitones apart`,
     });
   }
 
-  // Rule 4 — max 2 octaves total span
+  // Rule 6 — max 2 octaves total span
   const span = sorted[sorted.length - 1].semitone - sorted[0].semitone;
   if (span > MAX_TOTAL_SPAN && !isSameVoicing(voicing, SPAN_EXCEPTION)) {
-    violations.push({ rule: 4, message: `Spans ${span} semitones (more than 2 octaves)` });
+    violations.push({ rule: 6, message: `Spans ${span} semitones (more than 2 octaves)` });
   }
 
-  // Rule 2 & 8 — gaps between adjacent (sorted) notes
+  // Rule 5 & 7 — gaps between adjacent (sorted) notes
   for (let i = 1; i < sorted.length; i++) {
     const gap = sorted[i].semitone - sorted[i - 1].semitone;
     const prev = sorted[i - 1];
@@ -536,7 +536,7 @@ export const checkVoicingRules = (
 
     if (gap > MAX_ADJACENT_GAP && !isRootSeventhPair(prev, cur)) {
       violations.push({
-        rule: 2,
+        rule: 5,
         message: `${prev.interval} to ${cur.interval} is a ${gap}-semitone jump`,
       });
     }
@@ -546,7 +546,7 @@ export const checkVoicingRules = (
       const exceptionPair = [...HALFSTEP_EXCEPTION].sort().join(',');
       if (pair !== exceptionPair) {
         violations.push({
-          rule: 8,
+          rule: 7,
           message: `${prev.interval} and ${cur.interval} clash a half-step apart`,
         });
       }
