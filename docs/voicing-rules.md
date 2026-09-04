@@ -84,12 +84,15 @@ Regeln, um zu prüfen, ob ein neues Voicing in `alternativeVoicings`
     `#9` tiefer als die echte `3`, klingt der Dominant-Akkord nach Moll
     statt nach Dominant mit Farbton.
 
-## Abdeckung
-
-Das hier prüft nicht das einzelne Voicing, sondern die ganze Liste:
-
-- **Jeder Akkord braucht mindestens 2 passende Voicings.** Sonst gibt es
-  für diesen Akkord im Quiz nie eine echte Abwechslung.
+12. **Kein Tritonus zwischen Grundton und `#4`/`b5` in Oktave 1.** Liegt in
+    derselben (untersten) Oktave wie der Grundton (`1`) ein Ton, der genau
+    6 Halbtöne von *ihm* entfernt ist (`#4`/`b5`, in der Praxis eine `11`,
+    die als `#11` aufgelöst wird), klingt das im Bassbereich nach einem
+    harten Sprung statt nach Farbton. Betrifft nur den Abstand
+    Grundton→Ton, nicht beliebige Tonpaare in der Oktave — ein Tritonus
+    zwischen `3` und `b7` (die Dominant-Leittöne) in Oktave 1 ist völlig
+    normal und bleibt erlaubt. Weiter oben ist auch ein `#11` neben dem
+    Grundton ein ganz normaler Farbton.
 
 ## Bekannte Ausnahmen
 
@@ -98,15 +101,9 @@ Das hier prüft nicht das einzelne Voicing, sondern die ganze Liste:
 - Sus2 und Dim7 haben grundsätzlich keine Tensions und damit auch keine
   Voicings.
 
-## Offene Lücken
-
-- Folgende Akkorde haben aktuell nur 1 regelkonformes Voicing (kein
-  zweites gefunden, das alle Regeln erfüllt): `7sus4(10)`, `7(b9,#9)`,
-  `Sus4add(10,13)`.
-
 ## Wie prüfen?
 
-Regeln 1, 2, 3, 4, 5, 7, 8, 9, 10 und 11 sind als Code umgesetzt:
+Regeln 1, 2, 3, 4, 5, 7, 8, 9, 10, 11 und 12 sind als Code umgesetzt:
 `checkVoicingRules(voicing, chord)` in `src/model/voicing.ts` gibt eine
 Liste von Verstößen für ein konkretes Voicing+Akkord-Paar zurück (leer =
 sauber). `isVoicingValidForChord(voicing, chord)` kombiniert das mit
@@ -119,6 +116,6 @@ Shape global.
 Regel 6 (Sus-Akkorde gegenhören) bleibt manuell, da sie ein Höreindruck
 und keine Zahl ist.
 
-Für die Abdeckungs-Regel reicht ein Blick, wie viele Einträge in
-`alternativeVoicings` mit `isVoicingValidForChord` für einen Akkord
-`true` ergeben.
+Es gibt keine Mindestanzahl an Voicings pro Akkord — auch ein Akkord mit
+nur einem regelkonformen Voicing ist völlig in Ordnung, man muss ja
+ohnehin erst selbst darauf kommen, dass es dieser Akkord sein könnte.

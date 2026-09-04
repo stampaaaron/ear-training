@@ -191,6 +191,105 @@ export const alternativeVoicings: Voicing[] = [
 
   [[1, 5, 13, 7], [3]],
   [[1, 3, 13, 7], [9]],
+
+  // Additions found by exhaustively searching all rule-conformant shapes
+  // (2026-09-03, see docs/voicing-rules.md)
+  [
+    [1, 3, 5],
+    [9, 7],
+  ],
+  [
+    [1, 3, 13],
+    [9, 7],
+  ],
+  [
+    [1, 3, 7],
+    [5, 13],
+  ],
+  [
+    [1, 3],
+    [9, 5, 7],
+  ],
+  [
+    [1, 13, 7],
+    [9, 3],
+  ],
+  [
+    [1, 3, 13],
+    [11, 7],
+  ],
+  [
+    [1, 11, 5],
+    [3, 7],
+  ],
+  [[1, 3, 13, 7], [5]],
+  [
+    [1, 13, 7],
+    [3, 5],
+  ],
+  [
+    [1, 3],
+    [9, '10', 5],
+  ],
+  [[1, 3, 11, 7], [9]],
+  [
+    [1, 3, 11],
+    [9, 7],
+  ],
+  [
+    [1, 11],
+    [9, 3, 7],
+  ],
+  [
+    [1, 3, 13],
+    ['#9', 7],
+  ],
+  [
+    [1, 13, 7],
+    [3, 11],
+  ],
+  [
+    [1, 3, 5],
+    ['10', 7],
+  ],
+  [[1, 3, 11, 7], [5]],
+  [
+    [1, 11, 5],
+    [9, 3],
+  ],
+  [
+    [1, 3, 11],
+    [9, 5],
+  ],
+  [
+    [1, 5, 13],
+    [9, 3],
+  ],
+  [
+    [1, 3, 13],
+    [9, 5],
+  ],
+  [
+    [1, 13],
+    [9, 3, 5],
+  ],
+  [
+    [1, 3],
+    [9, 5, 13],
+  ],
+  [
+    [1, 3],
+    [9, 11, 7],
+  ],
+  [
+    [1, 3],
+    [9, 13, 7],
+  ],
+  [
+    [1, 11, 13],
+    [3, 7],
+  ],
+  [[1, 3, 13, 7], [11]],
 ];
 
 export const isTensionsVoicing = (voicing: Voicing, tensions: ChordTension[]) =>
@@ -253,8 +352,10 @@ export const MAX_TOTAL_SPAN = 24; // two octaves
 const SPAN_EXCEPTION: Voicing = [[1, 5], [9, 13], [3]];
 const HALFSTEP_EXCEPTION: [Interval, Interval] = ['2', 'b3'];
 
+const TRITONE = 6; // #4 / b5
+
 export type VoicingRuleViolation = {
-  rule: 1 | 2 | 3 | 4 | 5 | 7 | 8 | 9 | 10 | 11;
+  rule: 1 | 2 | 3 | 4 | 5 | 7 | 8 | 9 | 10 | 11 | 12;
   message: string;
 };
 
@@ -381,6 +482,22 @@ export const checkVoicingRules = (
       rule: 11,
       message: '#9 sits below the natural 3rd (sounds minor, not dominant)',
     });
+  }
+
+  // Rule 12 — no tritone between the root and a #4/b5 within the bottom
+  // octave (group 0). Only checked against the root, not between any two
+  // notes — a 3-to-b7 tritone in group 0 (the dominant guide-tone pair) is
+  // completely normal and not affected by this rule.
+  const rootNote = notes.find((n) => n.slot === 1 && n.group === 0);
+  if (rootNote) {
+    for (const note of notes) {
+      if (note.group === 0 && note.slot !== 1 && note.semitone - rootNote.semitone === TRITONE) {
+        violations.push({
+          rule: 12,
+          message: `${note.interval} is a tritone from the root within octave 1`,
+        });
+      }
+    }
   }
 
   // Rule 7 — ascending in the order the voicing is written
