@@ -42,6 +42,7 @@ import { MusicText } from '../../components/MusicText';
 import { possibleChordsForAlternativeVoicings } from '../../model/chordSet';
 import { Chord } from '../../model/chord';
 import { VoicingList } from '../../components/VoicingList';
+import classes from './Set.module.css';
 
 export function Set() {
   const { id } = useParams();
@@ -385,6 +386,11 @@ export function Set() {
               quizMode={mode}
               {...form.getInputProps('options')}
             />
+            <div className={classes.stickyFooter}>
+              <Button fullWidth onClick={() => setOptionsModalOpen(false)}>
+                Done
+              </Button>
+            </div>
           </Modal>
 
           <Modal
@@ -395,6 +401,11 @@ export function Set() {
             fullScreen={voicingsModalFullScreen}
           >
             <VoicingList {...form.getInputProps('settings.voicings')} />
+            <div className={classes.stickyFooter}>
+              <Button fullWidth onClick={() => setVoicingsModalOpen(false)}>
+                Done
+              </Button>
+            </div>
           </Modal>
 
           <Stack gap="sm">
