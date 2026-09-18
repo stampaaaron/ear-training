@@ -7,7 +7,11 @@ import {
   getAllTwoTensionChords,
   seventhChords,
 } from './chord';
-import { alternativeVoicings, isVoicingValidForChord } from './voicing';
+import {
+  alternativeVoicings,
+  isVoicingValidForChord,
+  seventhInversionVoicings,
+} from './voicing';
 
 export type ChordSet = QuizSet<Chord>;
 
@@ -35,6 +39,14 @@ const basicSeventhChords = [
   seventhChords['sus.b7'],
   seventhChords['dim.b7'],
   seventhChords['maj.b7'],
+];
+
+// Maj7, Dominant7 and Min7 in their three inversions (3rd/5th/7th in the
+// bass instead of the root) — see inversionVoicings in ./voicing.
+export const invertibleSeventhChords = [
+  seventhChords['maj.7'],
+  seventhChords['maj.b7'],
+  seventhChords['min.b7'],
 ];
 
 const basicSeventhChordsWithTensions = basicSeventhChords.flatMap(
@@ -111,6 +123,20 @@ export const chordSets: ChordSet[] = [
     label: 'All Seventh Chords',
     options: allSeventhChords,
     description: { names: allSeventhChords.map(({ name }) => name) },
+  },
+  {
+    key: 'seventh-chord-inversions',
+    label: 'Seventh Chord Inversions',
+    options: invertibleSeventhChords,
+    description: {
+      names: invertibleSeventhChords.map(({ name }) => name),
+      suffix: ' in their 1st, 2nd and 3rd inversion',
+    },
+    settings: {
+      ...defaultSettings,
+      inversions: true,
+      inversionVoicings: seventhInversionVoicings,
+    },
   },
   {
     key: 'basic-single-tensions',

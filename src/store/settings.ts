@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { alternativeVoicings } from '../model/voicing';
+import { alternativeVoicings, seventhInversionVoicings } from '../model/voicing';
 import { PlaybackMode } from '../player';
 
 export const defaultSettings = {
@@ -12,6 +12,8 @@ export const defaultSettings = {
   autoPlayNext: true,
   alternativeVoicings: false,
   voicings: alternativeVoicings,
+  inversions: false,
+  inversionVoicings: seventhInversionVoicings,
 };
 
 export type Settings = typeof defaultSettings;

@@ -2,7 +2,7 @@ import { getRandomFromArray } from '../utils';
 import { Chord, ChordBase, ChordTension } from './chord';
 import { Interval, intervalDistanceMap } from './interval';
 
-type VoicingInterval = 1 | 3 | 5 | 7 | 9 | '#9' | '10' | 11 | 13;
+export type VoicingInterval = 1 | 3 | 5 | 7 | 9 | '#9' | '10' | 11 | 13;
 
 export const chordIntervalBaseMap: Record<VoicingInterval, Interval[]> = {
   '1': ['1'],
@@ -558,4 +558,35 @@ export const checkVoicingRules = (
 
 export const isVoicingValidForChord = (voicing: Voicing, chord: Chord) =>
   voicingContainsChord(voicing, chord) &&
-  checkVoicingRules(voicing, chord).length === 0;
+  // checkVoicingRules is tailored to alternativeVoicings, which are always
+  // exactly 5 tones (rule 3) — close-position shapes (root position and
+  // inversions of a basic chord, see getClosePositions below) don't have 5
+  // tones, so they skip that rule set entirely and only need to actually
+  // contain the chord's tones.
+  (voicing.flat().length !== 5 || checkVoicingRules(voicing, chord).length === 0);
+
+export const getVoicingKey = (voicing: Voicing) => voicing.flat().join(',');
+
+// Close-position voicings of a chord's basic (stacked-third) tones: root
+// position has every tone in one octave; inversion k puts tones[k..] in the
+// bass and rotates tones[..k] up an octave — e.g. for a seventh chord
+// ([1,3,5,7]), 1st inversion is [[3,5,7],[1]] (3rd in the bass), 2nd is
+// [[5,7],[1,3]], 3rd is [[7],[1,3,5]]. These are a different concept from
+// `alternativeVoicings` (spread-out shapes for extended/tension chords).
+export type NamedVoicing = { label: string; voicing: Voicing };
+
+const inversionOrdinals = ['1st', '2nd', '3rd', '4th', '5th', '6th'];
+
+export const getCloseInversions = (tones: VoicingInterval[]): Voicing[] =>
+  tones.slice(1).map((_, i) => [tones.slice(i + 1), tones.slice(0, i + 1)]);
+
+export const getClosePositions = (tones: VoicingInterval[]): NamedVoicing[] => [
+  { label: 'Root Position', voicing: [tones] },
+  ...getCloseInversions(tones).map((voicing, i) => ({
+    label: `${inversionOrdinals[i]} Inversion`,
+    voicing,
+  })),
+];
+
+export const seventhInversionVoicings = getCloseInversions([1, 3, 5, 7]);
+export const seventhChordPositions = getClosePositions([1, 3, 5, 7]);

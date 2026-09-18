@@ -33,16 +33,22 @@ export function useQuiz(set?: QuizSet<QuizOption>) {
     const current: QuizState['current'] = { startNote, option: randomOption };
 
     if ('tensions' in randomOption) {
-      const availableVoicings =
-        set?.settings?.voicings.filter((voicing) =>
-          isVoicingValidForChord(voicing, randomOption)
-        ) ?? [];
+      // Alternative voicings (extended/tension shapes) and inversions
+      // (close-position, non-root bass) are independent toggles — pool
+      // whichever of them are enabled for this set.
+      const candidateVoicings = [
+        ...(set?.settings?.alternativeVoicings ? (set.settings.voicings ?? []) : []),
+        ...(set?.settings?.inversions ? (set.settings.inversionVoicings ?? []) : []),
+      ];
 
-      const voicing = set?.settings?.alternativeVoicings
-        ? getRandomFromArray(availableVoicings)
-        : undefined;
+      const availableVoicings = candidateVoicings.filter((voicing) =>
+        isVoicingValidForChord(voicing, randomOption)
+      );
 
-      current.voicing = voicing;
+      current.voicing =
+        availableVoicings.length > 0
+          ? getRandomFromArray(availableVoicings)
+          : undefined;
     }
 
     useQuizStore.setState(

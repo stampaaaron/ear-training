@@ -10,6 +10,7 @@ import { ReactNode } from 'react';
 import {
   alternativeVoicings,
   chordIntervalBaseMap,
+  getVoicingKey,
   Voicing,
   VoicingIntervalOctave,
   isVoicingValidForChord,
@@ -20,21 +21,15 @@ import { possibleChordsForAlternativeVoicings } from '../model/chordSet';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { MusicText } from './MusicText';
 
-export const getVoicingKey = (voicing: Voicing) => voicing.flat().join(',');
-
 type VoicingBadgesProps = {
   voicing: Voicing;
   trailing?: ReactNode;
   isMobile?: boolean;
 };
 
-export function VoicingBadges({
-  voicing,
-  trailing,
-  isMobile,
-}: VoicingBadgesProps) {
-  const possibleChords = possibleChordsForAlternativeVoicings.filter(
-    (chord) => isVoicingValidForChord(voicing, chord)
+export function VoicingBadges({ voicing, trailing, isMobile }: VoicingBadgesProps) {
+  const possibleChords = possibleChordsForAlternativeVoicings.filter((chord) =>
+    isVoicingValidForChord(voicing, chord)
   );
 
   const renderOctave = (octave: VoicingIntervalOctave) =>

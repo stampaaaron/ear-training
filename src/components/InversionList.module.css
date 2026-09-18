@@ -1,0 +1,9 @@
+.root {
+  position: relative;
+  transition: border-color 150ms ease;
+  cursor: pointer;
+
+  &[data-checked] {
+    border-color: var(--mantine-primary-color-filled);
+  }
+}
