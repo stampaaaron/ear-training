@@ -41,7 +41,13 @@ import { useState } from 'react';
 import { MusicText } from '../../components/MusicText';
 import { Chord } from '../../model/chord';
 import { VoicingList } from '../../components/VoicingList';
-import { alternativeVoicings, isVoicingValidForChord, Voicing } from '../../model/voicing';
+import {
+  alternativeVoicings,
+  InvertedChord,
+  isVoicingValidForChord,
+  resolveVoicingOctaveIntervals,
+  Voicing,
+} from '../../model/voicing';
 import classes from './Set.module.css';
 
 export function Set() {
@@ -86,6 +92,18 @@ export function Set() {
       chord,
       form.getValues().settings?.voicings ?? alternativeVoicings
     );
+
+  // A chord option can carry its own fixed voicing (see getChordInversions
+  // in model/voicing.ts) — the tooltip should show its tones in that actual
+  // playback order (e.g. 3-5-7-1 for a 1st inversion), not the chord's
+  // always-root-position `intervals` array.
+  const resolveDisplayIntervals = (chord: Chord) => {
+    const { voicing } = chord as Partial<InvertedChord>;
+
+    return voicing
+      ? resolveVoicingOctaveIntervals(chord.intervals, voicing).flat()
+      : chord.intervals;
+  };
 
   const [optionsModalOpen, setOptionsModalOpen] = useState(false);
   const [voicingsModalOpen, setVoicingsModalOpen] = useState(false);
@@ -276,12 +294,14 @@ export function Set() {
                       showWarning
                         ? 'Not available for alternative voicings.'
                         : 'intervals' in option
-                          ? option.intervals.map((interval, index) => (
-                              <span key={interval}>
-                                {index > 0 && ', '}
-                                <MusicText raise={false}>{interval}</MusicText>
-                              </span>
-                            ))
+                          ? resolveDisplayIntervals(option as Chord).map(
+                              (interval, index) => (
+                                <span key={interval}>
+                                  {index > 0 && ', '}
+                                  <MusicText raise={false}>{interval}</MusicText>
+                                </span>
+                              )
+                            )
                           : ''
                     }
                   >
