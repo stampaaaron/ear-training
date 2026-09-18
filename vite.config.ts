@@ -7,6 +7,12 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      // Default ('prompt') leaves a new service worker waiting until every
+      // tab of the site is closed and reopened — with no update prompt UI
+      // wired up in the app, a deploy would otherwise silently never reach
+      // an already-open tab. autoUpdate installs and activates a new
+      // version in the background and reloads the page for it.
+      registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
         name: 'freear – Ear Training',
