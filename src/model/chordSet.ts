@@ -11,6 +11,7 @@ import {
   alternativeVoicings,
   isVoicingValidForChord,
   seventhInversionVoicings,
+  triadInversionVoicings,
 } from './voicing';
 
 export type ChordSet = QuizSet<Chord>;
@@ -48,6 +49,9 @@ export const invertibleSeventhChords = [
   seventhChords['maj.b7'],
   seventhChords['min.b7'],
 ];
+
+// Maj and Min triads in their two inversions (3rd/5th in the bass).
+export const invertibleTriads = [baseChords['maj'], baseChords['min']];
 
 const basicSeventhChordsWithTensions = basicSeventhChords.flatMap(
   getAllOneTensionChords
@@ -110,6 +114,20 @@ export const chordSets: ChordSet[] = [
       prefix: 'All triads (',
       names: allTriads.map(({ name }) => name),
       suffix: ')',
+    },
+  },
+  {
+    key: 'triad-inversions',
+    label: 'Triad Inversions',
+    options: invertibleTriads,
+    description: {
+      names: invertibleTriads.map(({ name }) => name),
+      suffix: ' in their 1st and 2nd inversion',
+    },
+    settings: {
+      ...defaultSettings,
+      inversions: true,
+      inversionVoicings: triadInversionVoicings,
     },
   },
   {

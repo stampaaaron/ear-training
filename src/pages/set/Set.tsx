@@ -40,13 +40,14 @@ import { defaultSettings } from '../../store/settings';
 import { useState } from 'react';
 import { MusicText } from '../../components/MusicText';
 import { Chord } from '../../model/chord';
-import { invertibleSeventhChords } from '../../model/chordSet';
+import { invertibleSeventhChords, invertibleTriads } from '../../model/chordSet';
 import { VoicingList } from '../../components/VoicingList';
 import { InversionList } from '../../components/InversionList';
 import {
   alternativeVoicings,
   isVoicingValidForChord,
   seventhChordPositions,
+  triadChordPositions,
   Voicing,
 } from '../../model/voicing';
 import classes from './Set.module.css';
@@ -68,10 +69,31 @@ export function Set() {
   // a chord's basic tones — it silently drops anything else. So unlike
   // alternativeVoicings (which deliberately also matches chords with extra
   // tensions on top), a chord only really "supports" inversions when it's
-  // one of the chords the inversion catalog was actually built for — right
-  // now that's just the three basic seventh chords.
+  // one of the chords an inversion catalog was actually built for.
+  const invertibleChordFamilies = [
+    { chords: invertibleTriads, positions: triadChordPositions },
+    { chords: invertibleSeventhChords, positions: seventhChordPositions },
+  ];
+
   const chordSupportsInversions = (chord: Chord) =>
-    invertibleSeventhChords.some(({ name }) => chord.name === name);
+    invertibleChordFamilies.some(({ chords }) =>
+      chords.some(({ name }) => chord.name === name)
+    );
+
+  // Which position catalog(s) the Inversions dialog offers — only the
+  // families actually represented among the chosen chords, so "1st
+  // Inversion" isn't ambiguous between a triad and a seventh-chord shape.
+  // Falls back to every family before any chords are chosen yet.
+  const activeInversionPositions = () => {
+    const options = (form.getValues().options ?? []) as Chord[];
+    const active = invertibleChordFamilies.filter(({ chords }) =>
+      options.some((option) => chords.some((c) => c.name === option.name))
+    );
+
+    return (active.length > 0 ? active : invertibleChordFamilies).flatMap(
+      ({ positions }) => positions
+    );
+  };
 
   // Alternative voicings and inversions are independent toggles, but at
   // quiz time they're pooled together (see nextQuestion in store/quiz.ts) —
@@ -131,7 +153,8 @@ export function Set() {
 
     if (settings?.inversions && !chordSupportsInversions(chord)) {
       reasons.push(
-        `inversions (only available for ${invertibleSeventhChords
+        `inversions (only available for ${invertibleChordFamilies
+          .flatMap(({ chords }) => chords)
           .map(({ name }) => name)
           .join(', ')})`
       );
@@ -389,7 +412,10 @@ export function Set() {
                     <Group gap="xs">
                       Inversions{' '}
                       <Tooltip
-                        label={`Only available for ${invertibleSeventhChords.map(({ name }) => name).join(', ')}.`}
+                        label={`Only available for ${invertibleChordFamilies
+                          .flatMap(({ chords }) => chords)
+                          .map(({ name }) => name)
+                          .join(', ')}.`}
                         events={{ hover: true, focus: false, touch: true }}
                         multiline
                         maw={200}
@@ -407,7 +433,7 @@ export function Set() {
                   <Group gap="xs">
                     <Text c="dimmed" size="sm">
                       {form.getValues().settings?.inversionVoicings.length} of{' '}
-                      {seventhChordPositions.length} positions selected
+                      {activeInversionPositions().length} positions selected
                     </Text>
                     <Button
                       variant="subtle"
@@ -525,7 +551,7 @@ export function Set() {
             fullScreen={inversionsModalFullScreen}
           >
             <InversionList
-              positions={seventhChordPositions}
+              positions={activeInversionPositions()}
               {...form.getInputProps('settings.inversionVoicings')}
             />
             <div className={classes.stickyFooter}>

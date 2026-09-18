@@ -590,3 +590,18 @@ export const getClosePositions = (tones: VoicingInterval[]): NamedVoicing[] => [
 
 export const seventhInversionVoicings = getCloseInversions([1, 3, 5, 7]);
 export const seventhChordPositions = getClosePositions([1, 3, 5, 7]);
+
+export const triadInversionVoicings = getCloseInversions([1, 3, 5]);
+export const triadChordPositions = getClosePositions([1, 3, 5]);
+
+// Close-position catalogs share the same VoicingInterval slots (1/3/5/7),
+// so a 3-tone triad voicing would also satisfy voicingContainsChord against
+// a 4-tone seventh chord — it's a genuine subset, just missing the 7th. For
+// alternativeVoicings that's fine (a chord with extra tensions on top is
+// still meant to match), but a close-position voicing is supposed to
+// represent the chord's ENTIRE tone set, not a subset of it — so this only
+// matches when the tone counts are exactly equal, which is what keeps a
+// mixed triad + seventh chord inversions pool from cross-matching.
+export const isClosePositionValidForChord = (voicing: Voicing, chord: Chord) =>
+  voicing.flat().length === chord.intervals.length &&
+  voicingContainsChord(voicing, chord);

@@ -183,6 +183,12 @@ export const baseChords = (
       intervals: chordBaseIntervals[base],
       name: chordNaming[base].name,
       group: chordGrouping[base].group,
+      // No tensions of its own, but the (present but empty) key is what
+      // lets quiz.ts's `'tensions' in randomOption` check tell a bare
+      // triad apart from a Scale (which also has `intervals` but no
+      // tensions concept at all) so it still gets voicing/inversion
+      // selection at quiz time.
+      tensions: [],
     };
 
     return acc;
