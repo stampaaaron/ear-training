@@ -40,16 +40,8 @@ import { defaultSettings } from '../../store/settings';
 import { useState } from 'react';
 import { MusicText } from '../../components/MusicText';
 import { Chord } from '../../model/chord';
-import { invertibleSeventhChords, invertibleTriads } from '../../model/chordSet';
 import { VoicingList } from '../../components/VoicingList';
-import { InversionList } from '../../components/InversionList';
-import {
-  alternativeVoicings,
-  isVoicingValidForChord,
-  seventhChordPositions,
-  triadChordPositions,
-  Voicing,
-} from '../../model/voicing';
+import { alternativeVoicings, isVoicingValidForChord, Voicing } from '../../model/voicing';
 import classes from './Set.module.css';
 
 export function Set() {
@@ -65,55 +57,6 @@ export function Set() {
   const chordSupportsVoicings = (chord: Chord, voicings: Voicing[]) =>
     voicings.some((voicing) => isVoicingValidForChord(voicing, chord));
 
-  // A close-position voicing (root position / inversion) only has slots for
-  // a chord's basic tones — it silently drops anything else. So unlike
-  // alternativeVoicings (which deliberately also matches chords with extra
-  // tensions on top), a chord only really "supports" inversions when it's
-  // one of the chords an inversion catalog was actually built for.
-  const invertibleChordFamilies = [
-    { chords: invertibleTriads, positions: triadChordPositions },
-    { chords: invertibleSeventhChords, positions: seventhChordPositions },
-  ];
-
-  const chordSupportsInversions = (chord: Chord) =>
-    invertibleChordFamilies.some(({ chords }) =>
-      chords.some(({ name }) => chord.name === name)
-    );
-
-  // Which position catalog(s) the Inversions dialog offers — only the
-  // families actually represented among the chosen chords, so "1st
-  // Inversion" isn't ambiguous between a triad and a seventh-chord shape.
-  // Falls back to every family before any chords are chosen yet.
-  const activeInversionPositions = () => {
-    const options = (form.getValues().options ?? []) as Chord[];
-    const active = invertibleChordFamilies.filter(({ chords }) =>
-      options.some((option) => chords.some((c) => c.name === option.name))
-    );
-
-    return (active.length > 0 ? active : invertibleChordFamilies).flatMap(
-      ({ positions }) => positions
-    );
-  };
-
-  // Alternative voicings and inversions are independent toggles, but at
-  // quiz time they're pooled together (see nextQuestion in store/quiz.ts) —
-  // a chord just needs one playable voicing from whichever mechanisms are
-  // switched on, not one from every single one of them. Requiring all of
-  // them would mean no chord "supports" both at once, since their catalogs
-  // target different chords (extended/tension chords vs. basic ones).
-  const chordSupportsEnabledVoicingModes = (
-    chord: Chord,
-    settings?: Partial<typeof defaultSettings>
-  ) => {
-    if (!settings?.alternativeVoicings && !settings?.inversions) return true;
-
-    return (
-      (!!settings.alternativeVoicings &&
-        chordSupportsVoicings(chord, settings.voicings ?? alternativeVoicings)) ||
-      (!!settings.inversions && chordSupportsInversions(chord))
-    );
-  };
-
   const form = useForm<QuizSet<QuizOption>>({
     initialValues: set && {
       ...set,
@@ -125,55 +68,31 @@ export function Set() {
         [formRootRule]:
           hasLength({ min: 2 }, 'At least two options have to be seleced.') &&
           ((value, values) =>
+            !values.settings?.alternativeVoicings ||
             (value as Chord[])?.every((chord) =>
-              chordSupportsEnabledVoicingModes(chord, values.settings)
+              chordSupportsVoicings(
+                chord,
+                values.settings?.voicings ?? alternativeVoicings
+              )
             )
               ? undefined
-              : "Some of your chords selected doesn't support the selected voicing options"),
+              : "Some of your chords selected doesn't support alternative voicings"),
       },
     },
   });
 
-  const chordSupportsCurrentVoicingModes = (chord: Chord) =>
-    chordSupportsEnabledVoicingModes(chord, form.getValues().settings);
-
-  // Explains, per chord, exactly which of the active mechanisms it fails —
-  // rather than one generic "voicing options" message regardless of what's
-  // actually switched on.
-  const unsupportedVoicingModesMessage = (chord: Chord) => {
-    const settings = form.getValues().settings;
-    const reasons: string[] = [];
-
-    if (
-      settings?.alternativeVoicings &&
-      !chordSupportsVoicings(chord, settings.voicings ?? alternativeVoicings)
-    ) {
-      reasons.push('alternative voicings');
-    }
-
-    if (settings?.inversions && !chordSupportsInversions(chord)) {
-      reasons.push(
-        `inversions (only available for ${invertibleChordFamilies
-          .flatMap(({ chords }) => chords)
-          .map(({ name }) => name)
-          .join(', ')})`
-      );
-    }
-
-    return reasons.length
-      ? `Not available for ${reasons.join(' or ')}.`
-      : undefined;
-  };
+  const chordSupportAlternativeVoicings = (chord: Chord) =>
+    chordSupportsVoicings(
+      chord,
+      form.getValues().settings?.voicings ?? alternativeVoicings
+    );
 
   const [optionsModalOpen, setOptionsModalOpen] = useState(false);
   const [voicingsModalOpen, setVoicingsModalOpen] = useState(false);
-  const [inversionsModalOpen, setInversionsModalOpen] = useState(false);
   const [discardModalOpen, setDiscardModalOpen] = useState(false);
   const [optionsModalFullScreen, setOptionsModalFullScreen] =
     useState(false);
   const [voicingsModalFullScreen, setVoicingsModalFullScreen] =
-    useState(false);
-  const [inversionsModalFullScreen, setInversionsModalFullScreen] =
     useState(false);
   const isMobile = useIsMobile();
 
@@ -343,9 +262,8 @@ export function Set() {
             <Group gap="sm">
               {form.getValues().options?.map((option) => {
                 const showWarning =
-                  (form.getValues().settings?.alternativeVoicings ||
-                    form.getValues().settings?.inversions) &&
-                  !chordSupportsCurrentVoicingModes(option as Chord);
+                  form.getValues().settings?.alternativeVoicings &&
+                  !chordSupportAlternativeVoicings(option as Chord);
 
                 return (
                   <Tooltip
@@ -356,7 +274,7 @@ export function Set() {
                     maw={200}
                     label={
                       showWarning
-                        ? unsupportedVoicingModesMessage(option as Chord)
+                        ? 'Not available for alternative voicings.'
                         : 'intervals' in option
                           ? option.intervals.map((interval, index) => (
                               <span key={interval}>
@@ -410,48 +328,6 @@ export function Set() {
                   size="sm"
                   label={
                     <Group gap="xs">
-                      Inversions{' '}
-                      <Tooltip
-                        label={`Only available for ${invertibleChordFamilies
-                          .flatMap(({ chords }) => chords)
-                          .map(({ name }) => name)
-                          .join(', ')}.`}
-                        events={{ hover: true, focus: false, touch: true }}
-                        multiline
-                        maw={200}
-                      >
-                        <IconInfoCircle size={14} />
-                      </Tooltip>
-                    </Group>
-                  }
-                  labelPosition="left"
-                  {...form.getInputProps('settings.inversions', {
-                    type: 'checkbox',
-                  })}
-                />
-                {form.getValues().settings?.inversions && (
-                  <Group gap="xs">
-                    <Text c="dimmed" size="sm">
-                      {form.getValues().settings?.inversionVoicings.length} of{' '}
-                      {activeInversionPositions().length} positions selected
-                    </Text>
-                    <Button
-                      variant="subtle"
-                      size="compact-xs"
-                      leftSection={<IconPencil size={12} />}
-                      onClick={() => {
-                        setInversionsModalFullScreen(!!isMobile);
-                        setInversionsModalOpen(true);
-                      }}
-                    >
-                      Edit
-                    </Button>
-                  </Group>
-                )}
-                <Switch
-                  size="sm"
-                  label={
-                    <Group gap="xs">
                       Alternative Vocings (Beta){' '}
                       <Tooltip
                         label="Beta: may produce less musical voicings."
@@ -500,20 +376,18 @@ export function Set() {
           >
             <OptionsGrid
               isDisabled={
-                form.getValues().settings?.alternativeVoicings ||
-                form.getValues().settings?.inversions
+                form.getValues().settings?.alternativeVoicings
                   ? (option) =>
-                      !chordSupportsCurrentVoicingModes(option as Chord) &&
+                      !chordSupportAlternativeVoicings(option as Chord) &&
                       !form
                         .getValues()
                         .options?.some(({ name }) => option.name === name)
                   : undefined
               }
               resolveColor={
-                form.getValues().settings?.alternativeVoicings ||
-                form.getValues().settings?.inversions
+                form.getValues().settings?.alternativeVoicings
                   ? (option) =>
-                      !chordSupportsCurrentVoicingModes(option as Chord)
+                      !chordSupportAlternativeVoicings(option as Chord)
                         ? 'orange'
                         : undefined
                   : undefined
@@ -538,27 +412,6 @@ export function Set() {
             <VoicingList {...form.getInputProps('settings.voicings')} />
             <div className={classes.stickyFooter}>
               <Button fullWidth onClick={() => setVoicingsModalOpen(false)}>
-                Done
-              </Button>
-            </div>
-          </Modal>
-
-          <Modal
-            opened={inversionsModalOpen}
-            onClose={() => setInversionsModalOpen(false)}
-            title="Choose inversions"
-            size="lg"
-            fullScreen={inversionsModalFullScreen}
-          >
-            <InversionList
-              positions={activeInversionPositions()}
-              {...form.getInputProps('settings.inversionVoicings')}
-            />
-            <div className={classes.stickyFooter}>
-              <Button
-                fullWidth
-                onClick={() => setInversionsModalOpen(false)}
-              >
                 Done
               </Button>
             </div>

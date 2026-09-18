@@ -558,50 +558,35 @@ export const checkVoicingRules = (
 
 export const isVoicingValidForChord = (voicing: Voicing, chord: Chord) =>
   voicingContainsChord(voicing, chord) &&
-  // checkVoicingRules is tailored to alternativeVoicings, which are always
-  // exactly 5 tones (rule 3) — close-position shapes (root position and
-  // inversions of a basic chord, see getClosePositions below) don't have 5
-  // tones, so they skip that rule set entirely and only need to actually
-  // contain the chord's tones.
-  (voicing.flat().length !== 5 || checkVoicingRules(voicing, chord).length === 0);
+  checkVoicingRules(voicing, chord).length === 0;
 
 export const getVoicingKey = (voicing: Voicing) => voicing.flat().join(',');
 
-// Close-position voicings of a chord's basic (stacked-third) tones: root
-// position has every tone in one octave; inversion k puts tones[k..] in the
-// bass and rotates tones[..k] up an octave — e.g. for a seventh chord
-// ([1,3,5,7]), 1st inversion is [[3,5,7],[1]] (3rd in the bass), 2nd is
-// [[5,7],[1,3]], 3rd is [[7],[1,3,5]]. These are a different concept from
-// `alternativeVoicings` (spread-out shapes for extended/tension chords).
-export type NamedVoicing = { label: string; voicing: Voicing };
+// A chord in a specific close-position inversion: same tones as `chord`,
+// just rearranged so a tone other than the root sits in the bass, and
+// renamed so it's a distinct, guessable quiz answer (the same pattern
+// addTensions/getAllOneTensionChords use for tension chords) rather than a
+// voicing randomly swapped in behind the scenes.
+export type InvertedChord = Chord & { voicing: Voicing };
 
-const inversionOrdinals = ['1st', '2nd', '3rd', '4th', '5th', '6th'];
+const inversionSuffixes = ['1st Inv', '2nd Inv', '3rd Inv', '4th Inv', '5th Inv', '6th Inv'];
 
+// For tones [1,3,5,...], inversion k puts tones[k..] in the bass and
+// rotates tones[..k] up an octave — e.g. for a seventh chord ([1,3,5,7]),
+// 1st inversion is [[3,5,7],[1]] (3rd in the bass), 2nd is [[5,7],[1,3]],
+// 3rd is [[7],[1,3,5]]. Root position isn't generated here: a chord with no
+// voicing at all already plays as a plain ascending stack (see player.ts),
+// which *is* root position, so the existing chord object already covers it
+// without needing a separate variant.
 export const getCloseInversions = (tones: VoicingInterval[]): Voicing[] =>
   tones.slice(1).map((_, i) => [tones.slice(i + 1), tones.slice(0, i + 1)]);
 
-export const getClosePositions = (tones: VoicingInterval[]): NamedVoicing[] => [
-  { label: 'Root Position', voicing: [tones] },
-  ...getCloseInversions(tones).map((voicing, i) => ({
-    label: `${inversionOrdinals[i]} Inversion`,
+export const getChordInversions = (
+  chord: Chord,
+  tones: VoicingInterval[]
+): InvertedChord[] =>
+  getCloseInversions(tones).map((voicing, i) => ({
+    ...chord,
     voicing,
-  })),
-];
-
-export const seventhInversionVoicings = getCloseInversions([1, 3, 5, 7]);
-export const seventhChordPositions = getClosePositions([1, 3, 5, 7]);
-
-export const triadInversionVoicings = getCloseInversions([1, 3, 5]);
-export const triadChordPositions = getClosePositions([1, 3, 5]);
-
-// Close-position catalogs share the same VoicingInterval slots (1/3/5/7),
-// so a 3-tone triad voicing would also satisfy voicingContainsChord against
-// a 4-tone seventh chord — it's a genuine subset, just missing the 7th. For
-// alternativeVoicings that's fine (a chord with extra tensions on top is
-// still meant to match), but a close-position voicing is supposed to
-// represent the chord's ENTIRE tone set, not a subset of it — so this only
-// matches when the tone counts are exactly equal, which is what keeps a
-// mixed triad + seventh chord inversions pool from cross-matching.
-export const isClosePositionValidForChord = (voicing: Voicing, chord: Chord) =>
-  voicing.flat().length === chord.intervals.length &&
-  voicingContainsChord(voicing, chord);
+    name: `${chord.name} (${inversionSuffixes[i]})`,
+  }));

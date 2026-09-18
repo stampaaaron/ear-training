@@ -3,11 +3,7 @@ import { QuizOption } from '../model/quiz';
 import { getRandomFromArray } from '../utils';
 import { useSettings } from './settings';
 import { getRandomMidiNote } from '../player';
-import {
-  Voicing,
-  isClosePositionValidForChord,
-  isVoicingValidForChord,
-} from '../model/voicing';
+import { InvertedChord, Voicing, isVoicingValidForChord } from '../model/voicing';
 import { QuizSet } from './sets';
 
 type QuizState = {
@@ -36,27 +32,16 @@ export function useQuiz(set?: QuizSet<QuizOption>) {
 
     const current: QuizState['current'] = { startNote, option: randomOption };
 
-    if ('tensions' in randomOption) {
-      // Alternative voicings (extended/tension shapes) and inversions
-      // (close-position, non-root bass) are independent toggles — pool
-      // whichever of them are enabled for this set. Each uses its own
-      // matching rule: alternativeVoicings deliberately also matches a
-      // chord with extra tensions on top, while a close-position voicing
-      // must match the chord's tone count exactly (see
-      // isClosePositionValidForChord) — otherwise a 3-tone triad voicing
-      // could silently apply to a 4-tone seventh chord and drop its 7th.
-      const availableVoicings = [
-        ...(set?.settings?.alternativeVoicings
-          ? (set.settings.voicings ?? []).filter((voicing) =>
-              isVoicingValidForChord(voicing, randomOption)
-            )
-          : []),
-        ...(set?.settings?.inversions
-          ? (set.settings.inversionVoicings ?? []).filter((voicing) =>
-              isClosePositionValidForChord(voicing, randomOption)
-            )
-          : []),
-      ];
+    const invertedOption = randomOption as Partial<InvertedChord>;
+
+    if (invertedOption.voicing) {
+      // This option IS a specific inversion (see getChordInversions in
+      // model/voicing.ts) — its voicing is the answer, not a random pick.
+      current.voicing = invertedOption.voicing;
+    } else if (set?.settings?.alternativeVoicings && 'tensions' in randomOption) {
+      const availableVoicings = (set.settings.voicings ?? []).filter((voicing) =>
+        isVoicingValidForChord(voicing, randomOption)
+      );
 
       current.voicing =
         availableVoicings.length > 0

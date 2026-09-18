@@ -9,9 +9,8 @@ import {
 } from './chord';
 import {
   alternativeVoicings,
+  getChordInversions,
   isVoicingValidForChord,
-  seventhInversionVoicings,
-  triadInversionVoicings,
 } from './voicing';
 
 export type ChordSet = QuizSet<Chord>;
@@ -42,16 +41,28 @@ const basicSeventhChords = [
   seventhChords['maj.b7'],
 ];
 
-// Maj7, Dominant7 and Min7 in their three inversions (3rd/5th/7th in the
-// bass instead of the root) — see inversionVoicings in ./voicing.
+// Maj7, Dominant7 and Min7 — the chords the seventh-chord inversions set is
+// built from (root position; see seventhChordInversions below for the
+// 1st/2nd/3rd inversion variants).
 export const invertibleSeventhChords = [
   seventhChords['maj.7'],
   seventhChords['maj.b7'],
   seventhChords['min.b7'],
 ];
 
-// Maj and Min triads in their two inversions (3rd/5th in the bass).
+// Maj and Min triads — the chords the triad inversions set is built from.
 export const invertibleTriads = [baseChords['maj'], baseChords['min']];
+
+// Each invertible chord in its 1st/2nd/(3rd) inversion, as its own named,
+// guessable quiz option (e.g. "Maj7 (1st Inv)") — not a voicing randomly
+// swapped in behind an unchanged "Maj7" option.
+export const seventhChordInversions = invertibleSeventhChords.flatMap((chord) =>
+  getChordInversions(chord, [1, 3, 5, 7])
+);
+
+export const triadInversions = invertibleTriads.flatMap((chord) =>
+  getChordInversions(chord, [1, 3, 5])
+);
 
 const basicSeventhChordsWithTensions = basicSeventhChords.flatMap(
   getAllOneTensionChords
@@ -86,6 +97,8 @@ export const allChords = [
   ...allSeventhChords,
   ...allChordsWithTensions,
   ...allChordsWithTwoTensions,
+  ...seventhChordInversions,
+  ...triadInversions,
 ];
 
 const basicSeventhChordsWithAllTensions = [
@@ -119,15 +132,10 @@ export const chordSets: ChordSet[] = [
   {
     key: 'triad-inversions',
     label: 'Triad Inversions',
-    options: invertibleTriads,
+    options: [...invertibleTriads, ...triadInversions],
     description: {
       names: invertibleTriads.map(({ name }) => name),
-      suffix: ' in their 1st and 2nd inversion',
-    },
-    settings: {
-      ...defaultSettings,
-      inversions: true,
-      inversionVoicings: triadInversionVoicings,
+      suffix: ' in root position and their 1st and 2nd inversion',
     },
   },
   {
@@ -145,15 +153,10 @@ export const chordSets: ChordSet[] = [
   {
     key: 'seventh-chord-inversions',
     label: 'Seventh Chord Inversions',
-    options: invertibleSeventhChords,
+    options: [...invertibleSeventhChords, ...seventhChordInversions],
     description: {
       names: invertibleSeventhChords.map(({ name }) => name),
-      suffix: ' in their 1st, 2nd and 3rd inversion',
-    },
-    settings: {
-      ...defaultSettings,
-      inversions: true,
-      inversionVoicings: seventhInversionVoicings,
+      suffix: ' in root position and their 1st, 2nd and 3rd inversion',
     },
   },
   {
