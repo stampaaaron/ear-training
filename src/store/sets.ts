@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { QuizMode, QuizOption } from '../model/quiz';
-import { Settings } from './settings';
+import { defaultSettings, Settings } from './settings';
 import { chordSets } from '../model/chordSet';
 import { intervalSets } from '../model/interval';
 import { scaleSets } from '../model/scale';
@@ -37,7 +37,7 @@ type SetsState = {
 export const useSetsStore = create<SetsState>()(
   persist(() => ({ sets: initialSets }), {
     name: 'sets',
-    version: 1,
+    version: 3,
     migrate: (prevState) => {
       const state = prevState as SetsState;
 
@@ -65,8 +65,20 @@ export const useSetsStore = create<SetsState>()(
 
             return {
               ...fresh,
+              // A built-in set that defines no settings of its own (fresh.
+              // settings undefined) intentionally falls back to the user's
+              // global settings elsewhere (see useQuiz/usePlayer) — leave
+              // that undefined alone when there's nothing persisted to
+              // merge with. But the moment there IS a persisted settings
+              // object to merge, back it onto the full defaultSettings
+              // shape (not just fresh.settings, which can itself be
+              // undefined) so a field missing from old persisted data —
+              // whether from before this built-in set had its own settings
+              // override, or one added to defaultSettings since — still
+              // gets a real value instead of leaving the merged object
+              // incomplete.
               settings: persisted?.settings
-                ? { ...fresh.settings, ...persisted.settings }
+                ? { ...defaultSettings, ...fresh.settings, ...persisted.settings }
                 : fresh.settings,
             };
           });
