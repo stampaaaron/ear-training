@@ -8,6 +8,7 @@ import {
   Switch,
 } from '@mantine/core';
 import { usePlayer } from '../../player';
+import { useAudio } from '../AudioProvider';
 import { OptionsGrid } from '../../components/OptionsGrid';
 import {
   IconCheck,
@@ -40,6 +41,7 @@ export function Quiz() {
   const availableOptions = set?.options ?? [];
 
   const { handlePlayOption } = usePlayer(set?.settings ?? defaultSettings);
+  const { loaded, loadError } = useAudio();
 
   const {
     quiz: { current, guess, revealed },
@@ -93,7 +95,7 @@ export function Quiz() {
       <Button
         flex={1}
         variant="outline"
-        disabled={!current}
+        disabled={!current || !loaded}
         leftSection={<IconRepeat size={16} />}
         onClick={() => {
           if (current)
@@ -154,6 +156,14 @@ export function Quiz() {
         className={classes.stickyBar}
         data-stuck={isStuck || undefined}
       >
+        {loadError && (
+          <Alert color="red" title="Sound failed to load" icon={<IconX />}>
+            {loadError.message}
+          </Alert>
+        )}
+        {!loaded && !loadError && (
+          <Alert color="blue" title="Loading sounds…" icon={<IconVolume />} />
+        )}
         {!current && <Button onClick={handlePlayNext}>Continue</Button>}
         {current && (
           <Alert

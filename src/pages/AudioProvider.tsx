@@ -13,18 +13,21 @@ const PIANO_URLS = { A3: 'A3.wav', A4: 'A4.wav', A5: 'A5.wav' };
 const AudioContextReact = createContext<{
   getPiano: () => Tone.Sampler | undefined;
   loaded: boolean;
+  loadError: Error | null;
   resetAudioIfNeeded: () => Promise<void>;
 }>({
   getPiano: () => undefined,
   loaded: false,
+  loadError: null,
   resetAudioIfNeeded: async () => {},
 });
 
 const loadSampler = () =>
-  new Promise<Tone.Sampler>((resolve) => {
+  new Promise<Tone.Sampler>((resolve, reject) => {
     const sampler = new Tone.Sampler({
       urls: PIANO_URLS,
       onload: () => resolve(sampler),
+      onerror: reject,
       baseUrl: '/',
     }).toDestination();
   });
@@ -32,6 +35,7 @@ const loadSampler = () =>
 export function AudioProvider({ children }: PropsWithChildren) {
   const pianoRef = useRef<Tone.Sampler | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState<Error | null>(null);
   const needsReset = useRef(false);
   const detachStateListener = useRef<() => void>(() => {});
 
@@ -51,12 +55,17 @@ export function AudioProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     let cancelled = false;
-    loadSampler().then((sampler) => {
-      if (cancelled) return;
-      pianoRef.current = sampler;
-      bindStateListener();
-      setLoaded(true);
-    });
+    loadSampler()
+      .then((sampler) => {
+        if (cancelled) return;
+        pianoRef.current = sampler;
+        bindStateListener();
+        setLoaded(true);
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setLoadError(error);
+      });
 
     const handleVisibilityChange = () => {
       // iOS's reported AudioContext state after returning to the
@@ -91,9 +100,14 @@ export function AudioProvider({ children }: PropsWithChildren) {
     await Tone.start();
 
     setLoaded(false);
-    pianoRef.current = await loadSampler();
-    bindStateListener();
-    setLoaded(true);
+    setLoadError(null);
+    try {
+      pianoRef.current = await loadSampler();
+      bindStateListener();
+      setLoaded(true);
+    } catch (error) {
+      setLoadError(error as Error);
+    }
   };
 
   return (
@@ -101,6 +115,7 @@ export function AudioProvider({ children }: PropsWithChildren) {
       value={{
         getPiano: () => pianoRef.current ?? undefined,
         loaded,
+        loadError,
         resetAudioIfNeeded,
       }}
     >
