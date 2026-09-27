@@ -13,6 +13,12 @@ export default defineConfig({
       // an already-open tab. autoUpdate installs and activates a new
       // version in the background and reloads the page for it.
       registerType: 'autoUpdate',
+      // The default injected register script only calls
+      // navigator.serviceWorker.register() — it never reloads an already
+      // open tab, so autoUpdate's promise above wasn't actually kept.
+      // Registering manually via virtual:pwa-register (see main.tsx) pulls
+      // in workbox-window's reload-on-activated handling instead.
+      injectRegister: false,
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
         name: 'freear – Ear Training',

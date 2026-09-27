@@ -84,6 +84,11 @@ export function AudioProvider({ children }: PropsWithChildren) {
     pianoRef.current?.dispose();
     Tone.getContext().dispose();
     Tone.setContext(new Tone.Context());
+    // Resume immediately, before any awaited work below — iOS only grants
+    // a very short window after the triggering tap in which a *new*
+    // AudioContext can be resumed; a fetch/decode in between is enough to
+    // lose it and leave the context silently stuck suspended.
+    await Tone.start();
 
     setLoaded(false);
     pianoRef.current = await loadSampler();
