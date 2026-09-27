@@ -8,4 +8,7 @@
   margin-inline: calc(var(--mantine-spacing-md) * -1);
   margin-bottom: calc(var(--mantine-spacing-md) * -1);
   padding: var(--mantine-spacing-md);
+  padding-bottom: calc(
+    var(--mantine-spacing-md) + env(safe-area-inset-bottom, 0px)
+  );
 }

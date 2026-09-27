@@ -29,6 +29,9 @@ main {
     z-index: 10;
     margin-inline: 0 !important;
     margin-bottom: 0 !important;
+    padding-bottom: calc(
+      var(--mantine-spacing-sm) + env(safe-area-inset-bottom, 0px)
+    ) !important;
   }
 
   /* Fixed footer doesn't reserve space in the flow, so short content
@@ -36,9 +39,14 @@ main {
      down to the viewport edge (matching the fixed footer) and pad it
      by the footer's height so the footer never overlaps content. The
      card's own bottom padding sits below this element in the flow, so
-     it's subtracted here to avoid overshooting the viewport. */
+     it's subtracted here to avoid overshooting the viewport. The extra
+     safe-area inset accounts for the home indicator on notch-style
+     iPhones, which would otherwise sit on top of the footer buttons. */
   .shell-content-with-footer {
-    min-height: calc(100dvh - 64px - var(--mantine-spacing-lg));
-    padding-bottom: 72px;
+    min-height: calc(
+      100dvh - 64px - var(--mantine-spacing-lg) -
+        env(safe-area-inset-bottom, 0px)
+    );
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
   }
 }
